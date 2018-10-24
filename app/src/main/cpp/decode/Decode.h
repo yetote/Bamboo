@@ -6,13 +6,15 @@
 #define BAMBOO_DECODE_H
 
 
-#include "BlockQueue.h"
+#include "../util/BlockQueue.h"
 #include <android/log.h>
 
 extern "C" {
-#include "../jni/includes/libavutil/frame.h"
-#include "../jni/includes/libavcodec/avcodec.h"
-#include "../jni/includes/libavformat/avformat.h"
+#include "libavutil/frame.h"
+#include "libavcodec/avcodec.h"
+#include "libavformat/avformat.h"
+#include "libavutil/imgutils.h"
+#include "libswscale/swscale.h"
 };
 enum DECODE_TYPE {
     DECODE_VIDEO, DECODE_AUDIO, DECODE_UNKNOWN

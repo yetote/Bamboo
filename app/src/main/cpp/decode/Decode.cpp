@@ -3,8 +3,7 @@
 //
 
 #include "Decode.h"
-#include "../jni/includes/libavutil/imgutils.h"
-#include "../jni/includes/libswscale/swscale.h"
+
 #include <cstdint>
 
 
@@ -85,7 +84,7 @@ void Decode::audio(BlockQueue &blockQueue) {
 
 void Decode::video(BlockQueue &blockQueue) {
     int df = 0;
-    uint *outputBuffer = static_cast<uint *>(av_malloc(
+    uint8_t *outputBuffer = static_cast<uint8_t *>(av_malloc(
             av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 1)));
     struct SwsContext *swsCtx = sws_getContext(
             pCodecCtx->width,
@@ -111,13 +110,17 @@ void Decode::video(BlockQueue &blockQueue) {
                 } else if (ret == AVERROR_EOF) {
                     LOGE("%s", "解码完成");
                     return;
-                    break;
                 } else if (ret < 0) {
                     LOGE("%s", "解码出错");
                     break;
                 }
             }
-            sws_scale(swsCtx, pFrame->data, pFrame->linesize, 0, pCodecCtx->height, pFrame->data,
+            sws_scale(swsCtx,
+                      pFrame->data,
+                      pFrame->linesize,
+                      0,
+                      pCodecCtx->height,
+                      pFrame->data,
                       pFrame->linesize);
             df++;
             LOGE("解码了%d帧", df);

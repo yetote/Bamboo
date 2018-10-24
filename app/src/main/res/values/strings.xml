@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Bamboo</string>
+    <string name="login">点击开启精彩之旅</string>
+    <string name="register">没有账号立即加入</string>
 </resources>
