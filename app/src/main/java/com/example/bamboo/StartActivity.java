@@ -33,19 +33,16 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
         initView();
 
-//        lottieView.setMaxProgress(0.5f);
-        lottieView.addAnimatorUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                BigDecimal b = new BigDecimal(lottieView.getProgress());
-                float f = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
-                Log.e(TAG, "onAnimationUpdate: "+f );
-                if (isShowing == false && f == 0.5f) {
-                        showAnimation();
-                        isShowing=true;
-                }
-
+        lottieView.addAnimatorUpdateListener(animation -> {
+            BigDecimal b = new BigDecimal(lottieView.getProgress());
+            float f = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+            if (!isShowing && f == 0.5f) {
+                Log.e(TAG, "onAnimationUpdate: " + f);
+                lottieView.pauseAnimation();
+                showAnimation();
+                isShowing = true;
             }
+
         });
 
         setClick();
@@ -63,10 +60,15 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void showAnimation() {
+        loginBtn.setVisibility(View.VISIBLE);
+        registerBtn.setVisibility(View.VISIBLE);
         ObjectAnimator oa1 = ObjectAnimator.ofFloat(loginBtn, "alpha", 0f, 1f);
         ObjectAnimator oa2 = ObjectAnimator.ofFloat(registerBtn, "alpha", 0f, 1f);
+        oa1.setDuration(2000);
+        oa2.setDuration(2000);
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.setDuration(2000).playTogether(oa1, oa2);
+        animatorSet.setDuration(2000);
+        animatorSet.playTogether(oa1, oa2);
         animatorSet.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -103,7 +105,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                v.setVisibility(View.GONE);
+                v.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -123,11 +125,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.start_login:
                 hideAnimation(registerBtn);
-                lottieView.setMinAndMaxProgress(0.5f, 1f);
+                lottieView.resumeAnimation();
                 break;
             case R.id.start_register:
                 hideAnimation(loginBtn);
-                lottieView.setMinAndMaxProgress(0.5f, 1f);
+                lottieView.resumeAnimation();
                 break;
             default:
                 break;
