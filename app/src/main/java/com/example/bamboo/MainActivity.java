@@ -1,22 +1,19 @@
 package com.example.bamboo;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.example.bamboo.adapter.MainTabLayoutAdapter;
-import com.example.bamboo.fragment.DiscoverFragment;
 import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
-import com.example.bamboo.fragment.MineFragment;
 import com.example.bamboo.fragment.NearFragment;
 import com.example.bamboo.fragment.RecommendFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @author yetote
