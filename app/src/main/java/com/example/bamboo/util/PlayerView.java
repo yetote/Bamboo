@@ -12,22 +12,11 @@ import android.os.HandlerThread;
  * @chang time
  * @class describe
  */
-public class PlayerView extends HandlerThread {
-    public PlayerView(String name) {
-        super("recommendThread");
+public class PlayerView {
+    static {
+        System.loadLibrary("native-lib");
+
     }
 
-    @Override
-    public synchronized void start() {
-        super.start();
-        createEGLContext();
-    }
-
-    public void replace() {
-        destroyEGLContext();
-    }
-
-    public native void createEGLContext();
-
-    public native void destroyEGLContext();
+    public native void play(String path,String vertexCode,String fragCode);
 }

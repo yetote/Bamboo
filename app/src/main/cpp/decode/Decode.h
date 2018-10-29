@@ -8,13 +8,15 @@
 
 #include "../util/BlockQueue.h"
 #include <android/log.h>
+#include <cstdint>
+#include <unistd.h>
 
 extern "C" {
-#include "libavutil/frame.h"
-#include "libavcodec/avcodec.h"
-#include "libavformat/avformat.h"
-#include "libavutil/imgutils.h"
-#include "libswscale/swscale.h"
+#include <libavutil/frame.h>
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/imgutils.h>
+#include <libswscale/swscale.h>
 };
 enum DECODE_TYPE {
     DECODE_VIDEO, DECODE_AUDIO, DECODE_UNKNOWN
@@ -22,8 +24,10 @@ enum DECODE_TYPE {
 
 class Decode {
 public:
-    void decode(const char *path, DECODE_TYPE decode_type, BlockQueue &blockQueue);
+    void decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFrame *> &blockQueue);
+
     void destroy();
+
 private:
     AVCodecContext *pCodecCtx;
     AVFormatContext *pFmtCtx;
@@ -35,9 +39,9 @@ private:
 
     void findIndex(DECODE_TYPE type);
 
-    void audio(BlockQueue &blockQueue);
+    void audio(BlockQueue<AVFrame *> &blockQueue);
 
-    void video(BlockQueue &blockQueue);
+    void video(BlockQueue<AVFrame *> &blockQueue);
 };
 
 

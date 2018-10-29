@@ -3,9 +3,13 @@ package com.example.bamboo;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -13,6 +17,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import java.math.BigDecimal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 /**
  * @author yetote
@@ -27,6 +32,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
         setContentView(R.layout.activity_start);
 
         initView();
@@ -40,10 +49,10 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 showAnimation();
                 isShowing = true;
             }
-
         });
 
         setClick();
+
     }
 
     private void setClick() {
@@ -62,11 +71,11 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         registerBtn.setVisibility(View.VISIBLE);
         ObjectAnimator oa1 = ObjectAnimator.ofFloat(loginBtn, "alpha", 0f, 1f);
         ObjectAnimator oa2 = ObjectAnimator.ofFloat(registerBtn, "alpha", 0f, 1f);
-        oa1.setDuration(2000);
-        oa2.setDuration(2000);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.setDuration(2000);
+        Log.e(TAG, "showAnimation: " + animatorSet.getDuration());
         animatorSet.playTogether(oa1, oa2);
+        animatorSet.start();
         animatorSet.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -120,17 +129,43 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        Intent i = new Intent();
         switch (v.getId()) {
             case R.id.start_login:
                 hideAnimation(registerBtn);
-                lottieView.resumeAnimation();
+                i.setClass(this, MainActivity.class);
+//                startActivity(new Intent(this, MainActivity.class));
                 break;
             case R.id.start_register:
                 hideAnimation(loginBtn);
-                lottieView.resumeAnimation();
+//                lottieView.resumeAnimation();
                 break;
             default:
                 break;
         }
+        lottieView.resumeAnimation();
+        lottieView.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                startActivity(i);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
+
+
 }

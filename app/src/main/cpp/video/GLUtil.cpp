@@ -50,7 +50,7 @@ GLuint GLUtil::loadShader(GLenum type, const char *shaderCode) {
 }
 
 GLuint *GLUtil::createTexture() {
-    GLuint *textureArr = new GLuint[3];
+    GLuint textureArr[3];
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(3, textureArr);
     if (textureArr[0] == 0) {
@@ -65,5 +65,5 @@ GLuint *GLUtil::createTexture() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
-    return textureArr;
+    return &textureArr;
 }

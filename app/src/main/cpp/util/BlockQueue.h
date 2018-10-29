@@ -18,25 +18,25 @@ template<typename T>
 class BlockQueue : public queue<T> {
 public:
     void push(const T &value) {
-        lock_guard<decltype(mLock)> lock(mLock);
-        mQueue.push(value);
-        mCond.notify_one;
+        lock_guard<decltype(this->mLock)> lock(this->mLock);
+        this->mQueue.push(value);
+        this->mCond.notify_one();
     }
 
     void push(const T &&value) {
-        lock_guard<decltype(mLock)> lock(mLock);
-        mQueue.push(move(value));
-        mCond.notify_one;
+        lock_guard<decltype(this->mLock)> lock(this->mLock);
+        this->mQueue.push(move(value));
+        this->mCond.notify_one();
     }
 
     POP_RESULT pop(T &out) {
-        unique_lock<decltype(mLock)> lock(mLock);
-        if (isStop && mQueue.empty()) return POP_STOP;
-        if (mQueue.empty()) mCond.wait(lock);
-        if (isStop && mQueue.empty()) return POP_STOP;
-        if (mQueue.empty()) return POP_UNEXPECTED;
-        out = move(mQueue.front());
-        mQueue.pop();
+        unique_lock<decltype(this->mLock)> lock(this->mLock);
+        if (isStop && this->mQueue.empty()) return POP_STOP;
+        if (this->mQueue.empty()) mCond.wait(lock);
+        if (isStop && this->mQueue.empty()) return POP_STOP;
+        if (this->mQueue.empty()) return POP_UNEXPECTED;
+        out = move(this->mQueue.front());
+        this->mQueue.pop();
         return POP_OK;
     }
 

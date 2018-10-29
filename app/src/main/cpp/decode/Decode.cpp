@@ -4,14 +4,12 @@
 
 #include "Decode.h"
 
-#include <cstdint>
-
 
 #define null NULL
 #define LOG_TAG "decode"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-void Decode::decode(const char *path, DECODE_TYPE decode_type, BlockQueue &blockQueue) {
+void Decode::decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFrame *> &blockQueue) {
     av_register_all();
     pFmtCtx = avformat_alloc_context();
     if (avformat_open_input(&pFmtCtx, path, null, null) != 0) {
@@ -78,11 +76,11 @@ void Decode::findIndex(DECODE_TYPE type) {
     }
 }
 
-void Decode::audio(BlockQueue &blockQueue) {
+void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
 
 }
 
-void Decode::video(BlockQueue &blockQueue) {
+void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
     int df = 0;
     uint8_t *outputBuffer = static_cast<uint8_t *>(av_malloc(
             av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 1)));
@@ -99,7 +97,7 @@ void Decode::video(BlockQueue &blockQueue) {
             null
     );
     int ret;
-    while (av_read_frame(pFmtCtx, pPacket)) {
+    while (av_read_frame(pFmtCtx, pPacket) >= 0) {
         if (pPacket->stream_index == index) {
             ret = avcodec_send_packet(pCodecCtx, pPacket);
             while (ret >= 0) {
@@ -124,7 +122,8 @@ void Decode::video(BlockQueue &blockQueue) {
                       pFrame->linesize);
             df++;
             LOGE("解码了%d帧", df);
-
+            blockQueue.push(pFrame);
+            usleep(46000);
         }
     }
 }

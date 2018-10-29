@@ -1,11 +1,27 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/cadetblue</item>
+        <item name="android:colorControlNormal">@color/firebrick</item>
+        <item name="colorControlActivated">@color/goldenrod</item>
+        <item name="colorControlHighlight">@color/palegreen</item>
+        <item name="colorPrimaryDark">@color/cadetblue</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--<item name="android:windowContentTransitions">true</item>-->
     </style>
 
+    <style name="MyTheme" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <!--<item name="android:fitsSystemWindows">true</item>-->
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    </style>
+
+    <style name="GradientTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!--<item name="colorPrimary">@color/cadetblue</item>-->
+        <!--<item name="android:wsta">@drawable/toolbar_gradient_background</item>-->
+    </style>
 </resources>
