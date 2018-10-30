@@ -8,12 +8,18 @@
 #include <egl/egl.h>
 #include <egl/eglext.h>
 #include <android/log.h>
+
 class EGLUtil {
 public:
-    EGLContext  eglContext;
+    EGLContext eglContext;
     EGLDisplay eglDisplay;
-    EGLConfig  eglConfig;
+    EGLConfig eglConfig;
+    EGLSurface eglSurface;
+
     void createCtx();
+
+    void createSurface(ANativeWindow *window);
+
     void destroyCtx();
 
 private:

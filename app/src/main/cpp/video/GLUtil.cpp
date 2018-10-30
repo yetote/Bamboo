@@ -11,7 +11,10 @@
 void GLUtil::createProgram(const char *vertexShaderCode, const char *fragShaderCode) {
     this->program = glCreateProgram();
     if (program == 0) {
-        LOGE("创建program失败");
+        char szLog[1024] = {0};
+        GLsizei logLen = 0;
+        glGetProgramInfoLog(program, 1024, &logLen, szLog);
+        LOGE("加载着色器代码失败: %s ", szLog);
         return;
     }
     GLuint vertexShaderId = loadShader(GL_VERTEX_SHADER, vertexShaderCode);
@@ -42,15 +45,18 @@ GLuint GLUtil::loadShader(GLenum type, const char *shaderCode) {
     GLint compileStatus = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
     if (!compileStatus) {
+        char szLog[1024] = {0};
+        GLsizei logLen = 0;
+        glGetShaderInfoLog(shader, 1024, &logLen, szLog);
+        LOGE("加载着色器代码失败: %s \nshader code:\n%s\n", szLog, shaderCode);
         glDeleteShader(shader);
-        LOGE("加载着色器代码失败");
         return 0;
     }
     return shader;
 }
 
 GLuint *GLUtil::createTexture() {
-    GLuint textureArr[3];
+    GLuint *textureArr = new GLuint[3];
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(3, textureArr);
     if (textureArr[0] == 0) {
@@ -65,5 +71,9 @@ GLuint *GLUtil::createTexture() {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
-    return &textureArr;
+    return textureArr;
+}
+
+void GLUtil::destroy() {
+
 }

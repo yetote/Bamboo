@@ -40,6 +40,14 @@ public:
         return POP_OK;
     }
 
+    void stop() {
+        lock_guard<decltype(mLock)> lock(mLock);
+        isStop = true;
+        mCond.notify_all();
+    }
+
+    virtual ~BlockQueue() = default;
+
 private:
     mutex mLock;
     condition_variable mCond;

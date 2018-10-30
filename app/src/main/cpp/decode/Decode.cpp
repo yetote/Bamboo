@@ -122,8 +122,10 @@ void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
                       pFrame->linesize);
             df++;
             LOGE("解码了%d帧", df);
+//            pFrame->width = pCodecCtx->width;
+//            pFrame->height = pCodecCtx->height;
             blockQueue.push(pFrame);
-            usleep(46000);
+//            usleep(46000);
         }
     }
 }

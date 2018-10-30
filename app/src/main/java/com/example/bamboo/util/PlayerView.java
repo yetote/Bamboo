@@ -1,6 +1,7 @@
 package com.example.bamboo.util;
 
 import android.os.HandlerThread;
+import android.view.Surface;
 
 /**
  * @author yetote QQ:503779938
@@ -18,5 +19,5 @@ public class PlayerView {
 
     }
 
-    public native void play(String path,String vertexCode,String fragCode);
+    public native void play(String path, String vertexCode, String fragCode, Surface surface,int w,int h);
 }

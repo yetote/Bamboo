@@ -44,17 +44,6 @@ public class HomePageFragment extends Fragment {
 
         initView(v);
 
-        startBtn.setOnClickListener(v1 -> {
-            if (isPlaying) {
-                startBtn.setBackgroundResource(R.mipmap.play);
-            } else {
-                String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
-                String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
-                playerView.play(path, vertexCode, fragCode);
-                startBtn.setBackgroundResource(R.mipmap.pause);
-            }
-            isPlaying = !isPlaying;
-        });
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -65,7 +54,17 @@ public class HomePageFragment extends Fragment {
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 Log.e(TAG, "surfaceChanged: " + path);
-
+                startBtn.setOnClickListener(v1 -> {
+                    if (isPlaying) {
+                        startBtn.setBackgroundResource(R.mipmap.play);
+                    } else {
+                        String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.test_vertex_shader);
+                        String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.test_frag_shader);
+                        playerView.play(path, vertexCode, fragCode, holder.getSurface(), width, height);
+                        startBtn.setBackgroundResource(R.mipmap.pause);
+                    }
+                    isPlaying = !isPlaying;
+                });
 
             }
 

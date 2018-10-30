@@ -1,6 +1,5 @@
-#version 120
 precision mediump float;
-varying vec2  v_TextureCoordinate;
+varying vec2  v_TextureCoordinates;
 uniform sampler2D u_TexY;
 uniform sampler2D u_TexU;
 uniform sampler2D u_TexV;

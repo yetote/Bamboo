@@ -15,7 +15,7 @@ public:
     void createProgram(const char *vertexShaderCode, const char *fragShaderCode);
 
     GLuint *createTexture();
-
+    void destroy();
 private:
     GLuint loadShader(GLenum type, const char *shaderCode);
 };
