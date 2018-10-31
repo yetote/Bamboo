@@ -1,5 +1,6 @@
 package com.example.bamboo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.bamboo.R;
+import com.example.bamboo.TestActivity;
 import com.example.bamboo.util.PlayerView;
 import com.example.bamboo.util.TextRecourseReader;
 
@@ -35,6 +37,8 @@ public class HomePageFragment extends Fragment {
     private static final String TAG = "HomePageFragment";
     private boolean isPlaying = false;
     private String path;
+    int w;
+    int h;
 
     @Nullable
     @Override
@@ -44,34 +48,37 @@ public class HomePageFragment extends Fragment {
 
         initView(v);
 
+        playerView.start();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-
             }
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 Log.e(TAG, "surfaceChanged: " + path);
-                startBtn.setOnClickListener(v1 -> {
-                    if (isPlaying) {
-                        startBtn.setBackgroundResource(R.mipmap.play);
-                    } else {
-                        String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.test_vertex_shader);
-                        String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.test_frag_shader);
-                        playerView.play(path, vertexCode, fragCode, holder.getSurface(), width, height);
-                        startBtn.setBackgroundResource(R.mipmap.pause);
-                    }
-                    isPlaying = !isPlaying;
-                });
-
+                surfaceHolder = holder;
+                w = width;
+                h = height;
             }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
 
             }
+        });
+
+        startBtn.setOnClickListener(v1 -> {
+            if (isPlaying) {
+                startBtn.setBackgroundResource(R.mipmap.play);
+            } else {
+                String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
+                String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
+                new Thread(() -> playerView.play(path, vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
+                startBtn.setBackgroundResource(R.mipmap.pause);
+            }
+            isPlaying = !isPlaying;
         });
         return v;
     }

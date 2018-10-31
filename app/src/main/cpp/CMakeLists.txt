@@ -5,7 +5,8 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 set(path_project D:/AndroidStudioProjects/Bamboo)
-set(libs_path  ${path_project}/app/build/intermediates/cmake/debug/obj)
+#set(libs_path  ${path_project}/app/build/intermediates/cmake/debug/obj)
+set(libs_path  ${path_project}/app/src/main/jniLibs/libs)
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define mul    tiple libraries, and CMake builds them for you.
@@ -34,7 +35,8 @@ add_library( # Sets the name of the library.
 include_directories(${path_project}/app/src/main/jni/includes)
 
 #添加FFmpeg预编译的so库
-add_library( avutil
+add_library(
+        avutil
         SHARED
         IMPORTED
         )

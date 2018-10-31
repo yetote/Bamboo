@@ -1,5 +1,6 @@
 package com.example.bamboo.util;
 
+import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.Surface;
 
@@ -13,11 +14,24 @@ import android.view.Surface;
  * @chang time
  * @class describe
  */
-public class PlayerView {
+public class PlayerView extends HandlerThread  {
     static {
         System.loadLibrary("native-lib");
-
     }
+    public PlayerView() {
+        super("PlayerView");
+    }
+
+    @Override
+    public synchronized void start() {
+        super.start();
+        new Handler(getLooper()).post(this::configEGLContext);
+    }
+
+    public native void configEGLContext();
+
+
+    public native void destroyEGLContext();
 
     public native void play(String path, String vertexCode, String fragCode, Surface surface,int w,int h);
 }
