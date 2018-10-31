@@ -2,12 +2,14 @@
 // Created by ether on 2018/10/23.
 //
 
+#include <libswresample/swresample.h>
 #include "Decode.h"
 
 
 #define null NULL
 #define LOG_TAG "decode"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define MAX_AUDIO_FRAME_SIZE 44100*4
 
 void Decode::decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFrame *> &blockQueue) {
     av_register_all();
@@ -77,7 +79,61 @@ void Decode::findIndex(DECODE_TYPE type) {
 }
 
 void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
+    SwrContext *swrCtx = swr_alloc();
+    enum AVSampleFormat inSampleFmt = pCodecCtx->sample_fmt;
+    enum AVSampleFormat outSampleFmt = AV_SAMPLE_FMT_S16;
 
+    int inSampleRate = pCodecCtx->sample_rate;
+    int outSampleRate = 44100;
+
+    uint64_t inSampleChannel = pCodecCtx->channel_layout;
+    uint64_t outSampleChannel = AV_CH_LAYOUT_STEREO;
+
+    swr_alloc_set_opts(swrCtx,
+                       outSampleChannel,
+                       outSampleFmt,
+                       outSampleRate,
+                       inSampleChannel,
+                       inSampleFmt,
+                       inSampleRate,
+                       0,
+                       null);
+    swr_init(swrCtx);
+    int outChannelNum = av_get_channel_layout_nb_channels(outSampleChannel);
+    int ret = -1;
+    int dataSize;
+    uint8_t *outBuffer = static_cast<uint8_t *>(av_malloc(MAX_AUDIO_FRAME_SIZE));
+    while (av_read_frame(pFmtCtx, pPacket) >= 0) {
+        if (pPacket->stream_index == index) {
+            ret = avcodec_send_packet(pCodecCtx, pPacket);
+            while (ret >= 0) {
+                ret = avcodec_receive_frame(pCodecCtx, pFrame);
+                if (ret == AVERROR(EAGAIN)) {
+                    LOGE("%s", "读取解码数据失败");
+                    break;
+                } else if (ret == AVERROR_EOF) {
+                    LOGE("%s", "解码完成");
+//                    fclose(outFile);
+                    break;
+                } else if (ret < 0) {
+                    LOGE("%s", "解码出错");
+                    break;
+                }
+                int outBufferSize = av_samples_get_buffer_size(pFrame->linesize,
+                                                               pCodecCtx->channels,
+                                                               pCodecCtx->frame_size,
+                                                               pCodecCtx->sample_fmt,
+                                                               1);
+                int rst = swr_convert(swrCtx,
+                                      &outBuffer,
+                                      outBufferSize,
+                                      reinterpret_cast<const uint8_t **>(pFrame->data),
+                                      pFrame->nb_samples);
+                //todo 将解码后数据填充进queue中
+            }
+        }
+    }
+    av_packet_unref(pPacket);
 }
 
 void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
@@ -133,6 +189,7 @@ void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
 }
 
 void Decode::destroy() {
+
     av_packet_unref(pPacket);
     av_frame_free(&pFrame);
     avcodec_free_context(&pCodecCtx);
