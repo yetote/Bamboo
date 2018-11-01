@@ -189,7 +189,7 @@ void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
 }
 
 void Decode::destroy() {
-
+    avformat_close_input(&pFmtCtx);
     av_packet_unref(pPacket);
     av_frame_free(&pFrame);
     avcodec_free_context(&pCodecCtx);
