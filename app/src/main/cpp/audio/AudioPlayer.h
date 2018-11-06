@@ -8,23 +8,46 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include <android/log.h>
+#include "../util/BlockQueue.h"
+
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavutil/frame.h>
+#include <libswresample/swresample.h>
+#include <libavformat/avformat.h>
+};
 
 class AudioPlayer {
+public:
+    AVCodecContext *pCodecCtx;
+    int frameSize;
+    int channels;
+    enum AVSampleFormat sampleFormat;
+
+    SwrContext *swrContext;
+
+    void playAudio(const char *path);
+    void pushData(AVFrame *frame, int channels, int frameSize, AVSampleFormat sampleFormat,
+                  SwrContext *swrContext1);
+    AudioPlayer();
+
+    int getData(uint8_t *&buffer);
+
+private:
     SLObjectItf objectItf, outMaxObjItf, playerObjItf;
     SLEngineItf engineItf;
     SLPlayItf playItf;
-    SLBufferQueueItf bufferQueueItf;
+    SLAndroidSimpleBufferQueueItf bufferQueueItf;
     SLEnvironmentalReverbItf environmentalReverbItf;
+    SLEffectSendItf effectSendItf;
+    SLVolumeItf volumeItf;
+    popResult popResult;
 
-    void play();
-
-public:
-private:
     void start();
 
-    void setDataSource();
 
     void prepare();
+
 };
 
 

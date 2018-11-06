@@ -6,10 +6,11 @@
 #define BAMBOO_DECODE_H
 
 
-#include "../util/BlockQueue.h"
 #include <android/log.h>
 #include <cstdint>
 #include <unistd.h>
+#include "../util/BlockQueue.h"
+#include "../audio/AudioPlayer.h"
 
 extern "C" {
 #include <libavutil/frame.h>
@@ -17,6 +18,7 @@ extern "C" {
 #include <libavformat/avformat.h>
 #include <libavutil/imgutils.h>
 #include <libswscale/swscale.h>
+#include <libswresample/swresample.h>
 };
 enum DECODE_TYPE {
     DECODE_VIDEO, DECODE_AUDIO, DECODE_UNKNOWN
@@ -24,7 +26,7 @@ enum DECODE_TYPE {
 
 class Decode {
 public:
-    void decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFrame *> &blockQueue);
+    void decode(const char *path, DECODE_TYPE decode_type);
 
     void destroy();
 
@@ -39,9 +41,9 @@ private:
 
     void findIndex(DECODE_TYPE type);
 
-    void audio(BlockQueue<AVFrame *> &blockQueue);
+    void audio();
 
-    void video(BlockQueue<AVFrame *> &blockQueue);
+    void video();
 };
 
 

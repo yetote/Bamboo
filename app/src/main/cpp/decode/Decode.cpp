@@ -2,7 +2,6 @@
 // Created by ether on 2018/10/23.
 //
 
-#include <libswresample/swresample.h>
 #include "Decode.h"
 
 
@@ -10,8 +9,9 @@
 #define LOG_TAG "decode"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MAX_AUDIO_FRAME_SIZE 44100*4
+AudioPlayer mAudioPlayer;
 
-void Decode::decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFrame *> &blockQueue) {
+void Decode::decode(const char *path, DECODE_TYPE decode_type) {
     av_register_all();
     pFmtCtx = avformat_alloc_context();
     if (avformat_open_input(&pFmtCtx, path, null, null) != 0) {
@@ -58,9 +58,9 @@ void Decode::decode(const char *path, DECODE_TYPE decode_type, BlockQueue<AVFram
     pPacket = static_cast<AVPacket *>(av_malloc(sizeof(AVPacket)));
     pFrame = av_frame_alloc();
     if (decode_type == DECODE_VIDEO) {
-        video(blockQueue);
+        video();
     } else {
-        audio(blockQueue);
+        audio();
     }
 }
 
@@ -78,8 +78,8 @@ void Decode::findIndex(DECODE_TYPE type) {
     }
 }
 
-void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
-    SwrContext *swrCtx = swr_alloc();
+void Decode::audio() {
+    SwrContext *swrContext = swr_alloc();
     enum AVSampleFormat inSampleFmt = pCodecCtx->sample_fmt;
     enum AVSampleFormat outSampleFmt = AV_SAMPLE_FMT_S16;
 
@@ -89,7 +89,7 @@ void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
     uint64_t inSampleChannel = pCodecCtx->channel_layout;
     uint64_t outSampleChannel = AV_CH_LAYOUT_STEREO;
 
-    swr_alloc_set_opts(swrCtx,
+    swr_alloc_set_opts(mAudioPlayer.swrContext,
                        outSampleChannel,
                        outSampleFmt,
                        outSampleRate,
@@ -98,7 +98,7 @@ void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
                        inSampleRate,
                        0,
                        null);
-    swr_init(swrCtx);
+    swr_init(swrContext);
     int outChannelNum = av_get_channel_layout_nb_channels(outSampleChannel);
     int ret = -1;
     int dataSize;
@@ -119,16 +119,21 @@ void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
                     LOGE("%s", "解码出错");
                     break;
                 }
-                int outBufferSize = av_samples_get_buffer_size(pFrame->linesize,
-                                                               pCodecCtx->channels,
-                                                               pCodecCtx->frame_size,
-                                                               pCodecCtx->sample_fmt,
-                                                               1);
-                int rst = swr_convert(swrCtx,
-                                      &outBuffer,
-                                      outBufferSize,
-                                      reinterpret_cast<const uint8_t **>(pFrame->data),
-                                      pFrame->nb_samples);
+                mAudioPlayer.pushData(pFrame,pCodecCtx->channels,pCodecCtx->frame_size,pCodecCtx->sample_fmt,swrContext);
+                mAudioPlayer.sampleFormat = pCodecCtx->sample_fmt;
+                mAudioPlayer.channels = pCodecCtx->channels;
+                mAudioPlayer.frameSize = pCodecCtx->frame_size;
+
+//                int outBufferSize = av_samples_get_buffer_size(pFrame->linesize,
+//                                                               pCodecCtx->channels,
+//                                                               pCodecCtx->frame_size,
+//                                                               pCodecCtx->sample_fmt,
+//                                                               1);
+//                int rst = swr_convert(swrCtx,
+//                                      &outBuffer,
+//                                      outBufferSize,
+//                                      const_cast<const uint8_t **>(reinterpret_cast<uint8_t **>(pFrame->data)),
+//                                      pFrame->nb_samples);
                 //todo 将解码后数据填充进queue中
             }
         }
@@ -136,7 +141,7 @@ void Decode::audio(BlockQueue<AVFrame *> &blockQueue) {
     av_packet_unref(pPacket);
 }
 
-void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
+void Decode::video() {
     int df = 0;
     uint8_t *outputBuffer = static_cast<uint8_t *>(av_malloc(
             av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 1)));
@@ -181,7 +186,7 @@ void Decode::video(BlockQueue<AVFrame *> &blockQueue) {
                 LOGE("解码了%d帧", df);
                 pFrame->width = pCodecCtx->width;
                 pFrame->height = pCodecCtx->height;
-                blockQueue.push(pFrame);
+//                blockQueue.push(pFrame);
                 usleep(46000);
             }
         }

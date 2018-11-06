@@ -5,14 +5,30 @@
 
 #include <cstdlib>
 #include "AudioPlayer.h"
+#include <unistd.h>
 
 #define null NULL
 #define success SL_RESULT_SUCCESS
-#define true SL_BOOLEAN_TRUE
+#define sl_true SL_BOOLEAN_TRUE
 #define false SL_BOOLEAN_FALSE
 #define LOG_TAG "audioPlayer"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 uint8_t *outBuffer;
+AVFrame *pFrame;
+FILE *file;
+int i = 0;
+BlockQueue<AVFrame *> blockQueue;
+
+void playerCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
+    LOGE("i的大小%d", i++);
+    AudioPlayer *audioPlayer = static_cast<AudioPlayer *>(context);
+    int size = audioPlayer->getData(outBuffer);
+    if (outBuffer != null && size > 0) {
+        SLresult result = (*bf)->Enqueue(bf, outBuffer, size);
+    } else {
+        playerCallBack(bf, context);
+    }
+}
 
 void AudioPlayer::prepare() {
     SLresult result;
@@ -68,7 +84,7 @@ void AudioPlayer::prepare() {
     SLDataSink audioSink = {&outputMix, null};
 
     const SLInterfaceID mids[1] = {SL_IID_BUFFERQUEUE};
-    const SLboolean mreq[1] = {true};
+    const SLboolean mreq[1] = {sl_true};
     result = (*engineItf)->CreateAudioPlayer(engineItf, &playerObjItf, &audioSrc, &audioSink, 1,
                                              mids, mreq);
     if (result != success) {
@@ -87,9 +103,79 @@ void AudioPlayer::prepare() {
         LOGE("播放器接口获取失败");
         return;
     }
-    result = (*playerObjItf)->GetInterface(playerObjItf, SL_IID_BUFFERQUEUE, &bufferQueue);
+    result = (*playerObjItf)->GetInterface(playerObjItf, SL_IID_BUFFERQUEUE, &bufferQueueItf);
     if (result != success) {
         LOGE("队列接口获取失败");
         return;
     }
+    result = (*bufferQueueItf)->RegisterCallback(bufferQueueItf, playerCallBack, this);
+    if (result != success) {
+        LOGE("回调接口失败");
+        return;
+    }
+    effectSendItf = null;
+//    result = (*playerObjItf)->GetInterface(playerObjItf, SL_IID_VOLUME, &volumeItf);
+//    if (result != success) {
+//        LOGE("音量接口获取失败");
+//        return;
+//    }
 }
+
+void AudioPlayer::start() {
+    SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PLAYING);
+    if (result != success) {
+        LOGE("设置播放状态失败");
+        return;
+    }
+    playerCallBack(bufferQueueItf, this);
+}
+
+
+void AudioPlayer::playAudio(const char *path) {
+//    prepare();
+//    start();
+//    file = fopen(path, "wb+");
+    getData(outBuffer);
+}
+
+int AudioPlayer::getData(uint8_t *&buffer) {
+//    LOGE("QUEUE大小%d", blockQueue.size());
+    while (true) {
+        popResult = blockQueue.pop(pFrame);
+        if (popResult == POP_STOP) break;
+        if (popResult == POP_UNEXPECTED) continue;
+        int bufferSize = av_samples_get_buffer_size(pFrame->linesize,
+                                                    channels,
+                                                    frameSize,
+                                                    sampleFormat,
+                                                    1);
+        swr_convert(swrContext,
+                    &buffer,
+                    bufferSize,
+                    (const uint8_t **) (pFrame->data),
+                    pFrame->nb_samples);
+//        fwrite(buffer, 1, bufferSize, file);
+        LOGE("bufferSize的大小%d", bufferSize);
+//        return bufferSize;
+    }
+    return 0;
+}
+
+AudioPlayer::AudioPlayer() {
+
+    LOGE("初始化");
+}
+
+void AudioPlayer::pushData(AVFrame *frame, int channels,
+                           int frameSize,
+                           AVSampleFormat sampleFormat,SwrContext *swrContext1) {
+    blockQueue.push(frame);
+    this->channels = channels;
+    this->frameSize = frameSize;
+    this->sampleFormat = sampleFormat;
+    this->swrContext=swrContext1;
+    LOGE("queue大小%ld", blockQueue.getSize());
+}
+
+
+

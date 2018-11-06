@@ -1,6 +1,5 @@
 package com.example.bamboo.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.bamboo.R;
-import com.example.bamboo.TestActivity;
 import com.example.bamboo.util.PlayerView;
 import com.example.bamboo.util.TextRecourseReader;
 
@@ -39,6 +37,7 @@ public class HomePageFragment extends Fragment {
     private String path;
     int w;
     int h;
+    private String outPath;
 
     @Nullable
     @Override
@@ -75,7 +74,7 @@ public class HomePageFragment extends Fragment {
             } else {
                 String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
                 String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
-                new Thread(() -> playerView.play(path, vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
+                new Thread(() -> playerView.play(path, outPath,vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
                 startBtn.setBackgroundResource(R.mipmap.pause);
             }
             isPlaying = !isPlaying;
@@ -88,5 +87,6 @@ public class HomePageFragment extends Fragment {
         startBtn = v.findViewById(R.id.homePager_start_btn);
         playerView = new PlayerView();
         path = getActivity().getExternalCacheDir().getPath() + "/test.mp4";
+        outPath = getActivity().getExternalCacheDir().getPath() + "/test.pcm";
     }
 }

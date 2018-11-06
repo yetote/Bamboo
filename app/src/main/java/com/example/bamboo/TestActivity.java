@@ -46,7 +46,7 @@ public class TestActivity extends AppCompatActivity {
         String vertexCode = TextRecourseReader.readTextFileFromResource(this, R.raw.yuv_vertex_shader);
         String fragCode = TextRecourseReader.readTextFileFromResource(this, R.raw.yuv_frag_shader);
 
-        btn.setOnClickListener(v -> playerView.play(path, vertexCode, fragCode, surfaceHolder.getSurface(), w, h));
+//        btn.setOnClickListener(v -> playerView.play(path, vertexCode, fragCode, surfaceHolder.getSurface(), w, h));
     }
 
     private void initView() {

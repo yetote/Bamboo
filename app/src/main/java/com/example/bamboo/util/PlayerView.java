@@ -14,10 +14,11 @@ import android.view.Surface;
  * @chang time
  * @class describe
  */
-public class PlayerView extends HandlerThread  {
+public class PlayerView extends HandlerThread {
     static {
         System.loadLibrary("native-lib");
     }
+
     public PlayerView() {
         super("PlayerView");
     }
@@ -33,5 +34,5 @@ public class PlayerView extends HandlerThread  {
 
     public native void destroyEGLContext();
 
-    public native void play(String path, String vertexCode, String fragCode, Surface surface,int w,int h);
+    public native void play(String path, String outPath, String vertexCode, String fragCode, Surface surface, int w, int h);
 }

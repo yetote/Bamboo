@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/item_matters_heads"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/item_matters_identity"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/item_matters_heads"
+        android:layout_toEndOf="@+id/item_matters_heads"
+        app:layout_constraintBottom_toBottomOf="@+id/item_matters_heads"
+        app:layout_constraintEnd_toEndOf="@+id/item_matters_heads" />
+
+    <TextView
+        android:id="@+id/item_matters_username"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_toEndOf="@+id/item_matters_heads"
+        android:gravity="start|center_vertical"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/item_matters_release_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/item_matters_heads"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/first_names" />
+
+    <TextView
+        android:id="@+id/item_matters_release_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/item_matters_heads"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/item_matters_heads"
+        app:layout_constraintTop_toBottomOf="@+id/item_matters_username"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="@tools:sample/date/hhmmss" />
+
+    <TextView
+        android:id="@+id/item_matters_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_matters_release_time"
+        tools:text="@tools:sample/lorem/random" />
+
+    <include
+        layout="@layout/item_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_matters_content" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

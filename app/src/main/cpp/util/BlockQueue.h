@@ -8,6 +8,7 @@
 #include <queue>
 #include <mutex>
 #include <android/log.h>
+
 #define LOGE(FORMAT, ...) __android_log_print(ANDROID_LOG_ERROR,"BlockQueue",FORMAT,##__VA_ARGS__);
 
 enum popResult {
@@ -18,20 +19,20 @@ template<typename T>
 class BlockQueue : public std::queue<T> {
 public:
 
-    void push(const T & value){
+    void push(const T &value) {
         std::lock_guard<decltype(mLock)> lock(mLock);
         queue.push(value);
-        LOGE("QUEUE大小为%ld",queue.size());
         mCond.notify_one();
     }
+
     void push(const T &&value) {
         std::lock_guard<decltype(mLock)> lock(mLock);
         queue.push(std::move(value));
-        LOGE("QUEUE大小为%ld",queue.size());
         mCond.notify_one();
     }
 
     popResult pop(T &out) {
+        LOGE("QUEUE大小%d", queue.size());
         std::unique_lock<decltype(mLock)> lock(mLock);
         if (isStop && queue.empty()) return POP_STOP;
         if (queue.empty()) mCond.wait(lock);
@@ -47,7 +48,13 @@ public:
         isStop = true;
         mCond.notify_all();
     }
+
+    u_long getSize() {
+        return queue.size();
+    }
+
     virtual ~BlockQueue() = default;
+
 private:
     std::mutex mLock;
     std::condition_variable mCond;

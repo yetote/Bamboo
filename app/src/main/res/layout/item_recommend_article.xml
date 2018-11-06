@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--首页列表子布局:关注-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+
+
+    <ImageView
+        android:id="@+id/item_recommend_article_iv"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:contentDescription="@string/contentDescription"
+        android:scaleType="centerCrop"
+        tools:src="@tools:sample/backgrounds/scenic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_recommend_article_contentCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_recommend_article_iv"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="125dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/white"
+        android:padding="5dp"
+        app:cardCornerRadius="5dp"
+        app:cardPreventCornerOverlap="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/item_recommend_article_iv">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_recommend_article_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:paddingTop="5dp"
+                android:text="@string/test_title"
+                android:textSize="@dimen/titleSize" />
+
+            <View
+                android:id="@+id/item_recommend_article_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/item_recommend_article_title"
+                android:background="@color/gray_cc" />
+
+            <TextView
+                android:id="@+id/item_recommend_article_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/item_recommend_article_line"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:maxLines="6"
+                android:text="@string/test_content"
+                android:textColor="@color/gray_cc"
+                android:textSize="@dimen/contentSize" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/item_recommend_article_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_recommend_article_contentCardView"
+        android:layout_alignStart="@+id/item_recommend_article_contentCardView"
+        android:layout_marginStart="32dp"
+        android:text="@string/missOld"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
+
+    <TextView
+        android:id="@+id/item_recommend_article_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_recommend_article_contentCardView"
+        android:layout_toStartOf="@+id/item_recommend_article_discuss"
+        android:drawableStart="@mipmap/time"
+        android:gravity="center"
+        android:text="@string/testDate"
+        app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_tag"
+        app:layout_constraintEnd_toStartOf="@+id/item_recommend_article_discuss"
+        app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
+
+    <TextView
+        android:id="@+id/item_recommend_article_discuss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/item_recommend_article_contentCardView"
+        android:layout_alignEnd="@+id/item_recommend_article_contentCardView"
+        android:layout_alignBottom="@id/item_recommend_article_time"
+        android:drawableStart="@mipmap/discuss"
+        android:gravity="center"
+        android:text="@string/testDiscuss"
+        app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
