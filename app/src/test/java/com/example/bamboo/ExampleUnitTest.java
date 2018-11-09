@@ -1,6 +1,10 @@
 package com.example.bamboo;
 
+import com.example.bamboo.util.TimeUtil;
+
 import org.junit.Test;
+
+import java.sql.Time;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +15,7 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void timeUtilTest() {
+        System.out.println(TimeUtil.caseTime(1457));
     }
 }

@@ -116,7 +116,7 @@ void AudioPlayer::prepare() {
     effectSendItf = null;
 //    result = (*playerObjItf)->GetInterface(playerObjItf, SL_IID_VOLUME, &volumeItf);
 //    if (result != success) {
-//        LOGE("音量接口获取失败");
+//        LOGE("音量接口获 取失败");
 //        return;
 //    }
 }

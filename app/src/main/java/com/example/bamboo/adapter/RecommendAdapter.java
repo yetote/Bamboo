@@ -7,12 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
 import com.example.bamboo.model.RecommendBean;
+import com.example.bamboo.util.TimeUtil;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -38,6 +41,30 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     class ArticleViewHolder extends RecyclerView.ViewHolder {
         private TextView title, content, time, discussNum, category;
         private ImageView img;
+
+        public TextView getTitle() {
+            return title;
+        }
+
+        public TextView getContent() {
+            return content;
+        }
+
+        public TextView getTime() {
+            return time;
+        }
+
+        public TextView getDiscussNum() {
+            return discussNum;
+        }
+
+        public TextView getCategory() {
+            return category;
+        }
+
+        public ImageView getImg() {
+            return img;
+        }
 
         private ArticleViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,6 +99,26 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            ((GridLayoutManager) layoutManager).setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    int type = getItemViewType(position);
+                    switch (type) {
+                        case TYPE_ARTICLE:
+                            return 6;
+                        case TYPE_VIDEO:
+                            return 3;
+                        case TYPE_AD:
+                            return 6;
+                        default:
+                            return 3;
+                    }
+
+                }
+            });
+        }
     }
 
     @NonNull
@@ -95,20 +142,31 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ArticleViewHolder) {
-
+            Glide.with(context).load(list.get(position).getUrl()).into(((ArticleViewHolder) holder).img);
+            ((ArticleViewHolder) holder).getContent().setText(list.get(position).getContent());
+            ((ArticleViewHolder) holder).getCategory().setText(list.get(position).getCategory());
+            ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getTitle());
+            ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getDiscussNum()));
+            ((ArticleViewHolder) holder).getTime().setText(TimeUtil.caseTime(list.get(position).getVideoTime()));
         }
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (list.get(position).getTag().equals(RECOMMEND_VIDEO_TAG)) return TYPE_VIDEO;
-        if (list.get(position).getTag().equals(RECOMMEND_ARTICLE_TAG)) return TYPE_ARTICLE;
-        if (list.get(position).getTag().equals(RECOMMEND_AD_TAG)) return TYPE_AD;
+        if (list.get(position).getTag().equals(RECOMMEND_VIDEO_TAG)) {
+            return TYPE_VIDEO;
+        }
+        if (list.get(position).getTag().equals(RECOMMEND_ARTICLE_TAG)) {
+            return TYPE_ARTICLE;
+        }
+        if (list.get(position).getTag().equals(RECOMMEND_AD_TAG)) {
+            return TYPE_AD;
+        }
         return -1;
     }
 }

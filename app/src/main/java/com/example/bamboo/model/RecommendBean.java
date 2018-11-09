@@ -11,15 +11,27 @@ package com.example.bamboo.model;
  * @class describe
  */
 public class RecommendBean {
-    String url;
-    String tag;
-    String writer;
-    String category;
-    String topic;
-    String title;
-    int playNum, discussNum, collectionNum, videoTime;
+    /**
+     * 背景图片，
+     * 标签，
+     * 作者，
+     * 类别，
+     * 主题，
+     * 标题，
+     * 内容
+     */
+    private String url, tag, writer, category, topic, title, content;
 
-    public RecommendBean(String url, String tag, String writer, String category, String topic, String title, int playNum, int discussNum, int collectionNum, int videoTime) {
+
+    /**
+     * 播放数
+     * 评论数
+     * 收藏数
+     * 视频时长
+     */
+    private int playNum, discussNum, collectionNum, videoTime;
+
+    public RecommendBean(String url, String tag, String writer, String category, String topic, String title, String content, int playNum, int discussNum, int collectionNum, int videoTime) {
         this.url = url;
         this.tag = tag;
         this.writer = writer;
@@ -30,6 +42,7 @@ public class RecommendBean {
         this.discussNum = discussNum;
         this.collectionNum = collectionNum;
         this.videoTime = videoTime;
+        this.content = content;
     }
 
     public String getUrl() {
@@ -110,6 +123,14 @@ public class RecommendBean {
 
     public void setVideoTime(int videoTime) {
         this.videoTime = videoTime;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override

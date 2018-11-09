@@ -56,4 +56,5 @@
     <string name="reply">回复</string>
     <string name="ad">来自广告</string>
     <string name="extend">推广</string>
+    <string name="recommend_discuss_num">%1$d</string>
 </resources>
