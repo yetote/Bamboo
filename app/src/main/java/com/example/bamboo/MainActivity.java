@@ -3,7 +3,7 @@ package com.example.bamboo;
 import android.os.Bundle;
 import android.view.View;
 
-import com.example.bamboo.adapter.MainTabLayoutAdapter;
+import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.NearFragment;
@@ -22,7 +22,7 @@ import androidx.viewpager.widget.ViewPager;
  */
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
-    private MainTabLayoutAdapter adapter;
+    private MainViewPagerAdapter adapter;
     private ArrayList<Fragment> fmList;
     private ArrayList<String> titleList;
     private ViewPager viewPager;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         titleList.add("附近");
         titleList.add("动态");
 
-        adapter = new MainTabLayoutAdapter(getSupportFragmentManager(), fmList, titleList);
+        adapter = new MainViewPagerAdapter(getSupportFragmentManager(), fmList, titleList);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
         tabLayout.setupWithViewPager(viewPager);

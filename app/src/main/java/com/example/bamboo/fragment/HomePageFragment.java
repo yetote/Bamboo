@@ -74,7 +74,7 @@ public class HomePageFragment extends Fragment {
             } else {
                 String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
                 String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
-                new Thread(() -> playerView.play(path, outPath,vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
+//                new Thread(() -> playerView.play(path, outPath,vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
                 startBtn.setBackgroundResource(R.mipmap.pause);
             }
             isPlaying = !isPlaying;

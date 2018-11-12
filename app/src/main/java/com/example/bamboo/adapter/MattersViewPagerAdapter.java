@@ -12,28 +12,29 @@ import androidx.fragment.app.FragmentPagerAdapter;
  * @name Bamboo
  * @class name：com.example.bamboo.adapter
  * @class describe
- * @time 2018/10/19 16:50
+ * @time 2018/11/12 17:39
  * @change
  * @chang time
  * @class describe
  */
-public class MainTabLayoutAdapter extends FragmentPagerAdapter {
-    private ArrayList<Fragment> list;
+public class MattersViewPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<String> title;
-    public MainTabLayoutAdapter(FragmentManager fm,ArrayList<Fragment> fmList,ArrayList<String> titleList) {
+    private ArrayList<Fragment> fragmentArrayList;
+
+    public MattersViewPagerAdapter(FragmentManager fm, ArrayList<String> title, ArrayList<Fragment> fragmentArrayList) {
         super(fm);
-        this.list=fmList;
-        this.title=titleList;
+        this.fragmentArrayList = fragmentArrayList;
+        this.title = title;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return list.get(position);
+        return fragmentArrayList.get(position);
     }
 
     @Override
     public int getCount() {
-        return list.size();
+        return fragmentArrayList.size();
     }
 
     @Nullable

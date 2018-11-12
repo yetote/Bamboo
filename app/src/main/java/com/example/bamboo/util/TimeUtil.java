@@ -1,5 +1,8 @@
 package com.example.bamboo.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 /**
  * @author yetote QQ:503779938
  * @name Bamboo
@@ -26,5 +29,27 @@ public class TimeUtil {
             return seconds / MINUTE + ":" + seconds % MINUTE;
         }
         return seconds / HOUR + ":" + (seconds % HOUR) / MINUTE + ":" + seconds % HOUR % MINUTE;
+    }
+
+    /**
+     * 多久之前的时间
+     *
+     * @param timeStamp 时间戳
+     * @return 过去多长时间
+     */
+    public static String agoTime(long timeStamp) {
+        long time = System.currentTimeMillis() - timeStamp;
+        time /= 1000;
+        if (time < 3 * DAY) {
+            if (time < HOUR) {
+                return time / MINUTE + "分钟之前";
+            } else if (time < DAY) {
+                return time / HOUR + "小时之前";
+            } else if (time < 2 * DAY) {
+                return "昨天";
+            }
+            return time / DAY + "天前";
+        }
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeStamp);
     }
 }

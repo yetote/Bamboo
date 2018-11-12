@@ -16,6 +16,6 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void timeUtilTest() {
-        System.out.println(TimeUtil.caseTime(1457));
+        System.out.println(TimeUtil.agoTime(1541920173000L));
     }
 }

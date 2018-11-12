@@ -21,12 +21,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/matters_tabLayout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/matters_rv"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/matters_viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/matters_searchView" />
+        app:layout_constraintTop_toBottomOf="@+id/matters_searchView"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
