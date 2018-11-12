@@ -24,4 +24,8 @@
         <!--<item name="colorPrimary">@color/cadetblue</item>-->
         <!--<item name="android:wsta">@drawable/toolbar_gradient_background</item>-->
     </style>
+
+    <declare-styleable name="NineImageView">
+        <attr name="list_size" format="integer" />
+    </declare-styleable>
 </resources>
