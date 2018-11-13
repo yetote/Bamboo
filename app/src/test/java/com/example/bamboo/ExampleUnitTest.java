@@ -1,10 +1,13 @@
 package com.example.bamboo;
 
+import com.example.bamboo.opengl.utils.RandomTagPoint;
 import com.example.bamboo.util.TimeUtil;
 
 import org.junit.Test;
 
+import java.sql.Array;
 import java.sql.Time;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +19,8 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void timeUtilTest() {
-        System.out.println(TimeUtil.agoTime(1541920173000L));
+        float[] arr = new float[10];
+        RandomTagPoint.randomRadius(arr, 10);
+        System.out.println(Arrays.toString(arr));
     }
 }

@@ -4,16 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.example.bamboo.util.NineImageView;
 import com.example.bamboo.util.PlayerView;
-import com.example.bamboo.util.TextRecourseReader;
 
 import java.util.ArrayList;
 

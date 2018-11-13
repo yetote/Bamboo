@@ -131,7 +131,6 @@ public class NineImageView extends ViewGroup {
             topArr[i] = (i / horizontalViewCount) * childWidthSize + i / horizontalViewCount * segmentingLineSize;
             rightArr[i] = leftArr[i] + childWidthSize;
             bottomArr[i] = topArr[i] + childWidthSize;
-
         }
         int childSize = resolveSize(childWidthSize, widthMeasureSpec);
         setMeasuredDimension(childSize, childWidthSize * verticalCount);

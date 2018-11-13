@@ -1,4 +1,4 @@
-package com.example.bamboo.util;
+package com.example.bamboo.opengl.utils;
 
 import android.opengl.GLES20;
 import android.util.Log;

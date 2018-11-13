@@ -6,7 +6,7 @@
  * We make no guarantees that this code is fit for any purpose.
  * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
  ***/
-package com.example.bamboo.util;
+package com.example.bamboo.opengl.utils;
 
 import android.content.Context;
 import android.content.res.Resources;

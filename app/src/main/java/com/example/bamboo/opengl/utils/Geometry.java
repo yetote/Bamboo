@@ -1,4 +1,4 @@
-package com.example.bamboo.util;
+package com.example.bamboo.opengl.utils;
 
 
 public class Geometry {
