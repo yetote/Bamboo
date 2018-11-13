@@ -35,14 +35,14 @@ public class NineImageView extends ViewGroup {
     private static final String TAG = "NineImageView";
     int size;
     int segmentingLineSize = 5;
-    private ImageView[] imageViewArr;
-    Paint paint = new Paint();
-    int widthMeasureSpec;
+    int verticalCount;
 
     public void setSize(int size) {
+        Log.e(TAG, "setSize: " + size);
         this.size = size;
         try {
-            horizontalViewCount = checkSize(size);
+            horizontalViewCount = checkHorizontalSize(size);
+            verticalCount = checkVerticalSize(horizontalViewCount, size);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
@@ -50,10 +50,14 @@ public class NineImageView extends ViewGroup {
         topArr = new int[size];
         rightArr = new int[size];
         bottomArr = new int[size];
-        imageViewArr = new ImageView[size];
-        addImageView();
-        measure(widthMeasureSpec);
-        layout();
+        addImageView(size);
+    }
+
+    private int checkVerticalSize(int horizontalViewCount, int size) {
+        if (horizontalViewCount == 3) {
+            return size <= 6 ? 2 : 3;
+        }
+        return horizontalViewCount;
     }
 
     void init(Context context, AttributeSet attrs) {
@@ -63,16 +67,15 @@ public class NineImageView extends ViewGroup {
         ta.recycle();
     }
 
-    private void addImageView() {
+    private void addImageView(int size) {
         for (int i = 0; i < size; i++) {
             ImageView iv = new ImageView(context);
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageViewArr[i] = iv;
             addView(iv);
         }
     }
 
-    private int checkSize(int size) throws Throwable {
+    private int checkHorizontalSize(int size) throws Throwable {
         if (size == 0) {
             throw new Throwable("列表为空");
         }
@@ -110,43 +113,27 @@ public class NineImageView extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        for (int i = 0; i < size; i++) {
+            View v = getChildAt(i);
+            Log.e(TAG, "layout: " + v.getWidth());
+            v.layout(leftArr[i], topArr[i], rightArr[i], bottomArr[i]);
+            Glide.with(context).load(urlList.get(i)).into((ImageView) v);
+        }
 
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        selfWidthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
-        this.widthMeasureSpec = widthMeasureSpec;
-//        int childWidthSize = (selfWidthSpecSize - segmentingLineSize * (horizontalViewCount - 1)) / horizontalViewCount;
-//        for (int i = 0; i < getChildCount(); i++) {
-//            leftArr[i] = (i % horizontalViewCount) * childWidthSize + i % horizontalViewCount * segmentingLineSize;
-//            topArr[i] = (i / horizontalViewCount) * childWidthSize + i / horizontalViewCount * segmentingLineSize;
-//            rightArr[i] = leftArr[i] + childWidthSize;
-//            bottomArr[i] = topArr[i] + childWidthSize;
-//            int childSize = resolveSize(childWidthSize, widthMeasureSpec);
-//            setMeasuredDimension(childSize, childSize);
-//        }
-    }
-
-    void measure(int widthMeasureSpec) {
         int selfWidthSpecSize = MeasureSpec.getSize(widthMeasureSpec);
         int childWidthSize = (selfWidthSpecSize - segmentingLineSize * (horizontalViewCount - 1)) / horizontalViewCount;
-        for (int i = 0; i < getChildCount(); i++) {
+        for (int i = 0; i < size; i++) {
             leftArr[i] = (i % horizontalViewCount) * childWidthSize + i % horizontalViewCount * segmentingLineSize;
             topArr[i] = (i / horizontalViewCount) * childWidthSize + i / horizontalViewCount * segmentingLineSize;
             rightArr[i] = leftArr[i] + childWidthSize;
             bottomArr[i] = topArr[i] + childWidthSize;
-            int childSize = resolveSize(childWidthSize, widthMeasureSpec);
-            setMeasuredDimension(childSize, childSize);
-        }
-    }
 
-    void layout() {
-        for (int i = 0; i < getChildCount(); i++) {
-            View v = imageViewArr[i];
-            Log.e(TAG, "layout: " + v.getWidth());
-            v.layout(leftArr[i], topArr[i], rightArr[i], bottomArr[i]);
-            Glide.with(context).load(urlList.get(i)).into((ImageView) v);
         }
+        int childSize = resolveSize(childWidthSize, widthMeasureSpec);
+        setMeasuredDimension(childSize, childWidthSize * verticalCount);
     }
 }

@@ -93,8 +93,12 @@ public class MattersFollowAdapter extends RecyclerView.Adapter {
         vh.getReleaseTime().setText(TimeUtil.agoTime(list.get(position).getReleaseTime()));
         Glide.with(context).load(list.get(position).getHeadImg()).into(vh.getHeadIv());
         Glide.with(context).asDrawable().load(R.drawable.star).into(vh.getIdentityIv());
-        vh.getNineImageView().setSize(list.get(position).getImageList().size());
-        vh.getNineImageView().setUrlList(list.get(position).getImageList());
+        if (list.get(position).getImageList()!= null) {
+            vh.getNineImageView().setSize(list.get(position).getImageList().size());
+            vh.getNineImageView().setUrlList(list.get(position).getImageList());
+        } else {
+            vh.getNineImageView().setVisibility(View.GONE);
+        }
     }
 
     @Override
