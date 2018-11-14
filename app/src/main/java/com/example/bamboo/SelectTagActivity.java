@@ -20,12 +20,12 @@ public class SelectTagActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_tag);
         init();
-        glSurfaceView.setEGLContextClientVersion(3);
+        glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(renderer);
     }
 
     private void init() {
         glSurfaceView = findViewById(R.id.select_tag_glSurfaceView);
-        renderer = new SelectTagRenderer();
+        renderer = new SelectTagRenderer(this, glSurfaceView.getWidth(), glSurfaceView.getHeight());
     }
 }

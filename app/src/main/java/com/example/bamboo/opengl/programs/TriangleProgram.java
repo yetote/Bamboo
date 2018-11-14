@@ -11,7 +11,7 @@ public class TriangleProgram extends ShaderProgram {
 
     public TriangleProgram(Context context) {
         super(context, R.raw.select_tag_vertex_shade_choose, R.raw.select_tag_frag_shade_choose);
-        aColor = glGetAttribLocation(program, A_COLOR);
+//        aColor = glGetAttribLocation(program, A_COLOR);
         aPosition = glGetAttribLocation(program, A_POSITION);
     }
 

@@ -1,5 +1,6 @@
 package com.example.bamboo.opengl.utils;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 /**
@@ -16,15 +17,14 @@ public class RandomTagPoint {
     /**
      * 生成随机点的X坐标
      *
-     * @param xArr   x坐标数组
-     * @param count  要生成的个数
-     * @param around 取值范围
+     * @param xArr  x坐标数组
+     * @param count 要生成的个数
      */
-    public static void pointX(int[] xArr, int count, int around) {
-        xArr[0] = Math.abs((int) randomNum() * around);
+    public static void pointX(float[] xArr, int count) {
+        xArr[0] = randomNum();
         for (int i = 1; i < count; i++) {
-            xArr[i] = (int) Math.abs(randomNum() * around);
-            if (Math.abs(xArr[i] - xArr[i - 1]) < 50) {
+            xArr[i] = randomNum();
+            if (Math.abs(Math.abs(xArr[i]) - Math.abs(xArr[i - 1])) < 0.05f) {
                 i--;
             }
         }
@@ -36,28 +36,34 @@ public class RandomTagPoint {
      * @param yArr  y坐标数组
      * @param count 要生成的个数
      */
-    public static void pointY(int[] yArr, int count) {
-//        yArr[0] = Math.abs((int) randomNum() * around);
-//        for (int i = 1; i < count; i++) {
-//            yArr[i] = (int) Math.abs(randomNum() * around);
-//            if (Math.abs(yArr[i] - yArr[i - 1]) < 50) {
-//                i--;
-//            }
-//        }
-    }
-
-    public static float randomNum() {
-        return new Random(System.currentTimeMillis()).nextFloat() * 2f - 1.0f;
-    }
-
-    public static float randomRadius(float[] radiusArr, int count) {
-        radiusArr[0] = Math.abs(randomNum());
+    public static void pointY(float[] yArr, int count) {
+        yArr[0] = randomNum();
         for (int i = 1; i < count; i++) {
-            if (Math.abs(radiusArr[i] - radiusArr[i - 1]) < 0.1) {
+            yArr[i] = randomNum();
+            if (Math.abs(Math.abs(yArr[i]) - Math.abs(yArr[i - 1])) < 0.05f) {
                 i--;
             }
         }
-        return new Random(System.currentTimeMillis()).nextFloat();
+    }
+
+    private static float randomNum() {
+        float temp = 0;
+        while (Math.abs(temp) <= 0.02f) {
+            temp = new Random(System.currentTimeMillis()).nextFloat() * 2f - 1.0f;
+        }
+        BigDecimal b = new BigDecimal(temp);
+        float f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+        return f1;
+    }
+
+    public static void randomRadius(float[] radiusArr, int count) {
+        radiusArr[0] = Math.abs(randomNum()) / 2;
+        for (int i = 1; i < count; i++) {
+            radiusArr[i] = Math.abs(randomNum() / 2);
+            if (Math.abs(radiusArr[i] - radiusArr[i - 1]) < 0.05) {
+                i--;
+            }
+        }
 
     }
 }
