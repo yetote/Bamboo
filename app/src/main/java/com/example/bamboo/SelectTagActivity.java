@@ -37,9 +37,12 @@ public class SelectTagActivity extends AppCompatActivity {
         init(width, height);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(renderer);
+        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+
         glSurfaceView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 glSurfaceView.queueEvent(() -> renderer.tagClick(event.getX(), event.getY()));
+                glSurfaceView.requestRender();
             }
             return false;
         });

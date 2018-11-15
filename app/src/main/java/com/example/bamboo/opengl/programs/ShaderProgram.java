@@ -11,6 +11,7 @@ public class ShaderProgram {
     public static final String A_POSITION="a_Position";
     public static final String A_RADIUS="a_Radius";
     public static final String U_TEXTURE="u_Texture";
+    public static final String U_SCALE="u_Scale";
 
 
     public final int program;

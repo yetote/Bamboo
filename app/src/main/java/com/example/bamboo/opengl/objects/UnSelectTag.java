@@ -38,6 +38,8 @@ public class UnSelectTag {
     private static final int RADIUS_COMPONENT_COUNT = 1;
     private static final int STRIDE = (POSITION_COMPONENT_COUNT + RADIUS_COMPONENT_COUNT) * 4;
     float[] tagRound;
+    float[] vertexData;
+    private boolean isSelect = false;
 
     public UnSelectTag(float x, float y, float radius, int width, int height) {
 //        this.tagCount = tagCount;
@@ -47,7 +49,7 @@ public class UnSelectTag {
     }
 
     private void initVertex(float x, float y, float radius) {
-        float[] vertexData = new float[3];
+        vertexData = new float[3];
         vertexData[0] = x;
         vertexData[1] = y;
         vertexData[2] = radius * width;
@@ -61,18 +63,33 @@ public class UnSelectTag {
     public void bindData(UnSelectTagProgram program) {
         vertexArray.setVertexAttributePointer(0, program.getAttrPositionLocation(), POSITION_COMPONENT_COUNT, STRIDE);
         vertexArray.setVertexAttributePointer(POSITION_COMPONENT_COUNT, program.getAttrRadiusLocation(), RADIUS_COMPONENT_COUNT, STRIDE);
+        Log.e(TAG, "bindData: " + Arrays.toString(vertexData));
     }
 
     public void draw() {
         glDrawArrays(GL_POINTS, 0, 1);
     }
 
-    public boolean touchCheck(float x, float y) {
-        float xTemp = CoordinateTransformation.AndroidToOpenGLx(x, width);
-        float yTemp = CoordinateTransformation.AndroidToOpenGLy(y, height);
-        Log.e(TAG, "xTemp" + xTemp + "\n" + "tTemp:" + yTemp);
-        Log.e(TAG, "touchCheck: " + Arrays.toString(tagRound));
-        return (xTemp >= tagRound[0] && xTemp <= tagRound[2]) && ((yTemp >= tagRound[1] && yTemp <= tagRound[3]));
+    public void touch(float x, float y, UnSelectTagProgram program) {
+        if (isInCircle(x, y)) {
+            vertexData[2] += width / 10;
+            vertexArray.setVertexAttributePointer(0, program.getAttrPositionLocation(), POSITION_COMPONENT_COUNT, STRIDE);
+            vertexArray.setVertexAttributePointer(POSITION_COMPONENT_COUNT, program.getAttrRadiusLocation(), RADIUS_COMPONENT_COUNT, STRIDE);
+        }
     }
 
+    public boolean isInCircle(float x, float y) {
+        float xTemp = CoordinateTransformation.AndroidToOpenGLx(x, width);
+        float yTemp = CoordinateTransformation.AndroidToOpenGLy(y, height);
+        float distance = (float) Math.sqrt((xTemp - vertexData[0]) * (xTemp - vertexData[0]) + (yTemp - vertexData[1]) * (yTemp - vertexData[1]));
+        return (distance < vertexData[2] / width) && (distance < vertexData[2] / height);
+    }
+
+    public boolean getIsSelect() {
+        return isSelect;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
 }

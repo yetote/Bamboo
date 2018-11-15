@@ -37,6 +37,7 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private int width, height;
     private UnSelectTagProgram[] program;
     private int[] textureIds;
+    int select = -1;
     private float[] radiusArr = new float[]{
             0.3f, 0.2f, 0.2f,
             0.4f, 0.4f,
@@ -104,6 +105,15 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
         for (int i = 0; i < 10; i++) {
             program[i].useProgram();
+            if (select != -1) {
+                if (unSelectTag[i].getIsSelect()) {
+                    program[i].setScale(1.1f);
+                } else {
+                    program[i].setScale(1.0f);
+                }
+            } else {
+                program[i].setScale(1.0f);
+            }
             program[i].setUniform(textureIds[i]);
             unSelectTag[i].bindData(program[i]);
             unSelectTag[i].draw();
@@ -112,8 +122,10 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
 
     public void tagClick(float x, float y) {
         for (int i = 0; i < 10; i++) {
-            if (unSelectTag[i].touchCheck(x, y)) {
-                Log.e(TAG, "tagClick: " + i);
+            if (unSelectTag[i].isInCircle(x, y)) {
+                select = i;
+                unSelectTag[i].setSelect(!(unSelectTag[i].getIsSelect()));
+                break;
             }
         }
     }

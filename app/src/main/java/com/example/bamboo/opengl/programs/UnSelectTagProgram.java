@@ -1,6 +1,7 @@
 package com.example.bamboo.opengl.programs;
 
 import android.content.Context;
+import android.icu.lang.UScript;
 import android.opengl.GLES30;
 
 import com.example.bamboo.R;
@@ -11,6 +12,7 @@ import static android.opengl.GLES20.glActiveTexture;
 import static android.opengl.GLES20.glBindTexture;
 import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
+import static android.opengl.GLES20.glUniform1f;
 import static android.opengl.GLES20.glUniform1i;
 
 /**
@@ -26,12 +28,14 @@ import static android.opengl.GLES20.glUniform1i;
 public class UnSelectTagProgram extends ShaderProgram {
     private int aPosition, aRadius;
     private int uTexture;
+    private int uScale;
 
     public UnSelectTagProgram(Context context) {
         super(context, R.raw.select_tag_vertex_shade_unchoose, R.raw.select_tag_frag_shade_unchoose);
         aPosition = glGetAttribLocation(program, A_POSITION);
         aRadius = glGetAttribLocation(program, A_RADIUS);
         uTexture = glGetUniformLocation(program, U_TEXTURE);
+        uScale = glGetUniformLocation(program, U_SCALE);
     }
 
     public int getAttrPositionLocation() {
@@ -44,9 +48,13 @@ public class UnSelectTagProgram extends ShaderProgram {
 
     public void setUniform(int textureId) {
 //        for (int i = 0; i < textureIds.length; i++) {
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glUniform1i(uTexture, 0);
 //        }
+    }
+    public void setScale(float scale){
+        glUniform1f(uScale, scale);
     }
 }
