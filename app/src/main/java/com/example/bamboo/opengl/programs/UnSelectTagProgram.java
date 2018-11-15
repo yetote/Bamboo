@@ -43,8 +43,10 @@ public class UnSelectTagProgram extends ShaderProgram {
     }
 
     public void setUniform(int textureId) {
+//        for (int i = 0; i < textureIds.length; i++) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glUniform1i(uTexture, 0);
+//        }
     }
 }
