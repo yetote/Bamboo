@@ -143,7 +143,6 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                     relativeAndroidToOpenGL(selectTag[i].getX(), 1080),
                     relativeAndroidToOpenGL(-selectTag[i].getY(), 1800),
                     0);
-            Log.e(TAG, "onDrawFrame: " + selectTag[i].getY());
             if (selectTag[i].getIsSelect()) {
                 program[i].setUniform(selectTextureIds[i], 1.1f, modelMatrixArr[i]);
             } else {
@@ -155,10 +154,10 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     }
 
     public void tagClick(float x, float y) {
+        Log.e(TAG, "tagClick:     x      " + x + "    y:      " + y);
         for (int i = 0; i < 10; i++) {
-            if (selectTag[i].isInCircle(x, y)) {
+            if (selectTag[i].isInCircle(x, y * 0.88f)) {
                 select = i;
-                Log.e(TAG, "tagClick: " + i);
                 selectTag[i].setSelect(!(selectTag[i].getIsSelect()));
                 break;
             }

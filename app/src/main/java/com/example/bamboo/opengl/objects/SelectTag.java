@@ -40,7 +40,7 @@ public class SelectTag {
     float[] tagRound;
     private float[] vertexData;
     private boolean isSelect = false;
-
+    private float[] center;
     Object tag;
     float x, y;
 
@@ -76,6 +76,7 @@ public class SelectTag {
                 x + radius, y + radius
         };
         vertexArray = new VertexArray(vertexData);
+        center = new float[]{vertexData[0], vertexData[1]};
     }
 
     public void bindData(UnSelectTagProgram program) {
@@ -98,11 +99,11 @@ public class SelectTag {
 
     public boolean isInCircle(float x, float y) {
         // TODO: 2018/11/15 判断仍有bug
-        float xTemp = CoordinateTransformation.androidToOpenGLx(x, width);
-        float yTemp = CoordinateTransformation.androidToOpenGLy(y, height);
-        float distance = (float) Math.sqrt((xTemp - vertexData[0]) * (xTemp - vertexData[0]) + (yTemp - vertexData[1]) * (yTemp - vertexData[1]));
+//        float xTemp = CoordinateTransformation.androidToOpenGLx(x, width);
+//        float yTemp = CoordinateTransformation.androidToOpenGLy(y, height);
+        float distance = (float) Math.sqrt((x - center[0]) * (x - center[0]) + (y - center[1]) * (y - center[1]));
 //        return (distance < vertexData[2] / width) && (distance < vertexData[2] / height);
-        return distance < vertexData[2] / 1080;
+        return distance < 336/2;
     }
 
     public boolean getIsSelect() {
@@ -127,5 +128,14 @@ public class SelectTag {
 
     public float[] getVertexData() {
         return vertexData;
+    }
+
+    public float[] getCenter() {
+        return center;
+    }
+
+    public void setCenter(float x, float y) {
+        center[0] = x;
+        center[1] = y;
     }
 }

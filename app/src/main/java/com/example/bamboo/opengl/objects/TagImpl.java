@@ -57,9 +57,10 @@ public class TagImpl {
                 lx[i] = body.getPosition().x;
                 tag[i].setY(metersToPixels(body.getPosition().y - ly[i]));
                 ly[i] = body.getPosition().y;
+                tag[i].setCenter(metersToPixels(lx[i]), metersToPixels(ly[i]));
                 Log.e(TAG, "onDraw: x    " + body.getPosition().x +
-                                "y:   " + body.getPosition().y
-               );
+                        "y:   " + body.getPosition().y
+                );
             }
         }
     }
@@ -70,7 +71,7 @@ public class TagImpl {
 
     private void createWorld() {
         if (world == null) {
-            world = new World(new Vec2(0.0f, 0.0f));
+            world = new World(new Vec2(5.0f, 10.0f));
             createTopAndBottomBounds();
             createLeftAndRightBounds();
         }
@@ -86,13 +87,13 @@ public class TagImpl {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = (BodyType.DYNAMIC);
 
-        bodyDef.position.set(pixelsToMeters(openGLToAndroidX(tag[i].getVertexData()[0], width)-(tag[i].getRadius() / 1080 * 1680) / 2),
-                pixelsToMeters(openGLToAndroidY(tag[i].getVertexData()[1], height)-(tag[i].getRadius() / 1080 * 1680) / 2));
+        bodyDef.position.set(pixelsToMeters(openGLToAndroidX(tag[i].getVertexData()[0], width) - (tag[i].getRadius() / 1080 * 1680) / 2),
+                pixelsToMeters(openGLToAndroidY(tag[i].getVertexData()[1], height) - (tag[i].getRadius() / 1080 * 1680) / 2));
         lx[i] = pixelsToMeters(openGLToAndroidX(tag[i].getVertexData()[0], width));
         ly[i] = pixelsToMeters(openGLToAndroidY(tag[i].getVertexData()[1], height));
         CircleShape circleShape = new CircleShape();
 //        circleShape.setRadius(pixelsToMeters((tag[i].getRadius() / 1080 * 1680) / 2));
-        circleShape.m_radius=3.36f;
+        circleShape.m_radius = 3.36f;
         Log.e(TAG, "radius " + circleShape.getRadius());
         FixtureDef fixture = new FixtureDef();
         fixture.shape = (circleShape);
@@ -103,7 +104,7 @@ public class TagImpl {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixture);
         tag[i].setTag(body);
-        body.setLinearVelocity(new Vec2(random.nextFloat(), random.nextFloat()));
+        body.setLinearVelocity(new Vec2(random.nextFloat()*10, random.nextFloat()*10));
     }
 
     private void createTopAndBottomBounds() {
