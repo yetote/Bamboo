@@ -23,7 +23,7 @@ import static android.opengl.GLES20.glDrawArrays;
  * @chang time
  * @class describe
  */
-public class UnSelectTag {
+public class SelectTag {
     private float[] xArr, yArr;
     private VertexArray vertexArray;
     private int tagCount;
@@ -38,11 +38,29 @@ public class UnSelectTag {
     private static final int RADIUS_COMPONENT_COUNT = 1;
     private static final int STRIDE = (POSITION_COMPONENT_COUNT + RADIUS_COMPONENT_COUNT) * 4;
     float[] tagRound;
-    float[] vertexData;
+    private float[] vertexData;
     private boolean isSelect = false;
 
-    public UnSelectTag(float x, float y, float radius, int width, int height) {
-//        this.tagCount = tagCount;
+    Object tag;
+    float x, y;
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public SelectTag(float x, float y, float radius, int width, int height) {
         this.width = width;
         this.height = height;
         initVertex(x, y, radius);
@@ -52,7 +70,7 @@ public class UnSelectTag {
         vertexData = new float[3];
         vertexData[0] = x;
         vertexData[1] = y;
-        vertexData[2] = radius * width;
+        vertexData[2] = radius * 1080;
         tagRound = new float[]{
                 x - radius, y - radius,
                 x + radius, y + radius
@@ -63,7 +81,7 @@ public class UnSelectTag {
     public void bindData(UnSelectTagProgram program) {
         vertexArray.setVertexAttributePointer(0, program.getAttrPositionLocation(), POSITION_COMPONENT_COUNT, STRIDE);
         vertexArray.setVertexAttributePointer(POSITION_COMPONENT_COUNT, program.getAttrRadiusLocation(), RADIUS_COMPONENT_COUNT, STRIDE);
-        Log.e(TAG, "bindData: " + Arrays.toString(vertexData));
+//        Log.e(TAG, "bindData: " + Arrays.toString(vertexData));
     }
 
     public void draw() {
@@ -79,10 +97,12 @@ public class UnSelectTag {
     }
 
     public boolean isInCircle(float x, float y) {
-        float xTemp = CoordinateTransformation.AndroidToOpenGLx(x, width);
-        float yTemp = CoordinateTransformation.AndroidToOpenGLy(y, height);
+        // TODO: 2018/11/15 判断仍有bug
+        float xTemp = CoordinateTransformation.androidToOpenGLx(x, width);
+        float yTemp = CoordinateTransformation.androidToOpenGLy(y, height);
         float distance = (float) Math.sqrt((xTemp - vertexData[0]) * (xTemp - vertexData[0]) + (yTemp - vertexData[1]) * (yTemp - vertexData[1]));
-        return (distance < vertexData[2] / width) && (distance < vertexData[2] / height);
+//        return (distance < vertexData[2] / width) && (distance < vertexData[2] / height);
+        return distance < vertexData[2] / 1080;
     }
 
     public boolean getIsSelect() {
@@ -91,5 +111,21 @@ public class UnSelectTag {
 
     public void setSelect(boolean select) {
         isSelect = select;
+    }
+
+    public Object getTag() {
+        return tag;
+    }
+
+    public void setTag(Object tag) {
+        this.tag = tag;
+    }
+
+    public float getRadius() {
+        return vertexData[2];
+    }
+
+    public float[] getVertexData() {
+        return vertexData;
     }
 }

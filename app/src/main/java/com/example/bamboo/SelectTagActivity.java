@@ -37,12 +37,11 @@ public class SelectTagActivity extends AppCompatActivity {
         init(width, height);
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(renderer);
-        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+//        glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 
         glSurfaceView.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 glSurfaceView.queueEvent(() -> renderer.tagClick(event.getX(), event.getY()));
-                glSurfaceView.requestRender();
             }
             return false;
         });
@@ -50,8 +49,6 @@ public class SelectTagActivity extends AppCompatActivity {
 
     private void init(int width, int height) {
         glSurfaceView = findViewById(R.id.select_tag_glSurfaceView);
-        Log.e(TAG, "init: " + glSurfaceView.getWidth());
         renderer = new SelectTagRenderer(this, width, height);
     }
-
 }

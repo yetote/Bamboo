@@ -29,7 +29,7 @@
             android:theme="@style/GradientTheme">
 
         </activity>
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity"> </activity>
     </application>
 
 </manifest>

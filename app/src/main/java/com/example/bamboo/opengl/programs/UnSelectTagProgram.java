@@ -14,6 +14,7 @@ import static android.opengl.GLES20.glGetAttribLocation;
 import static android.opengl.GLES20.glGetUniformLocation;
 import static android.opengl.GLES20.glUniform1f;
 import static android.opengl.GLES20.glUniform1i;
+import static android.opengl.GLES20.glUniformMatrix4fv;
 
 /**
  * @author yetote QQ:503779938
@@ -29,6 +30,7 @@ public class UnSelectTagProgram extends ShaderProgram {
     private int aPosition, aRadius;
     private int uTexture;
     private int uScale;
+    private int uMatrix;
 
     public UnSelectTagProgram(Context context) {
         super(context, R.raw.select_tag_vertex_shade_unchoose, R.raw.select_tag_frag_shade_unchoose);
@@ -36,6 +38,7 @@ public class UnSelectTagProgram extends ShaderProgram {
         aRadius = glGetAttribLocation(program, A_RADIUS);
         uTexture = glGetUniformLocation(program, U_TEXTURE);
         uScale = glGetUniformLocation(program, U_SCALE);
+        uMatrix = glGetUniformLocation(program, U_MATRIX);
     }
 
     public int getAttrPositionLocation() {
@@ -46,15 +49,11 @@ public class UnSelectTagProgram extends ShaderProgram {
         return aRadius;
     }
 
-    public void setUniform(int textureId) {
-//        for (int i = 0; i < textureIds.length; i++) {
-
+    public void setUniform(int textureId, float scale, float[] matrix) {
+        glUniform1f(uScale, scale);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureId);
         glUniform1i(uTexture, 0);
-//        }
-    }
-    public void setScale(float scale){
-        glUniform1f(uScale, scale);
+        glUniformMatrix4fv(uMatrix, 1, false, matrix, 0);
     }
 }
