@@ -2,9 +2,13 @@ package com.example.bamboo.application;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 import com.example.bamboo.util.AbstractActivityLifeCycleCallbacks;
+import com.example.bamboo.util.CoordinateTransformation;
 import com.example.bamboo.util.CrashHandle;
 
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ public class MyApplication extends Application {
     private static MyApplication mContext;
     private List<Activity> activityList;
 
+
     public static MyApplication getContext() {
         return mContext;
     }
@@ -30,8 +35,24 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mContext = this;
+
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        // 屏幕宽度（像素）
+        int pxWidth = dm.widthPixels;
+        // 屏幕高度（像素）
+        int pxHeight = dm.heightPixels;
+        float density = dm.density;
+        int dpWidth = (int) (pxWidth / density);
+        int dpHeight = (int) (pxHeight / density);
+
+        CoordinateTransformation.initDisplay(pxWidth, pxHeight, dpWidth, dpHeight);
+
         startCrash();
+
         activityList = Collections.synchronizedList(new ArrayList<Activity>());
         registerActivityLifecycleCallbacks(new AbstractActivityLifeCycleCallbacks() {
             @Override
@@ -58,8 +79,6 @@ public class MyApplication extends Application {
         });
 
         initRetrofit();
-
-
     }
 
     private void initRetrofit() {

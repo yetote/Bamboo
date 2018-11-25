@@ -19,7 +19,11 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
-import static com.example.bamboo.opengl.utils.CoordinateTransformation.relativeAndroidToOpenGL;
+import static com.example.bamboo.util.CoordinateTransformation.SIDE_TYPE.SIDE_HEIGHT;
+import static com.example.bamboo.util.CoordinateTransformation.dpHeight;
+import static com.example.bamboo.util.CoordinateTransformation.dpWidth;
+import static com.example.bamboo.util.CoordinateTransformation.pxToDp;
+import static com.example.bamboo.util.CoordinateTransformation.relativeAndroidToOpenGL;
 
 /**
  * @author yetote QQ:503779938
@@ -35,20 +39,12 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "SelectTagRenderer";
     private Context context;
     private SelectTag[] selectTag;
-    private int width, height;
     private UnSelectTagProgram[] program;
     private int[] textureIds;
     private int[] selectTextureIds;
     private TagImpl tagImpl;
-    int select = -1;
-    float[][] modelMatrixArr = new float[10][16];
-
-    //    private float[] radiusArr = new float[]{
-//            0.3f, 0.2f, 0.2f,
-//            0.4f, 0.4f,
-//            0.4f, 0.2f, 0.2f,
-//            0.2f, 0.3f
-//    };
+    private float[][] modelMatrixArr = new float[10][16];
+    private float scale = 1.2f;
     private float[] radiusArr = new float[]{
             0.2f, 0.2f, 0.2f,
             0.2f, 0.2f,
@@ -59,21 +55,18 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
             -0.65f, 0.0f, 0.6f,
             -0.45f, 0.5f,
             -0.35f, 0.2f, 0.65f,
-            -0.8f, 0.5f
+            -0.7f, 0.5f
     };
     private float[] yArr = new float[]{
             0.75f, 0.6f, 0.7f,
             0.2f, 0.15f,
-            -0.5f, -0.2f, -0.3f,
-            -0.8f, -0.7f
+            -0.4f, -0.2f, -0.3f,
+            -0.7f, -0.7f
     };
 
 
-    public SelectTagRenderer(Context context, int width, int height) {
+    public SelectTagRenderer(Context context) {
         this.context = context;
-        this.width = width;
-        this.height = height;
-//        Log.e(TAG, "SelectTagRenderer: " + width);
     }
 
     @Override
@@ -85,12 +78,11 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
         selectTag = new SelectTag[10];
         program = new UnSelectTagProgram[10];
         tagImpl = new TagImpl(selectTag);
-        int i = 0;
-        init(10, width, height, context);
+        init(10, context);
         tagImpl.onLayout();
     }
 
-    private void init(int count, int width, int height, Context context) {
+    private void init(int count, Context context) {
         int[] drawableArr = new int[]{
                 R.drawable.texture,
                 R.drawable.texture1,
@@ -111,12 +103,12 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                 R.drawable.huwai,
                 R.drawable.keji,
                 R.drawable.mingxing,
-                R.drawable.xinweng,
+                R.drawable.xinwen,
                 R.drawable.yingyue,
                 R.drawable.youxi
         };
         for (int i = 0; i < count; i++) {
-            selectTag[i] = new SelectTag(xArr[i], yArr[i], radiusArr[i], width, height);
+            selectTag[i] = new SelectTag(xArr[i], yArr[i], radiusArr[i]);
             program[i] = new UnSelectTagProgram(context);
             textureIds[i] = TextureHelper.loadTexture(context, drawableArr[i]);
             selectTextureIds[i] = TextureHelper.loadTexture(context, selectDrawableArr[i]);
@@ -126,9 +118,8 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         glViewport(0, 0, width, height);
-        tagImpl.onSizeChanged(width, height);
-        for (int i = 0; i < modelMatrixArr.length; i++) {
-            setIdentityM(modelMatrixArr[i], 0);
+        for (float[] aModelMatrixArr : modelMatrixArr) {
+            setIdentityM(aModelMatrixArr, 0);
         }
     }
 
@@ -136,15 +127,15 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         glClear(GL_COLOR_BUFFER_BIT);
         tagImpl.onDraw();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i <selectTag.length; i++) {
             program[i].useProgram();
             translateM(modelMatrixArr[i],
                     0,
-                    relativeAndroidToOpenGL(selectTag[i].getX(), 1080),
-                    relativeAndroidToOpenGL(-selectTag[i].getY(), 1800),
+                    relativeAndroidToOpenGL(selectTag[i].getX(), dpWidth),
+                    relativeAndroidToOpenGL(-selectTag[i].getY(), dpHeight),
                     0);
             if (selectTag[i].getIsSelect()) {
-                program[i].setUniform(selectTextureIds[i], 1.1f, modelMatrixArr[i]);
+                program[i].setUniform(selectTextureIds[i], scale, modelMatrixArr[i]);
             } else {
                 program[i].setUniform(textureIds[i], 1.0f, modelMatrixArr[i]);
             }
@@ -155,10 +146,10 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
 
     public void tagClick(float x, float y) {
         Log.e(TAG, "tagClick:     x      " + x + "    y:      " + y);
-        for (int i = 0; i < 10; i++) {
-            if (selectTag[i].isInCircle(x, y * 0.88f)) {
-                select = i;
+        for (int i = 0; i < selectTag.length; i++) {
+            if (selectTag[i].isInCircle(x, pxToDp(y, SIDE_HEIGHT))) {
                 selectTag[i].setSelect(!(selectTag[i].getIsSelect()));
+                tagImpl.onChanged(i, scale);
                 break;
             }
         }

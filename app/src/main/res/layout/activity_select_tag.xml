@@ -6,34 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".SelectTagActivity">
 
+    <!--<androidx.appcompat.widget.Toolbar-->
+    <!--android:id="@+id/selectTag_toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:background="@drawable/toolbar_gradient_background"-->
+    <!--android:fitsSystemWindows="true"-->
+    <!--android:minHeight="?attr/actionBarSize"-->
+    <!--android:theme="?attr/actionBarTheme"-->
+    <!--app:navigationIcon="@mipmap/back"-->
+    <!--app:title="@string/select_tag"-->
+    <!--app:titleTextColor="@color/white" />-->
+
     <android.opengl.GLSurfaceView
         android:id="@+id/select_tag_glSurfaceView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <Button
-        android:id="@+id/select_tag_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:background="@color/transparent"
-        android:text="@string/back"
-        android:textColor="@color/gray" />
-
-    <Button
-        android:id="@+id/select_tag_sure"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:background="@color/transparent"
-        android:text="@string/sure"
-        android:textColor="@color/gray" />
+        android:layout_alignParentBottom="true" />
 
 
 </RelativeLayout>
