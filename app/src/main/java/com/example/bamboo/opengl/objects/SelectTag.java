@@ -58,7 +58,7 @@ public class SelectTag {
         vertexData = new float[3];
         vertexData[0] = x;
         vertexData[1] = y;
-        vertexData[2] = radius * dpWidth;
+        vertexData[2] = dpToPX(radius * dpWidth, SIDE_WIDTH);
         tagRound = new float[]{
                 x - radius, y - radius,
                 x + radius, y + radius

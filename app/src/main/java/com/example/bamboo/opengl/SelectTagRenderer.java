@@ -46,10 +46,10 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private float[][] modelMatrixArr = new float[10][16];
     private float scale = 1.2f;
     private float[] radiusArr = new float[]{
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f,
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f
+            0.15f, 0.15f, 0.15f,
+            0.15f, 0.15f,
+            0.15f, 0.15f, 0.15f,
+            0.15f, 0.15f
     };
     private float[] xArr = new float[]{
             -0.65f, 0.0f, 0.6f,

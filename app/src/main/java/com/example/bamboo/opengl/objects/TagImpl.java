@@ -52,7 +52,7 @@ public class TagImpl {
         int positionIterations = 10;
         float dt = 1f / 60f;
         world.step(dt, velocityIterations, positionIterations);
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < tag.length; i++) {
             Body body = (Body) tag[i].getTag();
             if (body != null) {
                 tag[i].setX(metersToPixels(body.getPosition().x - lx[i]));
@@ -74,7 +74,7 @@ public class TagImpl {
             createTopAndBottomBounds();
             createLeftAndRightBounds();
         }
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < tag.length; i++) {
             Body body = (Body) tag[i].getTag();
             if (body == null) {
                 createBody(world, i);
@@ -86,13 +86,13 @@ public class TagImpl {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = (BodyType.DYNAMIC);
 
-        bodyDef.position.set(pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[0], SIDE_WIDTH, dpWidth) - (dpToPX(tag[i].getRadius(), SIDE_WIDTH) / 2)),
-                pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[1], SIDE_HEIGHT, dpHeight) - (dpToPX(tag[i].getRadius(), SIDE_WIDTH) / 2)));
+        bodyDef.position.set(pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[0], SIDE_WIDTH, dpWidth) - (tag[i].getRadius() / 2)),
+                pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[1], SIDE_HEIGHT, dpHeight) - (tag[i].getRadius() / 2)));
         lx[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[0], SIDE_WIDTH, dpWidth));
         ly[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[1], SIDE_HEIGHT, dpHeight));
 
         CircleShape circleShape = new CircleShape();
-        circleShape.m_radius = pixelsToMeters(dpToPX(tag[i].getRadius(), SIDE_WIDTH)) / 2;
+        circleShape.m_radius = pixelsToMeters(tag[i].getRadius() / 2);
         radius = circleShape.getRadius();
 
         FixtureDef fixture = new FixtureDef();

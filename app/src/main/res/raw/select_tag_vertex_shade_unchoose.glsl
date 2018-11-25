@@ -4,5 +4,5 @@ uniform  float u_Scale;
 uniform  mat4 u_Matrix;
 void main() {
     gl_Position =u_Matrix*a_Position;
-    gl_PointSize =u_Scale*336.0;
+    gl_PointSize =u_Scale*a_Radius;
 }
