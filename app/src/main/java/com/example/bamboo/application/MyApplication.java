@@ -83,7 +83,6 @@ public class MyApplication extends Application {
 
     private void initRetrofit() {
 
-
     }
 
     private void startCrash() {

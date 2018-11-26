@@ -36,15 +36,15 @@ public class TagImpl {
     private static final String TAG = "JBoxImpl";
     private World world;
 
-    private float friction = 0.3f, density = 0.5f, restitution = 0.7f, ratio = 50;
+    private float friction = 1.0f, density = 0.5f, restitution = 0.7f, ratio = 50;
     private SelectTag[] tag;
     private float[] lx, ly;
     private float radius;
 
     public TagImpl(SelectTag[] tag) {
         this.tag = tag;
-        lx = new float[10];
-        ly = new float[10];
+        lx = new float[tag.length];
+        ly = new float[tag.length];
     }
 
     public void onDraw() {
@@ -60,7 +60,9 @@ public class TagImpl {
                 tag[i].setY(metersToPixels(body.getPosition().y - ly[i]));
                 ly[i] = body.getPosition().y;
                 tag[i].setCenter(metersToPixels(lx[i]), metersToPixels(ly[i]));
+                body.applyForce(new Vec2(-lx[i] + 10.8f, -ly[i] + 18f), body.getWorldCenter());
             }
+
         }
     }
 
@@ -91,8 +93,10 @@ public class TagImpl {
         lx[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[0], SIDE_WIDTH, dpWidth));
         ly[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[1], SIDE_HEIGHT, dpHeight));
 
+        calculateVelocity(lx[i], ly[i]);
+
         CircleShape circleShape = new CircleShape();
-        circleShape.m_radius = pixelsToMeters(tag[i].getRadius() / 2);
+        circleShape.m_radius = pixelsToMeters(tag[i].getRadius() / 2) + 0.1f;
         radius = circleShape.getRadius();
 
         FixtureDef fixture = new FixtureDef();
@@ -104,7 +108,14 @@ public class TagImpl {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixture);
         tag[i].setTag(body);
-        body.setLinearVelocity(new Vec2(lx[i], ly[i]));
+
+    }
+
+    private void calculateVelocity(float x, float y) {
+        float s = (float) Math.sqrt(
+                (x - pixelsToMeters(dpWidth / 2)) * (x - pixelsToMeters(dpWidth / 2))
+                        + (y - pixelsToMeters(dpHeight / 2)) * (y - pixelsToMeters(dpHeight / 2)));
+        float v0 = (float) Math.sqrt(0.6 * s);
     }
 
     private void createTopAndBottomBounds() {

@@ -24,6 +24,7 @@ import static com.example.bamboo.util.CoordinateTransformation.dpHeight;
 import static com.example.bamboo.util.CoordinateTransformation.dpWidth;
 import static com.example.bamboo.util.CoordinateTransformation.pxToDp;
 import static com.example.bamboo.util.CoordinateTransformation.relativeAndroidToOpenGL;
+import static com.example.bamboo.util.CoordinateTransformation.touchInGlSurfaceView;
 
 /**
  * @author yetote QQ:503779938
@@ -43,25 +44,33 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private int[] textureIds;
     private int[] selectTextureIds;
     private TagImpl tagImpl;
-    private float[][] modelMatrixArr = new float[10][16];
+    private float[][] modelMatrixArr = new float[15][16];
     private float scale = 1.2f;
     private float[] radiusArr = new float[]{
-            0.15f, 0.15f, 0.15f,
-            0.15f, 0.15f,
-            0.15f, 0.15f, 0.15f,
-            0.15f, 0.15f
+            0.25f, 0.25f, 0.25f,
+            0.25f, 0.25f, 0.25f,
+            0.25f, 0.25f, 0.25f,
+            0.25f, 0.25f, 0.25f,
+            0.25f, 0.25f, 0.25f
     };
     private float[] xArr = new float[]{
-            -0.65f, 0.0f, 0.6f,
-            -0.45f, 0.5f,
-            -0.35f, 0.2f, 0.65f,
-            -0.7f, 0.5f
+            //    @formatter:off
+            -0.0f, 0.0f,  0.6f,
+            -0.45f, 0.5f,  0.2f,
+            -0.35f, 0.2f,  0.65f,
+            -0.7f,  0.5f,  0.6f,
+            -0.45f, 0.5f, -0.35f
+            //    @formatter:on
+
     };
     private float[] yArr = new float[]{
-            0.75f, 0.6f, 0.7f,
-            0.2f, 0.15f,
+            //    @formatter:off
+             0.0f,  0.6f,  0.7f,
+             0.2f,  0.2f, -0.7f,
             -0.4f, -0.2f, -0.3f,
-            -0.7f, -0.7f
+            -0.7f, -0.7f,  0.6f,
+            -0.2f, -0.3f, -0.4f
+            //    @formatter:on
     };
 
 
@@ -73,12 +82,12 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        textureIds = new int[10];
-        selectTextureIds = new int[10];
-        selectTag = new SelectTag[10];
-        program = new UnSelectTagProgram[10];
+        textureIds = new int[15];
+        selectTextureIds = new int[15];
+        selectTag = new SelectTag[15];
+        program = new UnSelectTagProgram[15];
         tagImpl = new TagImpl(selectTag);
-        init(10, context);
+        init(15, context);
         tagImpl.onLayout();
     }
 
@@ -93,7 +102,12 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                 R.drawable.texture6,
                 R.drawable.texture7,
                 R.drawable.texture8,
-                R.drawable.texture9
+                R.drawable.texture9,
+                R.drawable.texture6,
+                R.drawable.texture5,
+                R.drawable.texture9,
+                R.drawable.texture2,
+                R.drawable.texture
         };
         int[] selectDrawableArr = new int[]{
                 R.drawable.dianying,
@@ -105,7 +119,12 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                 R.drawable.mingxing,
                 R.drawable.xinwen,
                 R.drawable.yingyue,
-                R.drawable.youxi
+                R.drawable.youxi,
+                R.drawable.gaoxiao,
+                R.drawable.huwai,
+                R.drawable.keji,
+                R.drawable.mingxing,
+                R.drawable.xinwen
         };
         for (int i = 0; i < count; i++) {
             selectTag[i] = new SelectTag(xArr[i], yArr[i], radiusArr[i]);
@@ -127,7 +146,7 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     public void onDrawFrame(GL10 gl) {
         glClear(GL_COLOR_BUFFER_BIT);
         tagImpl.onDraw();
-        for (int i = 0; i <selectTag.length; i++) {
+        for (int i = 0; i < selectTag.length; i++) {
             program[i].useProgram();
             translateM(modelMatrixArr[i],
                     0,
@@ -145,9 +164,9 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     }
 
     public void tagClick(float x, float y) {
-        Log.e(TAG, "tagClick:     x      " + x + "    y:      " + y);
+        Log.e(TAG, "tagClick: x     " + x + "\n" + "y         " + y);
         for (int i = 0; i < selectTag.length; i++) {
-            if (selectTag[i].isInCircle(x, pxToDp(y, SIDE_HEIGHT))) {
+            if (selectTag[i].isInCircle(x, touchInGlSurfaceView(y))) {
                 selectTag[i].setSelect(!(selectTag[i].getIsSelect()));
                 tagImpl.onChanged(i, scale);
                 break;

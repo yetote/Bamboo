@@ -43,10 +43,10 @@ public class CoordinateTransformation {
      * @param dph 高 dp
      */
     public static final void initDisplay(int pxw, int pxh, int dpw, int dph) {
-        dpWidth = 1080;
-        dpHeight = 1800;
-        pxWidth = 1680;
-        pxHeight = 2040;
+        dpWidth = pxw;
+        dpHeight = pxh;
+        pxWidth = dpw;
+        pxHeight = dph;
     }
 
     private static float openGLToAndroid(float coordinate, int width) {
@@ -100,6 +100,10 @@ public class CoordinateTransformation {
         return px * ((float) dpHeight / (float) pxHeight);
     }
 
+    public static float touchInGlSurfaceView(float px) {
+        return px - pxHeight;
+    }
+
     /**
      * dp转px
      *
@@ -108,9 +112,6 @@ public class CoordinateTransformation {
      * @return 返回的px数据
      */
     public static float dpToPX(float dp, SIDE_TYPE type) {
-        if (type == SIDE_TYPE.SIDE_WIDTH) {
-            return dp * ((float) pxWidth / (float) dpWidth);
-        }
-        return dp * ((float) pxHeight / (float) dpHeight);
+        return dp;
     }
 }
