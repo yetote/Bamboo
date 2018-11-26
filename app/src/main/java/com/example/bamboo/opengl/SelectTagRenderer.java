@@ -19,10 +19,8 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
-import static com.example.bamboo.util.CoordinateTransformation.SIDE_TYPE.SIDE_HEIGHT;
 import static com.example.bamboo.util.CoordinateTransformation.dpHeight;
 import static com.example.bamboo.util.CoordinateTransformation.dpWidth;
-import static com.example.bamboo.util.CoordinateTransformation.pxToDp;
 import static com.example.bamboo.util.CoordinateTransformation.relativeAndroidToOpenGL;
 import static com.example.bamboo.util.CoordinateTransformation.touchInGlSurfaceView;
 
@@ -47,11 +45,11 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private float[][] modelMatrixArr = new float[15][16];
     private float scale = 1.2f;
     private float[] radiusArr = new float[]{
-            0.25f, 0.25f, 0.25f,
-            0.25f, 0.25f, 0.25f,
-            0.25f, 0.25f, 0.25f,
-            0.25f, 0.25f, 0.25f,
-            0.25f, 0.25f, 0.25f
+            0.2f, 0.2f, 0.2f,
+            0.2f, 0.2f, 0.2f,
+            0.2f, 0.2f, 0.2f,
+            0.2f, 0.2f, 0.2f,
+            0.2f, 0.2f, 0.2f
     };
     private float[] xArr = new float[]{
             //    @formatter:off
@@ -172,5 +170,9 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                 break;
             }
         }
+    }
+
+    public void sensorChanged(float x, float y) {
+        tagImpl.onSensorChanged(x, y);
     }
 }

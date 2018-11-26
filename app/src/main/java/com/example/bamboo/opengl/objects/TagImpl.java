@@ -2,6 +2,7 @@ package com.example.bamboo.opengl.objects;
 
 
 import android.util.Log;
+import android.view.View;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
@@ -197,6 +198,16 @@ public class TagImpl {
             shape.m_radius = radius * scale;
         } else {
             shape.m_radius = radius;
+        }
+    }
+
+    public void onSensorChanged(float x, float y) {
+        for (int i = 0; i < tag.length; i++) {
+            Vec2 impulse = new Vec2(x, y);
+            Body body = (Body) tag[i].getTag();
+            if (body != null) {
+                body.applyForce(impulse, body.getPosition());
+            }
         }
     }
 }

@@ -1,5 +1,10 @@
 package com.example.bamboo;
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,14 +21,15 @@ import androidx.appcompat.widget.Toolbar;
  * @author yetote
  * @decription 选择标签
  */
-public class SelectTagActivity extends AppCompatActivity {
+public class SelectTagActivity extends AppCompatActivity implements SensorEventListener {
     private GLSurfaceView glSurfaceView;
     private SelectTagRenderer renderer;
     private static final String TAG = "SelectTagActivity";
     private Toolbar toolbar;
     View statusBar;
-    private int statusHeight;
     private boolean isFirst = true;
+    private SensorManager sensorManager;
+    private Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,15 +43,14 @@ public class SelectTagActivity extends AppCompatActivity {
                     statusBar = getWindow().findViewById(identifier);
                 }
                 statusBar.setBackgroundResource(R.drawable.toolbar_gradient_background);
-                statusHeight = statusBar.getHeight();
                 getWindow().getDecorView().removeOnLayoutChangeListener(this);
             }
         });
+
         init();
+
         glSurfaceView.setEGLContextClientVersion(2);
-
         glSurfaceView.setRenderer(renderer);
-
         glSurfaceView.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
@@ -66,7 +71,6 @@ public class SelectTagActivity extends AppCompatActivity {
             Log.e(TAG, "onWindowFocusChanged: width " + glSurfaceView.getWidth());
             CoordinateTransformation.initDisplay(glSurfaceView.getWidth(), glSurfaceView.getHeight(), glSurfaceView.getWidth(), toolbar.getHeight());
             isFirst = false;
-
         }
     }
 
@@ -74,6 +78,33 @@ public class SelectTagActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.selectTag_toolbar);
         glSurfaceView = findViewById(R.id.select_tag_glSurfaceView);
         renderer = new SelectTagRenderer(this);
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0]*10f;
+            float y = event.values[1] * 10f;
+            renderer.sensorChanged(-x, y);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
 }
