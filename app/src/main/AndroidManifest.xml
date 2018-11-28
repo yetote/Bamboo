@@ -17,20 +17,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".SelectTagActivity">
+        <activity android:name=".SelectTagActivity" />
+        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".StartActivity" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/GradientTheme">
-
-        </activity>
-        <activity android:name=".TestActivity"></activity>
+            android:theme="@style/GradientTheme" />
+        <activity android:name=".TestActivity" />
+        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".PwdLoginActivity"
+            android:theme="@style/Translucent" />
+        <activity
+            android:name=".CodeLoginActivity"
+            android:theme="@style/Translucent" />
     </application>
 
 </manifest>

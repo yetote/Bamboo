@@ -1,13 +1,19 @@
 package com.example.bamboo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.bamboo.R;
+import com.example.bamboo.SelectTagActivity;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.adapter.MattersViewPagerAdapter;
+import com.example.bamboo.myinterface.MattersInterface;
+import com.example.bamboo.opengl.objects.SelectTag;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -35,6 +41,8 @@ public class MattersFragment extends Fragment {
     private ViewPager viewPager;
     private ArrayList<Fragment> list;
     private ArrayList<String> title;
+    private Button addFollowBtn;
+    public static final int REQUEST_TAG = 1;
 
     @Nullable
     @Override
@@ -63,6 +71,13 @@ public class MattersFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
         tabLayout.setupWithViewPager(viewPager);
+
+        addFollowBtn.setOnClickListener(v1 -> {
+            Intent i = new Intent();
+            i.setClass(getActivity(), SelectTagActivity.class);
+            i.putExtra("user_id", "1");
+            startActivity(i);
+        });
         return v;
     }
 
@@ -72,5 +87,8 @@ public class MattersFragment extends Fragment {
         viewPager = v.findViewById(R.id.matters_viewPager);
         list = new ArrayList<>();
         title = new ArrayList<>();
+        addFollowBtn = v.findViewById(R.id.matters_addFollow_btn);
     }
+
+
 }

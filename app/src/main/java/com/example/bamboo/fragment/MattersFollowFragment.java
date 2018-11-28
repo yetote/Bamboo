@@ -1,13 +1,16 @@
 package com.example.bamboo.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.bamboo.R;
 import com.example.bamboo.adapter.MattersFollowAdapter;
 import com.example.bamboo.model.MattersFollowBean;
+import com.example.bamboo.myinterface.MattersInterface;
 
 import java.util.ArrayList;
 
@@ -27,11 +30,12 @@ import androidx.recyclerview.widget.RecyclerView;
  * @chang time
  * @class describe
  */
-public class MattersFollowFragment extends Fragment {
+public class MattersFollowFragment extends Fragment implements MattersInterface {
     private MattersFollowAdapter adapter;
     private RecyclerView rv;
     private ArrayList<MattersFollowBean> list;
     private ArrayList<String> imgList, imgList1, imgList2, imgList3, imgList5, imgList7;
+    private static final String TAG = "MattersFollowFragment";
 
     @Nullable
     @Override
@@ -93,10 +97,14 @@ public class MattersFollowFragment extends Fragment {
         list.add(new MattersFollowBean(imgList5, "https://pic1.zhimg.com/80/v2-c4eab541385689e8d02e02f4f25f81ac_hd.jpg", "", "Nicholas", "宫崎骏作品中最喜欢的一部，波妞和宗介简直萌化了我这个老阿姨的心，在网上找了好久的图一直没有高清的，跑去优酷重刷了一遍剧顺带截图，选的超清画质，我已经尽力了", 1541784352000L));
         list.add(new MattersFollowBean(imgList1, "https://pic4.zhimg.com/80/v2-a95b159cf810484c51c96b667c129ddf_hd.jpg", "", "Jam", "今天晚上，突然想给自己换个头像，找了一圈都没有合适的，于是搜了一搜，发现原来知乎是有默认头像的：", 1541905773000L));
         list.add(new MattersFollowBean(imgList2, "https://pic3.zhimg.com/80/v2-e2ae9159cf260da0ae61951bf1926abe_hd.jpg", "", "LadyGaga", "各位看官，走过路过不要错过，我一直有在勤劳的更新呦，快进来看看⏩哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈^_^", 1542019736000L));
-//        list.add(new MattersFollowBean(null, "https://pic4.zhimg.com/80/v2-ed6cdcff2a6b83df43e4fcde1961008b_hd.jpg", "", "Lewis M. Caton", "下面的什么风格我也没想好，就当杂图吧， 哈哈哈哈哈哈哈", 1542075952000L));
         list.add(new MattersFollowBean(imgList7, "https://pic1.zhimg.com/80/v2-8737c35c2628e9fd98c298df76e1ac70_hd.jpg", "", "Jesse H. Perry", "今天先更到这里，后续有喜欢的头像还会陆续上传哒，希望大家喜欢❤", 1542065152000L));
         list.add(new MattersFollowBean(imgList3, "https://pic3.zhimg.com/80/v2-145dcad62dabf17f803c87cc4b612dc2_hd.jpg", "", "Marvin D. Frost", "我也不知道为什么作为一只单身汪为什么要存情头 emmm... 大概是时刻提醒自己要找男友吧！", 1542043552000L));
 
         adapter = new MattersFollowAdapter(list, getActivity());
+    }
+
+    @Override
+    public void selectedTag(Bundle bundle) {
+        Log.e(TAG, "selectedTag: " + bundle.getInt("count"));
     }
 }

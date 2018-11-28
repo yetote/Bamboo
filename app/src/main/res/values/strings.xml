@@ -60,4 +60,6 @@
     <string name="back">返回</string>
     <string name="find">发现</string>
     <string name="select_tag">选择标签</string>
+    <string name="add">添加</string>
+    <string name="zhuce">注册</string>
 </resources>

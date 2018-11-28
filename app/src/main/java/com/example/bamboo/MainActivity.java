@@ -8,6 +8,7 @@ import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.NearFragment;
 import com.example.bamboo.fragment.RecommendFragment;
+import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -33,17 +34,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (statusBar == null) {
-                    int identifier = getResources().getIdentifier("statusBarBackground", "id", "android");
-                    statusBar = getWindow().findViewById(identifier);
-                }
-                statusBar.setBackgroundResource(R.drawable.toolbar_gradient_background);
-                getWindow().getDecorView().removeOnLayoutChangeListener(this);
-            }
-        });
+
+        StatusBarUtils.changedStatusBar(this);
 
         initView();
 

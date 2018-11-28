@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PwdLoginActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/login_pwd_toolbar"
+        style="@style/MyToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:titleTextColor="@color/white"
+        app:title="@string/pwd_login"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/login_pwd_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/register"
+        android:transitionName="loginFab"
+        app:backgroundTint="@color/verifyLoginColor"
+        app:layout_constraintBottom_toBottomOf="@+id/login_pwd_cardview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/login_pwd_cardview" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/login_pwd_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="430dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="@color/textColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/login_pwd_symbol"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="@string/pwd_login"
+                android:textColor="@color/white"
+                android:textSize="25sp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_pwd_tel_et_inputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/login_pwd_symbol"
+                android:layout_marginTop="10dp"
+                android:hint="@string/tel"
+                android:textColorHint="@color/white"
+                app:counterEnabled="true"
+                app:counterMaxLength="11"
+                app:counterOverflowTextAppearance="@style/MyTextInputLayoutCountOverFlowStyle"
+                app:counterTextAppearance="@style/MyTextInputLayoutCountStyle"
+                app:errorEnabled="true"
+                app:errorTextAppearance="@style/MyTextInputLayoutErrorStyle"
+                app:hintEnabled="true">
+
+                <EditText
+                    android:id="@+id/login_pwd_tel_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="number"
+                    android:textColor="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/login_pwd_pwd_et_inputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/login_pwd_tel_et_inputLayout"
+                android:layout_marginTop="10dp"
+                android:textColorHint="@color/white"
+                app:counterOverflowTextAppearance="@style/MyTextInputLayoutCountOverFlowStyle"
+                app:counterTextAppearance="@style/MyTextInputLayoutCountStyle"
+                app:errorTextAppearance="@style/MyTextInputLayoutErrorStyle"
+                app:hintEnabled="true">
+
+                <EditText
+                    android:id="@+id/login_pwd_pwd_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/pwd"
+                    android:inputType="textPassword"
+                    android:textColor="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/login_pwd_sure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/login_pwd_other_login"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="150dp"
+                android:background="@drawable/white_btn_background"
+                android:text="@string/login"
+                android:textColor="@color/white" />
+
+            <include
+                android:id="@+id/login_pwd_other_login"
+                layout="@layout/layout_other_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/login_pwd_to_verifyCodeLogin"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:id="@+id/login_pwd_to_verifyCodeLogin"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="5dp"
+                android:background="@color/transparent"
+                android:gravity="center"
+                android:text="@string/toVerifyCodeLogin"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

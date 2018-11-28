@@ -1,6 +1,7 @@
 package com.example.bamboo;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,11 +9,16 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
+import com.example.bamboo.fragment.MattersFollowFragment;
+import com.example.bamboo.myinterface.MattersInterface;
 import com.example.bamboo.opengl.SelectTagRenderer;
 import com.example.bamboo.util.CoordinateTransformation;
+import com.example.bamboo.util.StatusBarUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -30,24 +36,44 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
     private boolean isFirst = true;
     private SensorManager sensorManager;
     private Sensor sensor;
+    private int[] selectArr = new int[15];
+    private MattersInterface mattersInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_tag);
-        getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                if (statusBar == null) {
-                    int identifier = getResources().getIdentifier("statusBarBackground", "id", "android");
-                    statusBar = getWindow().findViewById(identifier);
-                }
-                statusBar.setBackgroundResource(R.drawable.toolbar_gradient_background);
-                getWindow().getDecorView().removeOnLayoutChangeListener(this);
-            }
-        });
+
+        StatusBarUtils.changedStatusBar(this);
 
         init();
+
+        Intent i = getIntent();
+        String id = i.getStringExtra("user_id");
+        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
+
+        toolbar.inflateMenu(R.menu.select_tag_menu);
+
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.select_tag_toolbar_sure:
+                        int count = checkSelect(selectArr);
+                        MattersFollowFragment fragment = new MattersFollowFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("count", count);
+                        bundle.putIntArray("select_arr", selectArr);
+                        mattersInterface = (MattersInterface) fragment;
+                        mattersInterface.selectedTag(bundle);
+                        finish();
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
 
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(renderer);
@@ -61,7 +87,26 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
             }
             return false;
         });
+
+
     }
+
+    /**
+     * 检查选择了那些标签
+     *
+     * @param selectIdArr 标签选择数组
+     * @return 选择了多少个标签
+     */
+    private int checkSelect(int[] selectIdArr) {
+        int j = 0;
+        for (int i = 0; i < renderer.getSelectTag().length; i++) {
+            if (renderer.getSelectTag()[i].getIsSelect()) {
+                selectIdArr[j++] = i;
+            }
+        }
+        return j;
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -97,7 +142,7 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float x = event.values[0]*10f;
+            float x = event.values[0] * 10f;
             float y = event.values[1] * 10f;
             renderer.sensorChanged(-x, y);
         }

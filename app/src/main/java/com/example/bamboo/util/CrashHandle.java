@@ -56,7 +56,7 @@ public class CrashHandle implements Thread.UncaughtExceptionHandler {
             }
         }
         long currentTime = System.currentTimeMillis();
-        String time = new SimpleDateFormat("yyyy-mm-dd", Locale.CHINA).format(currentTime);
+        String time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA).format(currentTime);
 
         File file = new File(path + time + ".track");
         try {

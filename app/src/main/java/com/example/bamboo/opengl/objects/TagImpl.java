@@ -1,9 +1,6 @@
 package com.example.bamboo.opengl.objects;
 
 
-import android.util.Log;
-import android.view.View;
-
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -17,7 +14,6 @@ import org.jbox2d.dynamics.World;
 import static com.example.bamboo.util.CoordinateTransformation.SIDE_TYPE.SIDE_HEIGHT;
 import static com.example.bamboo.util.CoordinateTransformation.SIDE_TYPE.SIDE_WIDTH;
 import static com.example.bamboo.util.CoordinateTransformation.dpHeight;
-import static com.example.bamboo.util.CoordinateTransformation.dpToPX;
 import static com.example.bamboo.util.CoordinateTransformation.dpWidth;
 import static com.example.bamboo.util.CoordinateTransformation.openGLToAndroid;
 
@@ -61,7 +57,7 @@ public class TagImpl {
                 tag[i].setY(metersToPixels(body.getPosition().y - ly[i]));
                 ly[i] = body.getPosition().y;
                 tag[i].setCenter(metersToPixels(lx[i]), metersToPixels(ly[i]));
-                body.applyForce(new Vec2(-lx[i] + 10.8f, -ly[i] + 18f), body.getWorldCenter());
+                body.applyForce(new Vec2(-lx[i] + pixelsToMeters(dpWidth) / 2, -ly[i] + pixelsToMeters(dpHeight) / 2), body.getWorldCenter());
             }
 
         }
@@ -94,8 +90,6 @@ public class TagImpl {
         lx[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[0], SIDE_WIDTH, dpWidth));
         ly[i] = pixelsToMeters(openGLToAndroid(tag[i].getVertexData()[1], SIDE_HEIGHT, dpHeight));
 
-        calculateVelocity(lx[i], ly[i]);
-
         CircleShape circleShape = new CircleShape();
         circleShape.m_radius = pixelsToMeters(tag[i].getRadius() / 2) + 0.1f;
         radius = circleShape.getRadius();
@@ -112,12 +106,6 @@ public class TagImpl {
 
     }
 
-    private void calculateVelocity(float x, float y) {
-        float s = (float) Math.sqrt(
-                (x - pixelsToMeters(dpWidth / 2)) * (x - pixelsToMeters(dpWidth / 2))
-                        + (y - pixelsToMeters(dpHeight / 2)) * (y - pixelsToMeters(dpHeight / 2)));
-        float v0 = (float) Math.sqrt(0.6 * s);
-    }
 
     private void createTopAndBottomBounds() {
         BodyDef bodyDef = new BodyDef();

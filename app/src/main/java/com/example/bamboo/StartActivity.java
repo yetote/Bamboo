@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 
@@ -28,6 +29,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private Button loginBtn, registerBtn;
     private static final String TAG = "StartActivity";
     private boolean isShowing = false;
+    private boolean isLogin = false, isRegister = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,13 +134,22 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Intent i = new Intent();
         switch (v.getId()) {
             case R.id.start_login:
-                hideAnimation(registerBtn);
-                i.setClass(this, MainActivity.class);
-//                startActivity(new Intent(this, MainActivity.class));
+                if (!isLogin) {
+                    hideAnimation(registerBtn);
+                    i.setClass(this, MainActivity.class);
+                    isLogin = true;
+                } else {
+                    Toast.makeText(this, "点这么多次干啥", Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.start_register:
-                hideAnimation(loginBtn);
-//                lottieView.resumeAnimation();
+                if (!isRegister) {
+                    hideAnimation(loginBtn);
+                    i.setClass(this, RegisterActivity.class);
+                    isRegister = true;
+                } else {
+                    Toast.makeText(this, "丫的找事是吧", Toast.LENGTH_SHORT).show();
+                }
                 break;
             default:
                 break;

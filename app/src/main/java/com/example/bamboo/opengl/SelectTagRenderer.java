@@ -175,4 +175,8 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     public void sensorChanged(float x, float y) {
         tagImpl.onSensorChanged(x, y);
     }
+
+    public SelectTag[] getSelectTag() {
+        return selectTag;
+    }
 }

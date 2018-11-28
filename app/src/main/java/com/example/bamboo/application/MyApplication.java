@@ -5,8 +5,10 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
 
+import com.example.bamboo.R;
 import com.example.bamboo.util.AbstractActivityLifeCycleCallbacks;
 import com.example.bamboo.util.CoordinateTransformation;
 import com.example.bamboo.util.CrashHandle;
@@ -26,7 +28,7 @@ import java.util.List;
 public class MyApplication extends Application {
     private static MyApplication mContext;
     private List<Activity> activityList;
-
+    private View statusBar;
 
     public static MyApplication getContext() {
         return mContext;

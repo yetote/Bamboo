@@ -21,14 +21,12 @@
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
+                style="@style/MyToolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/toolbar_gradient_background"
-                android:fitsSystemWindows="true"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
+                android:layout_height="?attr/actionBarSize"
+                app:titleTextColor="@color/white"
                 app:title="@string/home_page"
-                app:titleTextColor="@color/white" />
+                />
         </com.google.android.material.appbar.AppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
