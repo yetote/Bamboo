@@ -11,7 +11,7 @@ import android.widget.Button;
 
 import com.example.bamboo.R;
 import com.example.bamboo.opengl.utils.TextRecourseReader;
-import com.example.bamboo.util.PlayerView;
+import com.example.bamboo.myview.PlayerView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

@@ -19,11 +19,7 @@
         android:theme="@style/MyTheme">
         <activity android:name=".SelectTagActivity" />
         <activity android:name=".StartActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
@@ -36,6 +32,13 @@
         <activity
             android:name=".CodeLoginActivity"
             android:theme="@style/Translucent" />
+        <activity android:name=".WaitActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
 import com.example.bamboo.model.MattersFollowBean;
-import com.example.bamboo.util.NineImageView;
+import com.example.bamboo.myview.NineImageView;
 import com.example.bamboo.util.TimeUtil;
 
 import java.util.ArrayList;

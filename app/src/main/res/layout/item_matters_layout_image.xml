@@ -68,7 +68,7 @@
         app:layout_constraintTop_toBottomOf="@+id/item_matters_heads"
         tools:text="@tools:sample/lorem/random" />
 
-    <com.example.bamboo.util.NineImageView
+    <com.example.bamboo.myview.NineImageView
         android:id="@+id/item_matters_nineIv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,6 +76,6 @@
         app:layout_constraintEnd_toEndOf="@id/item_matters_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/item_matters_content">
-    </com.example.bamboo.util.NineImageView>
+    </com.example.bamboo.myview.NineImageView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -134,7 +134,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
         Intent i = new Intent();
         switch (v.getId()) {
             case R.id.start_login:
-                if (!isLogin) {
+                if (!isLogin && !isRegister) {
                     hideAnimation(registerBtn);
                     i.setClass(this, MainActivity.class);
                     isLogin = true;
@@ -143,7 +143,7 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
                 }
                 break;
             case R.id.start_register:
-                if (!isRegister) {
+                if (!isRegister && !isLogin) {
                     hideAnimation(loginBtn);
                     i.setClass(this, RegisterActivity.class);
                     isRegister = true;
