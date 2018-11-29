@@ -3,6 +3,7 @@ package com.example.bamboo.application;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -29,6 +30,7 @@ public class MyApplication extends Application {
     private static MyApplication mContext;
     private List<Activity> activityList;
     private View statusBar;
+    public static boolean isFirst;
 
     public static MyApplication getContext() {
         return mContext;
@@ -81,6 +83,8 @@ public class MyApplication extends Application {
         });
 
         initRetrofit();
+        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+        isFirst = sp.getBoolean("is_first", true);
     }
 
     private void initRetrofit() {

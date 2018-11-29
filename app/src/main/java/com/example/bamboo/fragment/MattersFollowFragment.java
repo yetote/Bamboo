@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * @chang time
  * @class describe
  */
-public class MattersFollowFragment extends Fragment implements MattersInterface {
+public class MattersFollowFragment extends Fragment  {
     private MattersFollowAdapter adapter;
     private RecyclerView rv;
     private ArrayList<MattersFollowBean> list;
@@ -103,8 +103,5 @@ public class MattersFollowFragment extends Fragment implements MattersInterface 
         adapter = new MattersFollowAdapter(list, getActivity());
     }
 
-    @Override
-    public void selectedTag(Bundle bundle) {
-        Log.e(TAG, "selectedTag: " + bundle.getInt("count"));
-    }
+
 }

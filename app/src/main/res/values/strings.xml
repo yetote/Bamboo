@@ -62,4 +62,8 @@
     <string name="select_tag">选择标签</string>
     <string name="add">添加</string>
     <string name="zhuce">注册</string>
+    <string name="recommend">推荐</string>
+    <string name="near">附近</string>
+    <string name="matters">动态</string>
+    <string name="write">发布新内容</string>
 </resources>

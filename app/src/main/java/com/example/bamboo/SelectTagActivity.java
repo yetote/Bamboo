@@ -9,12 +9,11 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.bamboo.fragment.MattersFollowFragment;
+import com.example.bamboo.fragment.RecommendFragment;
 import com.example.bamboo.myinterface.MattersInterface;
 import com.example.bamboo.opengl.SelectTagRenderer;
 import com.example.bamboo.util.CoordinateTransformation;
@@ -54,25 +53,22 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
 
         toolbar.inflateMenu(R.menu.select_tag_menu);
 
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.select_tag_toolbar_sure:
-                        int count = checkSelect(selectArr);
-                        MattersFollowFragment fragment = new MattersFollowFragment();
-                        Bundle bundle = new Bundle();
-                        bundle.putInt("count", count);
-                        bundle.putIntArray("select_arr", selectArr);
-                        mattersInterface = (MattersInterface) fragment;
-                        mattersInterface.selectedTag(bundle);
-                        finish();
-                        break;
-                    default:
-                        break;
-                }
-                return false;
+        toolbar.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.select_tag_toolbar_sure:
+                    int count = checkSelect(selectArr);
+                    RecommendFragment fragment = new RecommendFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("count", count);
+                    bundle.putIntArray("select_arr", selectArr);
+                    mattersInterface = fragment;
+                    mattersInterface.selectedTag(bundle);
+                    finish();
+                    break;
+                default:
+                    break;
             }
+            return false;
         });
 
         glSurfaceView.setEGLContextClientVersion(2);

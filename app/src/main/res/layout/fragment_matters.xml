@@ -5,28 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/matters_toolbar"
+        style="@style/MyToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/matters"
+        app:titleTextColor="@color/white" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/matters_tabLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="64dp"
-        app:layout_constraintEnd_toStartOf="@+id/matters_addFollow_btn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/matters_addFollow_btn"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/transparent"
-        android:text="@string/add"
-        app:layout_constraintBottom_toTopOf="@+id/matters_searchView"
+        android:layout_marginEnd="64dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/matters_tabLayout"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/matters_toolbar" />
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/matters_searchView"

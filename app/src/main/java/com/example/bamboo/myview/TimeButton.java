@@ -1,11 +1,20 @@
 package com.example.bamboo.myview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.LinearInterpolator;
+
+import com.example.bamboo.myinterface.WaitingAnimationEndInterface;
 
 import androidx.annotation.Nullable;
 
@@ -13,7 +22,7 @@ import androidx.annotation.Nullable;
  * @author ether QQ:503779938
  * @name Bamboo
  * @class name：com.example.bamboo.myview
- * @class describe
+ * @class 倒计时控件
  * @time 2018/11/28 18:28
  * @change
  * @chang time
@@ -22,13 +31,18 @@ import androidx.annotation.Nullable;
 public class TimeButton extends View {
     private Paint textPaint, circlePaint;
     private int width, height;
+    int angle = 0;
+    private int text = 3;
+    private static final String TAG = "TimeButton";
+    private Context context;
 
     public TimeButton(Context context) {
         super(context);
-        init();
+        init(context);
     }
 
-    private void init() {
+    private void init(Context context) {
+        this.context = context;
         textPaint = new Paint();
         circlePaint = new Paint();
         textPaint.setColor(Color.GRAY);
@@ -42,12 +56,12 @@ public class TimeButton extends View {
 
     public TimeButton(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        init(context);
     }
 
     public TimeButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        init(context);
     }
 
 
@@ -68,9 +82,39 @@ public class TimeButton extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawCircle((getRight() - getLeft()) / 2, (getBottom() - getTop()) / 2, width / 2 - 20, circlePaint);
-//        canvas.drawLine(0, height/2 , width, height/2 , circlePaint);
-//        canvas.drawLine(width/2, 0, width/2, height, circlePaint);
-        canvas.drawText("3", (getRight() - getLeft()) / 2, (getBottom() - getTop()) / 2+textPaint.getTextSize()/3, textPaint);
+        canvas.drawArc(0 + 5, 0 + 5, width - 5, height - 5, -90, angle, false, circlePaint);
+        canvas.drawText(text + "", (getRight() - getLeft()) / 2, (getBottom() - getTop()) / 2 + textPaint.getTextSize() / 3, textPaint);
+    }
+
+    public int getAngle() {
+        return angle;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+        invalidate();
+    }
+
+    public void startAnimation() {
+        ObjectAnimator oa = ObjectAnimator.ofInt(this, "angle", 0, 360);
+        oa.setDuration(2000);
+        oa.setInterpolator(new LinearInterpolator());
+        oa.setRepeatCount(2);
+        oa.start();
+        oa.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                super.onAnimationRepeat(animation);
+                text--;
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                if (context instanceof WaitingAnimationEndInterface) {
+                    ((WaitingAnimationEndInterface) context).waitingEnd(true);
+                }
+            }
+        });
     }
 }
