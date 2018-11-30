@@ -1,16 +1,16 @@
 package com.example.bamboo;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.myinterface.WaitingAnimationEndInterface;
 import com.example.bamboo.myview.TimeButton;
-import com.example.bamboo.opengl.objects.SelectTag;
-import com.example.bamboo.util.StatusBarUtils;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * @author yetote QQ:503779938
@@ -28,8 +28,13 @@ public class WaitActivity extends AppCompatActivity implements WaitingAnimationE
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+
         setContentView(R.layout.activity_wait);
-        StatusBarUtils.changedStatusBar(this);
         initView();
         timeButton.startAnimation();
     }
@@ -50,6 +55,7 @@ public class WaitActivity extends AppCompatActivity implements WaitingAnimationE
             } else {
                 startActivity(new Intent(this, MainActivity.class));
             }
+            finish();
         }
     }
 }

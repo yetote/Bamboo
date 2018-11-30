@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
 import com.example.bamboo.adapter.MattersFollowAdapter;
 import com.example.bamboo.model.MattersFollowBean;
@@ -30,12 +31,13 @@ import androidx.recyclerview.widget.RecyclerView;
  * @chang time
  * @class describe
  */
-public class MattersFollowFragment extends Fragment  {
+public class MattersFollowFragment extends Fragment {
     private MattersFollowAdapter adapter;
     private RecyclerView rv;
     private ArrayList<MattersFollowBean> list;
     private ArrayList<String> imgList, imgList1, imgList2, imgList3, imgList5, imgList7;
     private static final String TAG = "MattersFollowFragment";
+    private boolean isScrolling = false;
 
     @Nullable
     @Override
@@ -44,6 +46,21 @@ public class MattersFollowFragment extends Fragment  {
         initView(v);
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv.setAdapter(adapter);
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING || newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    isScrolling = true;
+                    Glide.with(getContext()).pauseRequests();
+                } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    if (isScrolling == true) {
+                        Glide.with(getContext()).resumeRequests();
+                    }
+                    isScrolling = false;
+                }
+            }
+        });
         return v;
     }
 

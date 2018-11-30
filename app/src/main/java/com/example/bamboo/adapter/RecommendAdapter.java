@@ -129,7 +129,7 @@ public class RecommendAdapter extends RecyclerView.Adapter {
             case TYPE_VIDEO:
                 break;
             case TYPE_ARTICLE:
-                v = LayoutInflater.from(context).inflate(R.layout.item_recommend_article, parent, false);
+                v = LayoutInflater.from(context).inflate(R.layout.item_recommend_video_article, parent, false);
                 return new ArticleViewHolder(v);
             case TYPE_AD:
                 break;

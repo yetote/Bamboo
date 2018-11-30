@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 
 import com.example.bamboo.R;
 import com.example.bamboo.SelectTagActivity;
+import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.adapter.RecommendAdapter;
 import com.example.bamboo.model.RecommendBean;
 import com.example.bamboo.myinterface.MattersInterface;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
@@ -20,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * @author yetote QQ:503779938
@@ -32,18 +35,30 @@ import androidx.recyclerview.widget.RecyclerView;
  * @class describe
  */
 public class RecommendFragment extends Fragment implements View.OnClickListener, MattersInterface {
-    ArrayList<RecommendBean> list;
-    RecyclerView rv;
-    RecommendAdapter adapter;
+    ViewPager viewPager;
     FloatingActionButton addBtn;
     private static final String TAG = "RecommendFragment";
+    private ArrayList<Fragment> fragList;
+    private ArrayList<String> title;
+    private MainViewPagerAdapter adapter;
+    private TabLayout tabLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_recommend, null, false);
+
         init(v);
+
+        tabLayout.addTab(tabLayout.newTab().setText("直播"));
+        tabLayout.addTab(tabLayout.newTab().setText("视频"));
+        adapter = new MainViewPagerAdapter(getChildFragmentManager(), fragList, title);
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
+
         onClick();
+
+
         return v;
     }
 
@@ -52,10 +67,17 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
     }
 
     private void init(View v) {
-        list = new ArrayList<>();
-        adapter = new RecommendAdapter(getActivity(), list);
-        rv = v.findViewById(R.id.recommend_rv);
+        viewPager = v.findViewById(R.id.recommend_viewPager);
         addBtn = v.findViewById(R.id.recommend_addBtn);
+        tabLayout = v.findViewById(R.id.recommend_tabLayout);
+
+        fragList = new ArrayList<>();
+        fragList.add(new RecommendLivingFragment());
+        fragList.add(new RecommendVideoFragment());
+
+        title = new ArrayList<>();
+        title.add("直播");
+        title.add("视频");
 
     }
 

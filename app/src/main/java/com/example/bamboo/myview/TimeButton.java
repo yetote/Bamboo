@@ -3,17 +3,15 @@ package com.example.bamboo.myview;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.example.bamboo.R;
 import com.example.bamboo.myinterface.WaitingAnimationEndInterface;
 
 import androidx.annotation.Nullable;
@@ -45,9 +43,9 @@ public class TimeButton extends View {
         this.context = context;
         textPaint = new Paint();
         circlePaint = new Paint();
-        textPaint.setColor(Color.GRAY);
-        circlePaint.setColor(Color.GRAY);
-        circlePaint.setStrokeWidth(10);
+        textPaint.setColor(context.getResources().getColor(R.color.half_white));
+        circlePaint.setColor(context.getResources().getColor(R.color.half_white));
+        circlePaint.setStrokeWidth(6);
         circlePaint.setStyle(Paint.Style.STROKE);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(50);
