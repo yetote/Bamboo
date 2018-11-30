@@ -34,7 +34,9 @@
         <activity
             android:name=".CodeLoginActivity"
             android:theme="@style/Translucent" />
-        <activity android:name=".WaitActivity">
+        <activity
+            android:name=".WaitActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

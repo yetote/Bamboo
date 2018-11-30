@@ -46,4 +46,8 @@
         <item name="android:background">@drawable/toolbar_gradient_background</item>
         <item name="android:fitsSystemWindows">true</item>
     </style>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/waiting</item>
+    </style>
 </resources>

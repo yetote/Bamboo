@@ -52,7 +52,7 @@ public class RecommendLivingFragment extends Fragment {
                     isScrolling = true;
                     Glide.with(getContext()).pauseRequests();
                 } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (isScrolling == true) {
+                    if (isScrolling) {
                         Glide.with(getContext()).resumeRequests();
                     }
                     isScrolling = false;
