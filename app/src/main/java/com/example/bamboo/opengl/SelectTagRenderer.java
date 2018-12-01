@@ -42,14 +42,16 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     private int[] textureIds;
     private int[] selectTextureIds;
     private TagImpl tagImpl;
-    private float[][] modelMatrixArr = new float[15][16];
+    private float[][] modelMatrixArr = new float[10][16];
     private float scale = 1.2f;
+    int count = 10;
+    private boolean isPause = false;
     private float[] radiusArr = new float[]{
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f, 0.2f,
-            0.2f, 0.2f, 0.2f
+            0.23f, 0.23f, 0.23f,
+            0.23f, 0.23f, 0.23f,
+            0.23f, 0.23f, 0.23f,
+            0.23f, 0.23f, 0.23f,
+            0.23f, 0.23f, 0.23f
     };
     private float[] xArr = new float[]{
             //    @formatter:off
@@ -80,16 +82,17 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        textureIds = new int[15];
-        selectTextureIds = new int[15];
-        selectTag = new SelectTag[15];
-        program = new UnSelectTagProgram[15];
+        init(count, context);
         tagImpl = new TagImpl(selectTag);
-        init(15, context);
         tagImpl.onLayout();
     }
 
     private void init(int count, Context context) {
+        textureIds = new int[count];
+        selectTextureIds = new int[count];
+        selectTag = new SelectTag[count];
+        program = new UnSelectTagProgram[count];
+
         int[] drawableArr = new int[]{
                 R.drawable.texture,
                 R.drawable.texture1,
@@ -101,28 +104,21 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
                 R.drawable.texture7,
                 R.drawable.texture8,
                 R.drawable.texture9,
-                R.drawable.texture6,
-                R.drawable.texture5,
-                R.drawable.texture9,
-                R.drawable.texture2,
-                R.drawable.texture
+
+
         };
         int[] selectDrawableArr = new int[]{
-                R.drawable.dianying,
+                R.drawable.keji,
+                R.drawable.music,
+                R.drawable.game,
+                R.drawable.movie,
+                R.drawable.huwai,
+                R.drawable.food,
+                R.drawable.trvelive,
                 R.drawable.dongman,
-                R.drawable.fengjing,
-                R.drawable.gaoxiao,
-                R.drawable.huwai,
-                R.drawable.keji,
-                R.drawable.mingxing,
-                R.drawable.xinwen,
-                R.drawable.yingyue,
-                R.drawable.youxi,
-                R.drawable.gaoxiao,
-                R.drawable.huwai,
-                R.drawable.keji,
-                R.drawable.mingxing,
-                R.drawable.xinwen
+                R.drawable.news,
+                R.drawable.takephoto,
+
         };
         for (int i = 0; i < count; i++) {
             selectTag[i] = new SelectTag(xArr[i], yArr[i], radiusArr[i]);
@@ -135,8 +131,11 @@ public class SelectTagRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         glViewport(0, 0, width, height);
-        for (float[] aModelMatrixArr : modelMatrixArr) {
-            setIdentityM(aModelMatrixArr, 0);
+        if (!isPause) {
+            for (float[] aModelMatrixArr : modelMatrixArr) {
+                setIdentityM(aModelMatrixArr, 0);
+            }
+            isPause = true;
         }
     }
 

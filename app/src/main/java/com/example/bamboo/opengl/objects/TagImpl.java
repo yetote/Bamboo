@@ -1,6 +1,8 @@
 package com.example.bamboo.opengl.objects;
 
 
+import android.util.Log;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.collision.shapes.Shape;
@@ -33,7 +35,7 @@ public class TagImpl {
     private static final String TAG = "JBoxImpl";
     private World world;
 
-    private float friction = 1.0f, density = 0.5f, restitution = 0.7f, ratio = 50;
+    private float friction = 1.0f, density = 0.5f, restitution = 0.3f, ratio = 50;
     private SelectTag[] tag;
     private float[] lx, ly;
     private float radius;
@@ -59,7 +61,6 @@ public class TagImpl {
                 tag[i].setCenter(metersToPixels(lx[i]), metersToPixels(ly[i]));
                 body.applyForce(new Vec2(-lx[i] + pixelsToMeters(dpWidth) / 2, -ly[i] + pixelsToMeters(dpHeight) / 2), body.getWorldCenter());
             }
-
         }
     }
 
@@ -103,7 +104,6 @@ public class TagImpl {
         Body body = world.createBody(bodyDef);
         body.createFixture(fixture);
         tag[i].setTag(body);
-
     }
 
 
