@@ -2,7 +2,6 @@ package com.example.bamboo.myview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -119,7 +118,6 @@ public class NineImageView extends ViewGroup {
             v.layout(leftArr[i], topArr[i], rightArr[i], bottomArr[i]);
             Glide.with(context).load(urlList.get(i)).into((ImageView) v);
         }
-
     }
 
     @Override

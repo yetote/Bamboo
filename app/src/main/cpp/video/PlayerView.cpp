@@ -11,6 +11,7 @@
 
 GLUtil *glUtil;
 EGLUtil *eglUtil;
+BlockQueue<AVFrame *> videoBlockQueue;
 
 void PlayerView::initVertex() {
 //    @formatter:off
@@ -51,7 +52,7 @@ void PlayerView::initLocation(const char *vertexCode, const char *fragCode) {
 }
 
 void
-PlayerView::play(BlockQueue<AVFrame *> &blackQueue, const char *vertexCode, const char *fragCode,
+PlayerView::play(const char *vertexCode, const char *fragCode,
                  ANativeWindow *window, int w, int h) {
     initEGL(window);
     eglMakeCurrent(eglUtil->eglDisplay, eglUtil->eglSurface, eglUtil->eglSurface,
@@ -62,7 +63,7 @@ PlayerView::play(BlockQueue<AVFrame *> &blackQueue, const char *vertexCode, cons
     popResult popResult;
     AVFrame *avFrame;
     while (true) {
-        popResult = blackQueue.pop(avFrame);
+        popResult = videoBlockQueue.pop(avFrame);
         if (popResult == POP_STOP) break;
         if (popResult == POP_UNEXPECTED) continue;
         draw(avFrame);
@@ -124,3 +125,8 @@ void PlayerView::initEGL(ANativeWindow *window) {
     eglUtil->createCtx();
     eglUtil->createSurface(window);
 }
+
+void PlayerView::pushData(AVFrame *avFrame) {
+    videoBlockQueue.push(avFrame);
+}
+

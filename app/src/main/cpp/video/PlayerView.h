@@ -31,9 +31,9 @@ public:
     GLint uTexY, uTexU, uTexV;
 
 
-    void play(BlockQueue<AVFrame *> &blackQueue, const char *vertexCode, const char *fragCode,
-              ANativeWindow *window, int w, int h);
+    void play(const char *vertexCode, const char *fragCode, ANativeWindow *window, int w, int h);
 
+    void pushData(AVFrame *avFrame);
 
 private:
     void initEGL(ANativeWindow *window);
