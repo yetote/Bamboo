@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include "../util/BlockQueue.h"
 #include "../audio/AudioPlayer.h"
+#include "../video/PlayerView.h"
 
 extern "C" {
 #include <libavutil/frame.h>
@@ -26,7 +27,7 @@ enum DECODE_TYPE {
 
 class Decode {
 public:
-    void decode(const char *path, DECODE_TYPE decode_type);
+    void decode(const char *path, DECODE_TYPE decode_type,PlayerView *playerView,AudioPlayer *audioPlayer,const char *outPath);
 
     void destroy();
 
@@ -41,9 +42,10 @@ private:
 
     void findIndex(DECODE_TYPE type);
 
-    void audio();
 
-    void video();
+    void video(PlayerView *pView);
+
+    void audio(AudioPlayer *pPlayer, const char *path);
 };
 
 

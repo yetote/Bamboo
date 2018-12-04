@@ -4,14 +4,14 @@
 
 #include "Decode.h"
 
-
 #define null NULL
 #define LOG_TAG "decode"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MAX_AUDIO_FRAME_SIZE 44100*4
-AudioPlayer mAudioPlayer;
 
-void Decode::decode(const char *path, DECODE_TYPE decode_type) {
+void Decode::decode(const char *path, DECODE_TYPE decode_type, PlayerView *playerView,
+                    AudioPlayer *audioPlayer, const char *outPath) {
+
     av_register_all();
     pFmtCtx = avformat_alloc_context();
     if (avformat_open_input(&pFmtCtx, path, null, null) != 0) {
@@ -58,9 +58,9 @@ void Decode::decode(const char *path, DECODE_TYPE decode_type) {
     pPacket = static_cast<AVPacket *>(av_malloc(sizeof(AVPacket)));
     pFrame = av_frame_alloc();
     if (decode_type == DECODE_VIDEO) {
-        video();
+        video(playerView);
     } else {
-        audio();
+        audio(audioPlayer, outPath);
     }
 }
 
@@ -78,31 +78,23 @@ void Decode::findIndex(DECODE_TYPE type) {
     }
 }
 
-void Decode::audio() {
-    SwrContext *swrContext = swr_alloc();
+void Decode::audio(AudioPlayer *pPlayer, const char *path) {
+//    FILE *file = fopen(path, "wb+");
+
     enum AVSampleFormat inSampleFmt = pCodecCtx->sample_fmt;
-    enum AVSampleFormat outSampleFmt = AV_SAMPLE_FMT_S16;
+
 
     int inSampleRate = pCodecCtx->sample_rate;
-    int outSampleRate = 44100;
+
 
     uint64_t inSampleChannel = pCodecCtx->channel_layout;
-    uint64_t outSampleChannel = AV_CH_LAYOUT_STEREO;
 
-    swr_alloc_set_opts(mAudioPlayer.swrContext,
-                       outSampleChannel,
-                       outSampleFmt,
-                       outSampleRate,
-                       inSampleChannel,
-                       inSampleFmt,
-                       inSampleRate,
-                       0,
-                       null);
-    swr_init(swrContext);
-    int outChannelNum = av_get_channel_layout_nb_channels(outSampleChannel);
-    int ret = -1;
-    int dataSize;
-    uint8_t *outBuffer = static_cast<uint8_t *>(av_malloc(MAX_AUDIO_FRAME_SIZE));
+
+    pPlayer->initSwrCtx(inSampleFmt, inSampleRate, inSampleChannel);
+
+    int ret;
+    int i = 0;
+
     while (av_read_frame(pFmtCtx, pPacket) >= 0) {
         if (pPacket->stream_index == index) {
             ret = avcodec_send_packet(pCodecCtx, pPacket);
@@ -114,34 +106,33 @@ void Decode::audio() {
                 } else if (ret == AVERROR_EOF) {
                     LOGE("%s", "解码完成");
 //                    fclose(outFile);
-                    break;
+                    return;
                 } else if (ret < 0) {
                     LOGE("%s", "解码出错");
                     break;
                 }
-                mAudioPlayer.pushData(pFrame,pCodecCtx->channels,pCodecCtx->frame_size,pCodecCtx->sample_fmt,swrContext);
-                mAudioPlayer.sampleFormat = pCodecCtx->sample_fmt;
-                mAudioPlayer.channels = pCodecCtx->channels;
-                mAudioPlayer.frameSize = pCodecCtx->frame_size;
-
+                pPlayer->pushData(pFrame, pCodecCtx->channels, pCodecCtx->frame_size,
+                                  pCodecCtx->sample_fmt);
+                usleep(3000);
 //                int outBufferSize = av_samples_get_buffer_size(pFrame->linesize,
 //                                                               pCodecCtx->channels,
 //                                                               pCodecCtx->frame_size,
 //                                                               pCodecCtx->sample_fmt,
 //                                                               1);
-//                int rst = swr_convert(swrCtx,
+//                int rst = swr_convert(swrContext,
 //                                      &outBuffer,
 //                                      outBufferSize,
 //                                      const_cast<const uint8_t **>(reinterpret_cast<uint8_t **>(pFrame->data)),
 //                                      pFrame->nb_samples);
                 //todo 将解码后数据填充进queue中
+//                fwrite(outBuffer, 1, outBufferSize, file);
             }
         }
     }
     av_packet_unref(pPacket);
 }
 
-void Decode::video() {
+void Decode::video(PlayerView *pView) {
     int df = 0;
     uint8_t *outputBuffer = static_cast<uint8_t *>(av_malloc(
             av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodecCtx->width, pCodecCtx->height, 1)));
@@ -186,7 +177,7 @@ void Decode::video() {
                 LOGE("解码了%d帧", df);
                 pFrame->width = pCodecCtx->width;
                 pFrame->height = pCodecCtx->height;
-//                blockQueue.push(pFrame);
+                pView->pushData(pFrame);
                 usleep(46000);
             }
         }

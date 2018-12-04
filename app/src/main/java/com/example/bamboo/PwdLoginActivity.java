@@ -104,7 +104,6 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
             public void onTransitionStart(Transition transition) {
                 cardView.setVisibility(View.GONE);
                 Log.e(TAG, "onTransitionStart: " + "asa");
-
             }
 
             /** 动画结束

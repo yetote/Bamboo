@@ -20,18 +20,20 @@ extern "C" {
 class AudioPlayer {
 public:
     AVCodecContext *pCodecCtx;
-    int frameSize;
-    int channels;
-    enum AVSampleFormat sampleFormat;
 
-    SwrContext *swrContext;
+
 
     void playAudio(const char *path);
-    void pushData(AVFrame *frame, int channels, int frameSize, AVSampleFormat sampleFormat,
-                  SwrContext *swrContext1);
+
+    void pushData(AVFrame *frame, int channels, int frameSize, AVSampleFormat sampleFormat);
+
     AudioPlayer();
 
     int getData(uint8_t *&buffer);
+
+    void initSwrCtx(AVSampleFormat inSampleFmt, int inSampleRate, uint64_t inSampleChannel);
+
+    int getData(uint8_t *&buffer, const char *path);
 
 private:
     SLObjectItf objectItf, outMaxObjItf, playerObjItf;

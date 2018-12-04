@@ -15,14 +15,18 @@
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 uint8_t *outBuffer;
 AVFrame *pFrame;
-FILE *file;
-int i = 0;
+SwrContext *swrContext;
 BlockQueue<AVFrame *> blockQueue;
+int frameSize;
+int channels;
+enum AVSampleFormat sampleFormat;
+int outChannelNum;
+#define MAX_AUDIO_FRAME_SIZE 44100*2
 
 void playerCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
-    LOGE("i的大小%d", i++);
     AudioPlayer *audioPlayer = static_cast<AudioPlayer *>(context);
-    int size = audioPlayer->getData(outBuffer);
+    int size = audioPlayer->getData(outBuffer, "");
+    LOGE("bufferSize的大小%d", size);
     if (outBuffer != null && size > 0) {
         SLresult result = (*bf)->Enqueue(bf, outBuffer, size);
     } else {
@@ -114,11 +118,6 @@ void AudioPlayer::prepare() {
         return;
     }
     effectSendItf = null;
-//    result = (*playerObjItf)->GetInterface(playerObjItf, SL_IID_VOLUME, &volumeItf);
-//    if (result != success) {
-//        LOGE("音量接口获 取失败");
-//        return;
-//    }
 }
 
 void AudioPlayer::start() {
@@ -132,14 +131,15 @@ void AudioPlayer::start() {
 
 
 void AudioPlayer::playAudio(const char *path) {
-//    prepare();
-//    start();
-//    file = fopen(path, "wb+");
-    getData(outBuffer);
+    prepare();
+    start();
+//    uint8_t *outBuffer = static_cast<uint8_t *>(av_malloc(MAX_AUDIO_FRAME_SIZE));
+//    getData(outBuffer, path);
 }
 
-int AudioPlayer::getData(uint8_t *&buffer) {
-//    LOGE("QUEUE大小%d", blockQueue.size());
+int AudioPlayer::getData(uint8_t *&buffer, const char *path) {
+//    FILE *file = fopen(path, "wb+");
+
     while (true) {
         popResult = blockQueue.pop(pFrame);
         if (popResult == POP_STOP) break;
@@ -149,14 +149,22 @@ int AudioPlayer::getData(uint8_t *&buffer) {
                                                     frameSize,
                                                     sampleFormat,
                                                     1);
-        swr_convert(swrContext,
-                    &buffer,
-                    bufferSize,
-                    (const uint8_t **) (pFrame->data),
-                    pFrame->nb_samples);
+        int rst = swr_convert(swrContext,
+                              &buffer,
+                              bufferSize,
+                              (const uint8_t **) (pFrame->data),
+                              pFrame->nb_samples);
+//        int rst = swr_convert(swrContext,
+//                              &buffer,
+//                              MAX_AUDIO_FRAME_SIZE,
+//                              (const uint8_t **) (pFrame->data),
+//                              pFrame->nb_samples);
+//        int bufferSize = av_samples_get_buffer_size(NULL, outChannelNum,
+//                                                       pFrame->nb_samples,
+//                                                       AV_SAMPLE_FMT_S16, 1);
+        LOGE("%d", bufferSize);
 //        fwrite(buffer, 1, bufferSize, file);
-        LOGE("bufferSize的大小%d", bufferSize);
-//        return bufferSize;
+        return bufferSize;
     }
     return 0;
 }
@@ -166,16 +174,34 @@ AudioPlayer::AudioPlayer() {
     LOGE("初始化");
 }
 
-void AudioPlayer::pushData(AVFrame *frame, int channels,
-                           int frameSize,
-                           AVSampleFormat sampleFormat,SwrContext *swrContext1) {
+void AudioPlayer::pushData(AVFrame *frame, int channelsParams,
+                           int frameSizeParams,
+                           AVSampleFormat sampleFormatParams) {
     blockQueue.push(frame);
-    this->channels = channels;
-    this->frameSize = frameSize;
-    this->sampleFormat = sampleFormat;
-    this->swrContext=swrContext1;
+    channels = channelsParams;
+    frameSize = frameSizeParams;
+    sampleFormat = sampleFormatParams;
     LOGE("queue大小%ld", blockQueue.getSize());
 }
 
+void
+AudioPlayer::initSwrCtx(AVSampleFormat inSampleFmt, int inSampleRate, uint64_t inSampleChannel) {
+    swrContext = swr_alloc();
+    enum AVSampleFormat outSampleFmt = AV_SAMPLE_FMT_S16;
 
+    int outSampleRate = 44100;
 
+    uint64_t outSampleChannel = AV_CH_LAYOUT_STEREO;
+
+    swr_alloc_set_opts(swrContext,
+                       outSampleChannel,
+                       outSampleFmt,
+                       outSampleRate,
+                       inSampleChannel,
+                       inSampleFmt,
+                       inSampleRate,
+                       0,
+                       null);
+    swr_init(swrContext);
+    outChannelNum = av_get_channel_layout_nb_channels(outSampleChannel);
+}
