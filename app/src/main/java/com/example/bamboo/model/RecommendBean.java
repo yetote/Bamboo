@@ -30,8 +30,9 @@ public class RecommendBean {
      * 视频时长
      */
     private int playNum, discussNum, collectionNum, videoTime;
-
-    public RecommendBean(String url, String tag, String writer, String category, String topic, String title, String content, int playNum, int discussNum, int collectionNum, int videoTime) {
+    int id;
+    public RecommendBean(int id,String url, String tag, String writer, String category, String topic, String title, String content, int playNum, int discussNum, int collectionNum, int videoTime) {
+        this.id=id;
         this.url = url;
         this.tag = tag;
         this.writer = writer;
@@ -43,6 +44,14 @@ public class RecommendBean {
         this.collectionNum = collectionNum;
         this.videoTime = videoTime;
         this.content = content;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUrl() {

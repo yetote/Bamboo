@@ -66,4 +66,9 @@
     <string name="near">附近</string>
     <string name="matters">动态</string>
     <string name="write">发布新内容</string>
+    <string name="sendMsg">发消息</string>
+    <string name="follow">关注</string>
+    <string name="collect">收藏</string>
+    <string name="dynamics">动态</string>
+    <string name="contributes">投稿</string>
 </resources>

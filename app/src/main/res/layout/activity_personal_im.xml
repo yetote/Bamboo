@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".PersonalImActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/personal_im_appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="exitUntilCollapsed|scroll"
+            app:titleEnabled="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7">
+
+                <ImageView
+                    android:id="@+id/personal_im_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/test_head" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/personal_im_headImg"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_alignBottom="@id/personal_im_bg"
+                    android:layout_marginBottom="-50dp"
+                    android:src="@drawable/test_headimg" />
+
+                <Button
+                    android:id="@+id/personal_im_sendMsg_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/personal_im_headImg"
+                    android:layout_toStartOf="@id/personal_im_follow_btn"
+                    android:background="@drawable/personal_im_sendmsg_btn"
+                    android:text="@string/sendMsg"
+                    android:textColor="@color/pink" />
+
+                <Button
+                    android:id="@+id/personal_im_follow_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/personal_im_headImg"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/personal_im_follow_btn"
+                    android:text="@string/follow"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/personal_im_username_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/personal_im_follow_btn"
+                    android:layout_alignParentStart="true"
+                    android:gravity="center|start"
+                    android:text="yetote"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/personal_im_userId_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/personal_im_username_tv"
+                    android:layout_alignBottom="@id/personal_im_username_tv"
+                    android:layout_toEndOf="@id/personal_im_username_tv"
+                    android:drawableStart="@mipmap/lv_one"
+                    android:gravity="center|start"
+                    android:text="uid:123456789" />
+
+                <TextView
+                    android:id="@+id/personal_im_followNum_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/personal_im_username_tv"
+                    android:layout_alignParentStart="true"
+                    android:text="4 关注" />
+
+                <TextView
+                    android:id="@+id/personal_im_fans_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@id/personal_im_followNum_tv"
+                    android:layout_toEndOf="@id/personal_im_followNum_tv"
+                    android:text="162 粉丝" />
+
+
+                <TextView
+                    android:id="@+id/personal_im_synopsis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/personal_im_followNum_tv"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentEnd="true"
+                    android:ellipsize="end"
+                    android:maxLines="3"
+                    android:text="这是一个很无聊的人" />
+            </RelativeLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/personal_im_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="@mipmap/back" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/personal_im_tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/personal_im_viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

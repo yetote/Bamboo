@@ -19,6 +19,7 @@ public class MattersFollowBean {
     private String name;
     private String content;
     private long releaseTime;
+    private int id;
 
     @Override
     public String toString() {
@@ -76,6 +77,14 @@ public class MattersFollowBean {
         return releaseTime;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setReleaseTime(long releaseTime) {
         this.releaseTime = releaseTime;
     }
@@ -88,7 +97,8 @@ public class MattersFollowBean {
      * @param content     内容
      * @param releaseTime 发布时间
      */
-    public MattersFollowBean(ArrayList<String> imageList, String headImg, String identity, String name, String content, long releaseTime) {
+    public MattersFollowBean(int id,ArrayList<String> imageList, String headImg, String identity, String name, String content, long releaseTime) {
+        this.id=id;
         this.imageList = imageList;
         this.headImg = headImg;
         this.identity = identity;

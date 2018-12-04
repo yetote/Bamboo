@@ -14,15 +14,16 @@ public class RecommendLivingBean {
     private String title, tag, img, user;
     private int spectator;
     private String label;
+    int id;
 
-
-    public RecommendLivingBean(String title, String tag, String img, String user, String label, int spectator) {
+    public RecommendLivingBean(int id, String title, String tag, String img, String user, String label, int spectator) {
+        this.id = id;
         this.title = title;
         this.tag = tag;
         this.img = img;
         this.user = user;
         this.spectator = spectator;
-        this.label=label;
+        this.label = label;
     }
 
     public String getTitle() {
@@ -71,5 +72,13 @@ public class RecommendLivingBean {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

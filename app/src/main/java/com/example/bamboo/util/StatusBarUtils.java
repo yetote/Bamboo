@@ -3,6 +3,7 @@ package com.example.bamboo.util;
 
 import android.app.Activity;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.example.bamboo.R;
 
@@ -31,5 +32,9 @@ public class StatusBarUtils {
                 activity.getWindow().getDecorView().removeOnLayoutChangeListener(this);
             }
         });
+    }
+
+    public static void transparentStatusBar(Activity activity) {
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     }
 }

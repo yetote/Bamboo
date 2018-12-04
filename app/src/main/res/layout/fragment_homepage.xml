@@ -17,7 +17,7 @@
         android:id="@+id/homePager_start_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@mipmap/pause"
+        android:background="@mipmap/play"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
