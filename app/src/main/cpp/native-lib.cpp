@@ -26,7 +26,7 @@ Java_com_example_bamboo_myview_PlayerView_play(JNIEnv *env, jobject instance, js
     ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
 
     std::thread decodeThread(&Decode::decode, decode, path, DECODE_AUDIO, &playerView,
-                             &audioPlayer,outPath);
+                             &audioPlayer);
 //    std::thread playThread(&PlayerView::play, playerView, vertexCode,
 //                           fragCode, window, w, h);
     std::thread audioThread(&AudioPlayer::playAudio, &audioPlayer, outPath);
@@ -55,4 +55,15 @@ Java_com_example_bamboo_myview_PlayerView_destroyEGLContext(JNIEnv *env, jobject
 
     // TODO
 
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_decode(JNIEnv *env, jobject instance, jstring path_) {
+    const char *path = env->GetStringUTFChars(path_, 0);
+
+//    std::thread decodeThread(&Decode::decode, decode, path, DECODE_AUDIO, &playerView,
+//                             &audioPlayer);
+//    decodeThread.join();
+    env->ReleaseStringUTFChars(path_, path);
 }

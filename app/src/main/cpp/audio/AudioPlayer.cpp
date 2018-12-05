@@ -27,16 +27,12 @@ void playerCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
     AudioPlayer *audioPlayer = static_cast<AudioPlayer *>(context);
     int size = audioPlayer->getData(outBuffer, "");
     LOGE("bufferSize的大小%d", size);
-    if (outBuffer != null && size > 0) {
-        SLresult result = (*bf)->Enqueue(bf, outBuffer, size);
-    } else {
-        playerCallBack(bf, context);
-    }
+    SLresult result = (*audioPlayer->bufferQueueItf)->Enqueue(bf, outBuffer, size);
 }
 
 void AudioPlayer::prepare() {
     SLresult result;
-    result = slCreateEngine(&objectItf, 0, null, 0, null, null);
+    result = slCreateEngine(&objectItf, 0, 0, 0, 0, 0);
     if (result != success) {
         LOGE("创建引擎失败");
         return;
@@ -118,10 +114,7 @@ void AudioPlayer::prepare() {
         return;
     }
     effectSendItf = null;
-}
-
-void AudioPlayer::start() {
-    SLresult result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PLAYING);
+    result = (*playItf)->SetPlayState(playItf, SL_PLAYSTATE_PLAYING);
     if (result != success) {
         LOGE("设置播放状态失败");
         return;
@@ -129,8 +122,13 @@ void AudioPlayer::start() {
     playerCallBack(bufferQueueItf, this);
 }
 
+void AudioPlayer::start() {
+
+}
+
 
 void AudioPlayer::playAudio(const char *path) {
+    pFrame = av_frame_alloc();
     prepare();
     start();
 //    uint8_t *outBuffer = static_cast<uint8_t *>(av_malloc(MAX_AUDIO_FRAME_SIZE));
@@ -138,35 +136,23 @@ void AudioPlayer::playAudio(const char *path) {
 }
 
 int AudioPlayer::getData(uint8_t *&buffer, const char *path) {
-//    FILE *file = fopen(path, "wb+");
-
     while (true) {
         popResult = blockQueue.pop(pFrame);
-        if (popResult == POP_STOP) break;
+        if (popResult == POP_STOP) {
+            LOGE("POP_STOP");
+            break;
+        }
         if (popResult == POP_UNEXPECTED) continue;
-        int bufferSize = av_samples_get_buffer_size(pFrame->linesize,
-                                                    channels,
-                                                    frameSize,
-                                                    sampleFormat,
-                                                    1);
         int rst = swr_convert(swrContext,
                               &buffer,
-                              bufferSize,
+                              pFrame->nb_samples,
                               (const uint8_t **) (pFrame->data),
                               pFrame->nb_samples);
-//        int rst = swr_convert(swrContext,
-//                              &buffer,
-//                              MAX_AUDIO_FRAME_SIZE,
-//                              (const uint8_t **) (pFrame->data),
-//                              pFrame->nb_samples);
-//        int bufferSize = av_samples_get_buffer_size(NULL, outChannelNum,
-//                                                       pFrame->nb_samples,
-//                                                       AV_SAMPLE_FMT_S16, 1);
-        LOGE("%d", bufferSize);
-//        fwrite(buffer, 1, bufferSize, file);
+        int out_channels = av_get_channel_layout_nb_channels(pFrame->channel_layout);
+        int bufferSize = rst * out_channels * av_get_bytes_per_sample(AV_SAMPLE_FMT_S16);
+        if (bufferSize == 0) continue;
         return bufferSize;
     }
-    return 0;
 }
 
 AudioPlayer::AudioPlayer() {
@@ -181,7 +167,7 @@ void AudioPlayer::pushData(AVFrame *frame, int channelsParams,
     channels = channelsParams;
     frameSize = frameSizeParams;
     sampleFormat = sampleFormatParams;
-    LOGE("queue大小%ld", blockQueue.getSize());
+
 }
 
 void

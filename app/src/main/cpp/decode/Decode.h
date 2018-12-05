@@ -27,7 +27,7 @@ enum DECODE_TYPE {
 
 class Decode {
 public:
-    void decode(const char *path, DECODE_TYPE decode_type,PlayerView *playerView,AudioPlayer *audioPlayer,const char *outPath);
+    void decode(const char *path, DECODE_TYPE decode_type,PlayerView *playerView,AudioPlayer *audioPlayer);
 
     void destroy();
 
@@ -45,7 +45,7 @@ private:
 
     void video(PlayerView *pView);
 
-    void audio(AudioPlayer *pPlayer, const char *path);
+    void audio(AudioPlayer *pPlayer);
 };
 
 

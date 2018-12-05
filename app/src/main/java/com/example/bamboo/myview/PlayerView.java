@@ -33,6 +33,6 @@ public class PlayerView extends HandlerThread {
 
 
     public native void destroyEGLContext();
-
+    public native void decode(String path);
     public native void play(String path, String outPath, String vertexCode, String fragCode, Surface surface, int w, int h);
 }

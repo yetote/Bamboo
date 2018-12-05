@@ -10,7 +10,7 @@
 #define MAX_AUDIO_FRAME_SIZE 44100*4
 
 void Decode::decode(const char *path, DECODE_TYPE decode_type, PlayerView *playerView,
-                    AudioPlayer *audioPlayer, const char *outPath) {
+                    AudioPlayer *audioPlayer) {
 
     av_register_all();
     pFmtCtx = avformat_alloc_context();
@@ -60,7 +60,7 @@ void Decode::decode(const char *path, DECODE_TYPE decode_type, PlayerView *playe
     if (decode_type == DECODE_VIDEO) {
         video(playerView);
     } else {
-        audio(audioPlayer, outPath);
+        audio(audioPlayer);
     }
 }
 
@@ -78,14 +78,12 @@ void Decode::findIndex(DECODE_TYPE type) {
     }
 }
 
-void Decode::audio(AudioPlayer *pPlayer, const char *path) {
+void Decode::audio(AudioPlayer *pPlayer) {
 //    FILE *file = fopen(path, "wb+");
 
     enum AVSampleFormat inSampleFmt = pCodecCtx->sample_fmt;
 
-
     int inSampleRate = pCodecCtx->sample_rate;
-
 
     uint64_t inSampleChannel = pCodecCtx->channel_layout;
 
@@ -113,7 +111,7 @@ void Decode::audio(AudioPlayer *pPlayer, const char *path) {
                 }
                 pPlayer->pushData(pFrame, pCodecCtx->channels, pCodecCtx->frame_size,
                                   pCodecCtx->sample_fmt);
-                usleep(3000);
+                usleep(24000);
 //                int outBufferSize = av_samples_get_buffer_size(pFrame->linesize,
 //                                                               pCodecCtx->channels,
 //                                                               pCodecCtx->frame_size,

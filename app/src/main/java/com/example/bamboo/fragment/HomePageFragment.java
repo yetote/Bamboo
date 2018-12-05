@@ -30,7 +30,7 @@ import androidx.fragment.app.Fragment;
 public class HomePageFragment extends Fragment {
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
-    Button startBtn;
+    Button startBtn, decode;
     PlayerView playerView;
     private static final String TAG = "HomePageFragment";
     private boolean isPlaying = false;
@@ -74,11 +74,12 @@ public class HomePageFragment extends Fragment {
             } else {
                 String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
                 String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
-                new Thread(() -> playerView.play(path, outPath,vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
+                new Thread(() -> playerView.play(path, outPath, vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
                 startBtn.setBackgroundResource(R.mipmap.pause);
             }
             isPlaying = !isPlaying;
         });
+        decode.setOnClickListener(v12 -> playerView.decode(path));
         return v;
     }
 
@@ -86,7 +87,8 @@ public class HomePageFragment extends Fragment {
         surfaceView = v.findViewById(R.id.homePager_surfaceView);
         startBtn = v.findViewById(R.id.homePager_start_btn);
         playerView = new PlayerView();
-        path = getActivity().getExternalCacheDir().getPath() + "/res/test.mp3";
+        decode = v.findViewById(R.id.decode);
+        path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
     }
 }

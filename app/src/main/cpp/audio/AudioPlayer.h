@@ -34,12 +34,12 @@ public:
     void initSwrCtx(AVSampleFormat inSampleFmt, int inSampleRate, uint64_t inSampleChannel);
 
     int getData(uint8_t *&buffer, const char *path);
+    SLAndroidSimpleBufferQueueItf bufferQueueItf;
 
 private:
     SLObjectItf objectItf, outMaxObjItf, playerObjItf;
     SLEngineItf engineItf;
     SLPlayItf playItf;
-    SLAndroidSimpleBufferQueueItf bufferQueueItf;
     SLEnvironmentalReverbItf environmentalReverbItf;
     SLEffectSendItf effectSendItf;
     SLVolumeItf volumeItf;
