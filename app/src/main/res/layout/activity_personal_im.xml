@@ -17,8 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:id="@+id/personal_im_collapsingToolbarLayout"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
+            app:statusBarScrim="@drawable/toolbar_gradient_background"
+            app:contentScrim="@drawable/toolbar_gradient_background"
             app:layout_scrollFlags="exitUntilCollapsed|scroll"
             app:titleEnabled="false">
 
@@ -44,14 +46,16 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_alignBottom="@id/personal_im_bg"
+                    android:layout_marginStart="10dp"
                     android:layout_marginBottom="-50dp"
                     android:src="@drawable/test_headimg" />
 
                 <Button
                     android:id="@+id/personal_im_sendMsg_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
                     android:layout_alignBottom="@id/personal_im_headImg"
+                    android:layout_marginEnd="5dp"
                     android:layout_toStartOf="@id/personal_im_follow_btn"
                     android:background="@drawable/personal_im_sendmsg_btn"
                     android:text="@string/sendMsg"
@@ -59,10 +63,11 @@
 
                 <Button
                     android:id="@+id/personal_im_follow_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
                     android:layout_alignBottom="@id/personal_im_headImg"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/personal_im_follow_btn"
                     android:text="@string/follow"
                     android:textColor="@color/white" />
@@ -73,6 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/personal_im_follow_btn"
                     android:layout_alignParentStart="true"
+                    android:layout_marginStart="10dp"
                     android:gravity="center|start"
                     android:text="yetote"
                     android:textSize="25sp" />
@@ -83,6 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/personal_im_username_tv"
                     android:layout_alignBottom="@id/personal_im_username_tv"
+                    android:layout_marginStart="10dp"
                     android:layout_toEndOf="@id/personal_im_username_tv"
                     android:drawableStart="@mipmap/lv_one"
                     android:gravity="center|start"
@@ -94,6 +101,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/personal_im_username_tv"
                     android:layout_alignParentStart="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
                     android:text="4 关注" />
 
                 <TextView
@@ -101,9 +110,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@id/personal_im_followNum_tv"
+                    android:layout_marginStart="20dp"
                     android:layout_toEndOf="@id/personal_im_followNum_tv"
                     android:text="162 粉丝" />
-
 
                 <TextView
                     android:id="@+id/personal_im_synopsis"
@@ -112,6 +121,8 @@
                     android:layout_below="@id/personal_im_followNum_tv"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:text="这是一个很无聊的人" />
@@ -122,7 +133,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:navigationIcon="@mipmap/back" />
+                app:navigationIcon="@mipmap/back"
+                app:titleTextColor="@color/white" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
         <com.google.android.material.tabs.TabLayout
