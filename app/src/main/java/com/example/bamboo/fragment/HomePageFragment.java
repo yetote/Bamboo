@@ -1,5 +1,6 @@
 package com.example.bamboo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.bamboo.R;
+import com.example.bamboo.RecodeVideoActivity;
 import com.example.bamboo.opengl.utils.TextRecourseReader;
 import com.example.bamboo.myview.PlayerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +41,7 @@ public class HomePageFragment extends Fragment {
     int w;
     int h;
     private String outPath;
+    private FloatingActionButton recodeBtn;
 
     @Nullable
     @Override
@@ -68,7 +72,7 @@ public class HomePageFragment extends Fragment {
             }
         });
 
-        startBtn.setOnClickListener(v1 -> {
+        startBtn.setOnClickListener(vStart -> {
             if (isPlaying) {
                 startBtn.setBackgroundResource(R.mipmap.play);
             } else {
@@ -79,7 +83,12 @@ public class HomePageFragment extends Fragment {
             }
             isPlaying = !isPlaying;
         });
-        decode.setOnClickListener(v12 -> playerView.decode(path));
+        decode.setOnClickListener(vDecode -> playerView.decode(path));
+        recodeBtn.setOnClickListener(vRecode -> {
+            Intent i = new Intent();
+            i.setClass(getActivity(), RecodeVideoActivity.class);
+            startActivity(i);
+        });
         return v;
     }
 
@@ -90,5 +99,6 @@ public class HomePageFragment extends Fragment {
         decode = v.findViewById(R.id.decode);
         path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
+        recodeBtn = v.findViewById(R.id.homePager_recode_video);
     }
 }

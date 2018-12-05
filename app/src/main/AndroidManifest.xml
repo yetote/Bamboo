@@ -18,11 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
         <activity android:name=".SelectTagActivity" />
-        <activity android:name=".StartActivity"></activity>
+        <activity android:name=".StartActivity" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/GradientTheme" />
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".TestActivity" />
         <activity android:name=".RegisterActivity" />
         <activity
             android:name=".PwdLoginActivity"
@@ -39,7 +39,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PersonalImActivity"></activity>
+        <activity android:name=".PersonalImActivity" />
+        <activity android:name=".RecodeVideoActivity"></activity>
     </application>
 
 </manifest>
