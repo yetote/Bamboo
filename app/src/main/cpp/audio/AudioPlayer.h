@@ -29,11 +29,9 @@ public:
 
     AudioPlayer();
 
-    int getData(uint8_t *&buffer);
-
+    void initQueue();
     void initSwrCtx(AVSampleFormat inSampleFmt, int inSampleRate, uint64_t inSampleChannel);
 
-    int getData(uint8_t *&buffer, const char *path);
     SLAndroidSimpleBufferQueueItf bufferQueueItf;
 
 private:
@@ -43,7 +41,6 @@ private:
     SLEnvironmentalReverbItf environmentalReverbItf;
     SLEffectSendItf effectSendItf;
     SLVolumeItf volumeItf;
-    popResult popResult;
 
     void start();
 

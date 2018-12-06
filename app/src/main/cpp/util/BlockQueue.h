@@ -1,66 +1,59 @@
 //
-// Created by ether on 2018/10/11.
+// Created by ether on 2018/12/6.
 //
 
-#ifndef NDKPLAYER_BLOCKQUEUE_H
-#define NDKPLAYER_BLOCKQUEUE_H
+#ifndef BLOCKQUEUE_BLOCKQUEUE_H
+#define BLOCKQUEUE_BLOCKQUEUE_H
 
+#include <pthread.h>
 #include <queue>
-#include <mutex>
 #include <android/log.h>
 
-#define LOGE(FORMAT, ...) __android_log_print(ANDROID_LOG_ERROR,"BlockQueue",FORMAT,##__VA_ARGS__);
-
-enum popResult {
-    POP_OK, POP_STOP, POP_UNEXPECTED
-};
+#define LOG_TAG "blockQueue"
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define null NULL
 
 template<typename T>
-class BlockQueue : public std::queue<T> {
+class BlockQueue {
 public:
+    void init() {
+        pthread_mutex_init(&mutex, null);
+        pthread_cond_init(&cond, null);
+    }
 
     void push(const T &value) {
-        std::lock_guard<decltype(mLock)> lock(mLock);
+        pthread_mutex_lock(&mutex);
+        while (queue.size() == 100) {
+            pthread_cond_wait(&cond, &mutex);
+            LOGE("队列已满阻塞中queue大小为%d", queue.size());
+        }
         queue.push(value);
-        mCond.notify_one();
+        LOGE("queue放入了%d,queue大小为%d", value, queue.size());
+        pthread_cond_signal(&cond);
+        pthread_mutex_unlock(&mutex);
     }
 
-    void push(const T &&value) {
-        std::lock_guard<decltype(mLock)> lock(mLock);
-        queue.push(std::move(value));
-        mCond.notify_one();
+    void pop(T &out) {
+        pthread_mutex_lock(&mutex);
+        if (!queue.empty()) {
+            out = (std::move(queue.front()));
+            queue.pop();
+            pthread_cond_signal(&cond);
+        } else {
+            pthread_cond_wait(&cond, &mutex);
+        }
+        pthread_mutex_unlock(&mutex);
     }
 
-    popResult pop(T &out) {
-        LOGE("QUEUE大小%d", queue.size());
-        std::unique_lock<decltype(mLock)> lock(mLock);
-        if (isStop && queue.empty()) return POP_STOP;
-        if (queue.empty()) mCond.wait(lock);
-        if (isStop && queue.empty()) return POP_STOP;
-        if (queue.empty()) return POP_UNEXPECTED;
-        out = (std::move(queue.front()));
-        queue.pop();
-        return POP_OK;
-    }
-
-    void stop() {
-        std::lock_guard<decltype(mLock)> lock(mLock);
-        isStop = true;
-        mCond.notify_all();
-    }
-
-    u_long getSize() {
+    uint getSize() {
         return queue.size();
     }
 
-    virtual ~BlockQueue() = default;
-
 private:
-    std::mutex mLock;
-    std::condition_variable mCond;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
     std::queue<T> queue;
-    bool isStop = false;
 };
 
 
-#endif //NDKPLAYER_BLOCKQUEUE_H
+#endif //BLOCKQUEUE_BLOCKQUEUE_H

@@ -27,18 +27,17 @@ enum DECODE_TYPE {
 
 class Decode {
 public:
-    void decode(const char *path, DECODE_TYPE decode_type,PlayerView *playerView,AudioPlayer *audioPlayer);
+    void decode(const char *path, DECODE_TYPE decode_type, PlayerView *playerView,
+                AudioPlayer *audioPlayer);
 
     void destroy();
 
 private:
     AVCodecContext *pCodecCtx;
     AVFormatContext *pFmtCtx;
-    AVPacket *pPacket;
     int index;
     AVStream *pStream;
     AVCodec *pCodec;
-    AVFrame *pFrame;
 
     void findIndex(DECODE_TYPE type);
 
@@ -46,6 +45,7 @@ private:
     void video(PlayerView *pView);
 
     void audio(AudioPlayer *pPlayer);
+
 };
 
 

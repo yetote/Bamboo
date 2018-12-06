@@ -60,12 +60,9 @@ PlayerView::play(const char *vertexCode, const char *fragCode,
     initVertex();
     initLocation(vertexCode, fragCode);
     glViewport(0, 0, w, h);
-    popResult popResult;
     AVFrame *avFrame;
     while (true) {
-        popResult = videoBlockQueue.pop(avFrame);
-        if (popResult == POP_STOP) break;
-        if (popResult == POP_UNEXPECTED) continue;
+        videoBlockQueue.pop(avFrame);
         draw(avFrame);
     }
     eglUtil->destroyCtx();
@@ -128,5 +125,9 @@ void PlayerView::initEGL(ANativeWindow *window) {
 
 void PlayerView::pushData(AVFrame *avFrame) {
     videoBlockQueue.push(avFrame);
+}
+
+void PlayerView::initQueue() {
+    videoBlockQueue.init();
 }
 

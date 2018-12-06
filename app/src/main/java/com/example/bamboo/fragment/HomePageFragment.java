@@ -83,7 +83,7 @@ public class HomePageFragment extends Fragment {
             }
             isPlaying = !isPlaying;
         });
-        decode.setOnClickListener(vDecode -> playerView.decode(path));
+        decode.setOnClickListener(vDecode -> playerView.decode(outPath));
         recodeBtn.setOnClickListener(vRecode -> {
             Intent i = new Intent();
             i.setClass(getActivity(), RecodeVideoActivity.class);

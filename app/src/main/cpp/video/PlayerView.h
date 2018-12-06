@@ -34,7 +34,7 @@ public:
     void play(const char *vertexCode, const char *fragCode, ANativeWindow *window, int w, int h);
 
     void pushData(AVFrame *avFrame);
-
+    void initQueue();
 private:
     void initEGL(ANativeWindow *window);
 

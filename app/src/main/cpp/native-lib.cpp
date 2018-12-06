@@ -23,17 +23,20 @@ Java_com_example_bamboo_myview_PlayerView_play(JNIEnv *env, jobject instance, js
     const char *vertexCode = env->GetStringUTFChars(vertexCode_, 0);
     const char *fragCode = env->GetStringUTFChars(fragCode_, 0);
 
-    ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
 
-    std::thread decodeThread(&Decode::decode, decode, path, DECODE_AUDIO, &playerView,
-                             &audioPlayer);
+    ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
+    audioPlayer.initQueue();
+    decode.decode(path, DECODE_AUDIO, &playerView, &audioPlayer);
+
+//    std::thread decodeThread(&Decode::decode, decode, path, DECODE_AUDIO, &playerView,
+//                             &audioPlayer);
 //    std::thread playThread(&PlayerView::play, playerView, vertexCode,
 //                           fragCode, window, w, h);
-    std::thread audioThread(&AudioPlayer::playAudio, &audioPlayer, outPath);
+//    std::thread audioThread(&AudioPlayer::playAudio, &audioPlayer, outPath);
 //    AudioPlayer::playAudio(path);
-    decodeThread.join();
+//    decodeThread.join();
 //    playThread.join();
-    audioThread.join();
+//    audioThread.join();
 
     env->ReleaseStringUTFChars(path_, path);
     env->ReleaseStringUTFChars(outpath_, outPath);
@@ -65,5 +68,6 @@ Java_com_example_bamboo_myview_PlayerView_decode(JNIEnv *env, jobject instance, 
 //    std::thread decodeThread(&Decode::decode, decode, path, DECODE_AUDIO, &playerView,
 //                             &audioPlayer);
 //    decodeThread.join();
+    audioPlayer.playAudio(path);
     env->ReleaseStringUTFChars(path_, path);
 }
