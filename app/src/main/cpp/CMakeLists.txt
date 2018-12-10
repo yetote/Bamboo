@@ -12,12 +12,6 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         native-lib.cpp
-        util/BlockQueue.cpp
-        audio/AudioPlayer.cpp
-        decode/Decode.cpp
-        video/EGLUtil.cpp
-        video/GLUtil.cpp
-        video/PlayerView.cpp
         )
 
     #配置头文件的包含路径

@@ -89,5 +89,6 @@
         android:gravity="start|center"
         android:maxLines="1"
         android:text="2eewffdgh"
+        android:layout_marginBottom="5dp"
         android:textSize="16sp" />
 </RelativeLayout>
