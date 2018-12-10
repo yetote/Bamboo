@@ -4,35 +4,38 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.Surface;
 
+import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
+
 /**
  * @author yetote QQ:503779938
  * @name Bamboo
  * @class name：com.example.bamboo.util
- * @class describe
+ * @class 播放器
  * @time 2018/10/20 14:02
  * @change
  * @chang time
  * @class describe
  */
-public class PlayerView extends HandlerThread {
+public class PlayerView {
     static {
         System.loadLibrary("native-lib");
     }
 
-    public PlayerView() {
-        super("PlayerView");
+    private OnPreparedListener preparedListener;
+
+    public void setPreparedListener(OnPreparedListener preparedListener) {
+        this.preparedListener = preparedListener;
     }
 
-    @Override
-    public synchronized void start() {
-        super.start();
-        new Handler(getLooper()).post(this::configEGLContext);
+    public void prepared(String source) {
+        new Thread(() -> ffmpegPrepared(source)).start();
     }
 
-    public native void configEGLContext();
+    void onPreparedCall() {
+        if (preparedListener != null) {
+            preparedListener.onPrepared();
+        }
+    }
 
-
-    public native void destroyEGLContext();
-    public native void decode(String path);
-    public native void play(String path, String outPath, String vertexCode, String fragCode, Surface surface, int w, int h);
+    private native void ffmpegPrepared(String source);
 }

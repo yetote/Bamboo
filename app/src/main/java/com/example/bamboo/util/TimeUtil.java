@@ -1,4 +1,4 @@
-ï»¿ package com.example.bamboo.util;
+package com.example.bamboo.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -6,7 +6,7 @@ import java.util.Locale;
 /**
  * @author yetote QQ:503779938
  * @name Bamboo
- * @class nameï¼šcom.example.bamboo.util
+ * @class name£ºcom.example.bamboo.util
  * @class describe
  * @time 2018/11/8 14:01
  * @change
@@ -19,10 +19,10 @@ public class TimeUtil {
     private static final int DAY = 24 * HOUR;
 
     /**
-     * å°†ç§’æ•°è½¬åŒ–ä¸ºæ—¶é•¿
+     * ½«ÃëÊý×ª»¯ÎªÊ±³¤
      *
-     * @param seconds ç§’æ•°
-     * @return æ—¶é•¿
+     * @param seconds ÃëÊý
+     * @return Ê±³¤
      */
     public static String caseTime(int seconds) {
         if (seconds < HOUR) {
@@ -32,23 +32,23 @@ public class TimeUtil {
     }
 
     /**
-     * å¤šä¹…ä¹‹å‰çš„æ—¶é—´
+     * ¶à¾ÃÖ®Ç°µÄÊ±¼ä
      *
-     * @param timeStamp æ—¶é—´æˆ³
-     * @return è¿‡åŽ»å¤šé•¿æ—¶é—´
+     * @param timeStamp Ê±¼ä´Á
+     * @return ¹ýÈ¥¶à³¤Ê±¼ä
      */
     public static String agoTime(long timeStamp) {
         long time = System.currentTimeMillis() - timeStamp;
         time /= 1000;
         if (time < 3 * DAY) {
             if (time < HOUR) {
-                return time / MINUTE + "åˆ†é’Ÿä¹‹å‰";
+                return time / MINUTE + "·ÖÖÓÖ®Ç°";
             } else if (time < DAY) {
-                return time / HOUR + "å°æ—¶ä¹‹å‰";
+                return time / HOUR + "Ð¡Ê±Ö®Ç°";
             } else if (time < 2 * DAY) {
-                return "æ˜¨å¤©";
+                return "×òÌì";
             }
-            return time / DAY + "å¤©å‰";
+            return time / DAY + "ÌìÇ°";
         }
         return new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeStamp);
     }

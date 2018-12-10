@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.example.bamboo.R;
 import com.example.bamboo.RecodeVideoActivity;
+import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
 import com.example.bamboo.opengl.utils.TextRecourseReader;
 import com.example.bamboo.myview.PlayerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -42,6 +43,7 @@ public class HomePageFragment extends Fragment {
     int h;
     private String outPath;
     private FloatingActionButton recodeBtn;
+    private String networkSource;
 
     @Nullable
     @Override
@@ -51,7 +53,7 @@ public class HomePageFragment extends Fragment {
 
         initView(v);
 
-        playerView.start();
+        onClick();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -72,24 +74,35 @@ public class HomePageFragment extends Fragment {
             }
         });
 
+        ffmpegCallBack();
+
+        return v;
+    }
+
+    private void ffmpegCallBack() {
+        playerView.setPreparedListener(new OnPreparedListener() {
+            @Override
+            public void onPrepared() {
+                Log.e(TAG, "onPrepared: ffmpeg准备好了");
+            }
+        });
+    }
+
+    private void onClick() {
         startBtn.setOnClickListener(vStart -> {
             if (isPlaying) {
                 startBtn.setBackgroundResource(R.mipmap.play);
             } else {
-                String vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
-                String fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
-                new Thread(() -> playerView.play(path, outPath, vertexCode, fragCode, surfaceHolder.getSurface(), w, h)).start();
                 startBtn.setBackgroundResource(R.mipmap.pause);
+                playerView.prepared(networkSource);
             }
             isPlaying = !isPlaying;
         });
-        decode.setOnClickListener(vDecode -> playerView.decode(outPath));
         recodeBtn.setOnClickListener(vRecode -> {
             Intent i = new Intent();
             i.setClass(getActivity(), RecodeVideoActivity.class);
             startActivity(i);
         });
-        return v;
     }
 
     private void initView(View v) {
@@ -99,6 +112,7 @@ public class HomePageFragment extends Fragment {
         decode = v.findViewById(R.id.decode);
         path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
+        networkSource = "http://wsaudio.bssdlbig.kugou.com/1812101617/soWMwbaRaxJwrs0mJZXyVQ/1544516232/bss/extname/wsaudio/1b9622ef73c66de3e13c789619a677c4.mp3";
         recodeBtn = v.findViewById(R.id.homePager_recode_video);
     }
 }

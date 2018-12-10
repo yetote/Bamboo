@@ -12,91 +12,96 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         native-lib.cpp
+        audio/AudioPlayer.cpp
+        decode/Decode.cpp
+        util/BlockQueue.cpp
+        util/PlayerCallJava.cpp
+        util/PlayerStatuts.cpp
         )
 
-    #配置头文件的包含路径
-    include_directories(${path_project}/app/src/main/jni/includes)
+#配置头文件的包含路径
+include_directories(${path_project}/app/src/main/jni/includes)
 
-    #添加FFmpeg预编译的so库
-    add_library(
-            avutil
-            SHARED
-            IMPORTED
-    )
+#添加FFmpeg预编译的so库
+add_library(
+        avutil
+        SHARED
+        IMPORTED
+)
 
-    #设置两个预编译的库的路径
-    set_target_properties(
-            avutil
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libavutil.so
-    )
+#设置两个预编译的库的路径
+set_target_properties(
+        avutil
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libavutil.so
+)
 
-    add_library(swresample
-            SHARED
-            IMPORTED
-            )
+add_library(swresample
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            swresample
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libswresample.so
-    )
+set_target_properties(
+        swresample
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libswresample.so
+)
 
-    add_library(avcodec
-            SHARED
-            IMPORTED
-            )
+add_library(avcodec
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            avcodec
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libavcodec.so
-    )
+set_target_properties(
+        avcodec
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libavcodec.so
+)
 
-    add_library(avformat
-            SHARED
-            IMPORTED
-            )
+add_library(avformat
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            avformat
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libavformat.so
-    )
+set_target_properties(
+        avformat
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libavformat.so
+)
 
-    add_library(swscale
-            SHARED
-            IMPORTED
-            )
+add_library(swscale
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            swscale
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libswscale.so
-    )
+set_target_properties(
+        swscale
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libswscale.so
+)
 
 
-    add_library(avfilter
-            SHARED
-            IMPORTED
-            )
+add_library(avfilter
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            avfilter
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libavfilter.so
-    )
+set_target_properties(
+        avfilter
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libavfilter.so
+)
 
-    add_library(avdevice
-            SHARED
-            IMPORTED
-            )
+add_library(avdevice
+        SHARED
+        IMPORTED
+        )
 
-    set_target_properties(
-            avdevice
-            PROPERTIES IMPORTED_LOCATION
-            ${libs_path}/${ANDROID_ABI}/libavdevice.so
-    )
+set_target_properties(
+        avdevice
+        PROPERTIES IMPORTED_LOCATION
+        ${libs_path}/${ANDROID_ABI}/libavdevice.so
+)
 find_library( # Sets the name of the path variable.
         log-lib
 
