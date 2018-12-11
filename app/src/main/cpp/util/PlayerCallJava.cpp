@@ -16,10 +16,10 @@ PlayerCallJava::PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj) {
         LOGE("获取jclass失败");
         return;
     }
-    prepared_jMid = jniEnv->GetMethodID(jlz, "onCallPrepared", "()V");
+    prepared_jMid = jniEnv->GetMethodID(jlz, "onPreparedCall", "()V");
     load_jMid = jniEnv->GetMethodID(jlz, "onCallLoad", "(Z)V");
-    timeInfo_jMid = jniEnv->GetMethodID(jlz, "onCallTimeInfo", "(II)V");
-    error_jMid = jniEnv->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
+    timeInfo_jMid = jniEnv->GetMethodID(jlz, "onTimeInfoCall", "(II)V");
+//    error_jMid = jniEnv->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
 }
 
 void PlayerCallJava::onCallPrepared(int type) {

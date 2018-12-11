@@ -4,7 +4,7 @@
 
 
 
-#include <libswresample/swresample.h>
+
 #include "AudioPlayer.h"
 
 
@@ -130,7 +130,6 @@ int AudioPlayer::resampleAudio() {
             }
             clock = now_time;
 
-            LOGE("data_size is %d", data_size);
             av_packet_free(&avPacket);
             av_free(avPacket);
             avPacket = NULL;

@@ -5,7 +5,7 @@
 
 #include "Decode.h"
 #include <unistd.h>
-#include <libavutil/time.h>
+
 
 Decode::Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url) {
     this->callJava = callJava;
@@ -63,11 +63,13 @@ void Decode::ffmpegDecodeThread() {
     for (int i = 0; i < pFmtCtx->nb_streams; ++i) {
         if (pFmtCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
             if (audio == null) {
-                audio = new AudioPlayer(playstatus, pFmtCtx->streams[i]->codecpar->sample_rate, callJava);
+                audio = new AudioPlayer(playstatus, pFmtCtx->streams[i]->codecpar->sample_rate,
+                                        callJava);
                 audio->streamIndex = i;
                 audio->codecParameters = pFmtCtx->streams[i]->codecpar;
                 audio->duration = pFmtCtx->duration / AV_TIME_BASE;
                 audio->time_base = pFmtCtx->streams[i]->time_base;
+                duration = audio->duration;
             }
             break;
         }

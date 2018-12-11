@@ -6,7 +6,7 @@ import java.util.Locale;
 /**
  * @author yetote QQ:503779938
  * @name Bamboo
- * @class name£ºcom.example.bamboo.util
+ * @class nameï¼šcom.example.bamboo.util
  * @class describe
  * @time 2018/11/8 14:01
  * @change
@@ -19,37 +19,50 @@ public class TimeUtil {
     private static final int DAY = 24 * HOUR;
 
     /**
-     * ½«ÃëÊý×ª»¯ÎªÊ±³¤
+     * å°†ç§’æ•°è½¬åŒ–ä¸ºæ—¶é•¿
      *
-     * @param seconds ÃëÊý
-     * @return Ê±³¤
+     * @param seconds ç§’æ•°
+     * @return æ—¶é•¿
      */
     public static String caseTime(int seconds) {
         if (seconds < HOUR) {
-            return seconds / MINUTE + ":" + seconds % MINUTE;
+            return zeroNum(seconds / MINUTE) + ":" + zeroNum(seconds % MINUTE);
         }
-        return seconds / HOUR + ":" + (seconds % HOUR) / MINUTE + ":" + seconds % HOUR % MINUTE;
+        return zeroNum(seconds / HOUR) + ":" + zeroNum((seconds % HOUR) / MINUTE) + ":" + zeroNum(seconds % HOUR % MINUTE);
     }
 
     /**
-     * ¶à¾ÃÖ®Ç°µÄÊ±¼ä
+     * å¤šä¹…ä¹‹å‰çš„æ—¶é—´
      *
-     * @param timeStamp Ê±¼ä´Á
-     * @return ¹ýÈ¥¶à³¤Ê±¼ä
+     * @param timeStamp æ—¶é—´æˆ³
+     * @return è¿‡åŽ»å¤šé•¿æ—¶é—´
      */
     public static String agoTime(long timeStamp) {
         long time = System.currentTimeMillis() - timeStamp;
         time /= 1000;
         if (time < 3 * DAY) {
             if (time < HOUR) {
-                return time / MINUTE + "·ÖÖÓÖ®Ç°";
+                return time / MINUTE + "åˆ†é’Ÿä¹‹å‰";
             } else if (time < DAY) {
-                return time / HOUR + "Ð¡Ê±Ö®Ç°";
+                return time / HOUR + "å°æ—¶ä¹‹å‰";
             } else if (time < 2 * DAY) {
-                return "×òÌì";
+                return "æ˜¨å¤©";
             }
-            return time / DAY + "ÌìÇ°";
+            return time / DAY + "å¤©å‰";
         }
         return new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(timeStamp);
+    }
+
+    /**
+     * å°†ä¸€ä½æ•°å‰é¢åŠ 0è½¬åŒ–ä¸ºä¸¤ä½æ•°
+     *
+     * @param num è¾“å…¥çš„æ•°
+     * @return è¾“å‡ºçš„åŠ 0çš„å­—ç¬¦ä¸²
+     */
+    private static String zeroNum(int num) {
+        if (num < 10) {
+            return "0" + num;
+        }
+        return num + "";
     }
 }

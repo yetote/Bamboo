@@ -13,7 +13,7 @@
 
 extern "C" {
 #include <libavformat/avformat.h>
-#include <libavformat/avformat.h>
+#include <libavutil/time.h>
 };
 #define null NULL
 

@@ -16,6 +16,7 @@
 #define false SL_BOOLEAN_FALSE
 extern "C" {
 #include <libavcodec/avcodec.h>
+#include <libswresample/swresample.h>
 };
 
 #define null NULL

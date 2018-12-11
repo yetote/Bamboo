@@ -9,6 +9,7 @@ PlayerCallJava *playerCallJava = null;
 PlayerStatus *playerStatus;
 Decode *decode = null;
 JavaVM *javaVM;
+bool nExit = true;
 
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *version) {
     jint result = -1;
@@ -35,4 +36,63 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegPrepared(JNIEnv *env, jobject in
     }
     decode->prepared();
 //    env->ReleaseStringUTFChars(source_, source);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegStart(JNIEnv *env, jobject instance) {
+
+    if (decode != null) {
+        decode->start();
+    }
+
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instance) {
+    if (!nExit) {
+        return;
+    }
+    if (decode != null) {
+        decode->release();
+        delete decode;
+        decode = null;
+    }
+    if (playerCallJava != null) {
+        delete (playerCallJava);
+        playerCallJava = null;
+    }
+    if (playerStatus != null) {
+        delete (playerStatus);
+        playerStatus = null;
+    }
+    nExit = true;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegSeek(JNIEnv *env, jobject instance, jint secs) {
+
+    if (decode != null) {
+        decode->seek(secs);
+    }
+}
+
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegPause(JNIEnv *env, jobject instance) {
+
+    if (decode != null) {
+        decode->pause();
+    }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegResume(JNIEnv *env, jobject instance) {
+    if (decode != null) {
+        decode->resume();
+    }
 }

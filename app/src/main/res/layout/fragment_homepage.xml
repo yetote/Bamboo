@@ -20,30 +20,55 @@
         android:id="@+id/homePager_start_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@mipmap/play"
+        android:background="@mipmap/pause"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/decode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="decode"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homePager_start_btn" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/homePager_recode_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:src="@mipmap/video"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/homePager_totalTime_tv"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="40dp" />
+
+    <TextView
+        android:id="@+id/homePager_currentTime_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/homePager_seekBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/homePager_seekBar" />
+
+    <SeekBar
+        android:id="@+id/homePager_seekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/homePager_surfaceView"
+        app:layout_constraintEnd_toStartOf="@+id/homePager_totalTime_tv"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toEndOf="@+id/homePager_currentTime_tv" />
+
+    <TextView
+        android:id="@+id/homePager_totalTime_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="00:00"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/homePager_seekBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/homePager_seekBar" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
