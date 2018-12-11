@@ -1,6 +1,7 @@
 package com.example.bamboo.myview;
 
 import com.example.bamboo.model.TimeInfoBean;
+import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
 import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPauseListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
@@ -29,6 +30,13 @@ public class PlayerView {
     private OnPauseListener pauseListener;
     private OnTimeInfoListener timeInfoListener;
     private OnLoadListener loadListener;
+    private OnCompleteListener completeListener;
+    public static boolean isNext = false;
+    String source;
+
+    public void setCompleteListener(OnCompleteListener completeListener) {
+        this.completeListener = completeListener;
+    }
 
     public void setTimeInfoListener(OnTimeInfoListener timeInfoListener) {
         this.timeInfoListener = timeInfoListener;
@@ -88,6 +96,12 @@ public class PlayerView {
         ffmpegSeek(secs);
     }
 
+    public void playNext(String url) {
+        source = url;
+        isNext=true;
+        stop();
+    }
+
     void onPreparedCall() {
         if (preparedListener != null) {
             preparedListener.onPrepared();
@@ -116,6 +130,21 @@ public class PlayerView {
             loadListener.onLoad(isLoad);
         }
     }
+
+    void onCallComplete() {
+        stop();
+        if (completeListener != null) {
+            completeListener.onComplete();
+        }
+    }
+
+    void onCallPlayNext() {
+        if (isNext) {
+            isNext = false;
+            prepared(source);
+        }
+    }
+
 
     private native void ffmpegPrepared(String source);
 

@@ -145,7 +145,9 @@ void Decode::start() {
             }
         }
     }
-
+    if (callJava != null) {
+        callJava->onCallComplete(CHILD_THREAD);
+    }
     isExit = true;
     LOGE("解码完成");
 
@@ -165,9 +167,6 @@ void Decode::resume() {
 }
 
 void Decode::release() {
-    if (playstatus->isExit) {
-        return;
-    }
     playstatus->isExit = true;
     pthread_mutex_lock(&initMutex);
     int sleepCount = 0;

@@ -10,6 +10,7 @@ PlayerStatus *playerStatus;
 Decode *decode = null;
 JavaVM *javaVM;
 bool nExit = true;
+pthread_t startThread;
 
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *version) {
     jint result = -1;
@@ -38,12 +39,19 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegPrepared(JNIEnv *env, jobject in
 //    env->ReleaseStringUTFChars(source_, source);
 }
 
+void *start(void *data) {
+    Decode *decode1 = static_cast<Decode *>(data);
+    decode1->start();
+    pthread_exit(&startThread);
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_bamboo_myview_PlayerView_ffmpegStart(JNIEnv *env, jobject instance) {
 
     if (decode != null) {
-        decode->start();
+        pthread_create(&startThread, null, start, decode);
+//        decode->start();
     }
 
 }
@@ -51,9 +59,14 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegStart(JNIEnv *env, jobject insta
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instance) {
+
     if (!nExit) {
         return;
     }
+
+    jclass  jlz=env->GetObjectClass(instance);
+    jmethodID next_jMid=env->GetMethodID(jlz,"onCallPlayNext","()V");
+
     if (decode != null) {
         decode->release();
         delete decode;
@@ -68,6 +81,7 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instan
         playerStatus = null;
     }
     nExit = true;
+    env->CallVoidMethod(instance,next_jMid);
 }
 
 extern "C"

@@ -19,6 +19,7 @@ PlayerCallJava::PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj) {
     prepared_jMid = jniEnv->GetMethodID(jlz, "onPreparedCall", "()V");
     load_jMid = jniEnv->GetMethodID(jlz, "onCallLoad", "(Z)V");
     timeInfo_jMid = jniEnv->GetMethodID(jlz, "onTimeInfoCall", "(II)V");
+    complete_jMid = jniEnv->GetMethodID(jlz, "onCallComplete", "()V");
 //    error_jMid = jniEnv->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
 }
 
@@ -82,5 +83,19 @@ void PlayerCallJava::onCallError(int type, int code, char *msg) {
         javaVM->DetachCurrentThread();
     }
     jniEnv->DeleteLocalRef(jmsg);
+}
+
+void PlayerCallJava::onCallComplete(int type) {
+    if (type == MAIN_THREAD) {
+        jniEnv->CallVoidMethod(jobj, complete_jMid);
+    } else if (type == CHILD_THREAD) {
+        JNIEnv *jniEnv1;
+        if (javaVM->AttachCurrentThread(&jniEnv1, 0) != JNI_OK) {
+            LOGE("子线程回调java方法失败");
+            return;
+        }
+        jniEnv1->CallVoidMethod(jobj, complete_jMid);
+        javaVM->DetachCurrentThread();
+    }
 }
 

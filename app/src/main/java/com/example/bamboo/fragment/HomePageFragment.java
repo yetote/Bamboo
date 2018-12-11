@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bamboo.R;
 import com.example.bamboo.RecodeVideoActivity;
 import com.example.bamboo.model.TimeInfoBean;
+import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
 import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPauseListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
@@ -29,6 +32,7 @@ import com.example.bamboo.util.TimeUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,6 +65,9 @@ public class HomePageFragment extends Fragment {
     private boolean isSetTime = false;
     private TextView currentTime, totalTime;
     private SeekBar seekBar;
+    private int playPosition;
+    private ArrayList<String> musicList;
+    private boolean isCut = false;
 
     @Nullable
     @Override
@@ -91,7 +98,47 @@ public class HomePageFragment extends Fragment {
             }
         });
 
-        playerView.prepared(networkSource);
+        surfaceView.setOnTouchListener(new View.OnTouchListener() {
+            int startX, startY, endX, endY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startX = (int) event.getX();
+                        startY = (int) event.getY();
+                        Log.e(TAG, "onTouch: down" + startY);
+                        isCut = true;
+                    case MotionEvent.ACTION_MOVE:
+                        endY = (int) event.getY();
+                        if (isCut && (endY - startY) > 500) {
+                            Log.e(TAG, endY + "move" + startY);
+                            if (playPosition > 0) {
+                                playerView.playNext(musicList.get(playPosition - 1));
+                                playPosition -= 1;
+                            } else {
+                                Toast.makeText(getActivity(), "这已经是第一首音乐了", Toast.LENGTH_SHORT).show();
+                            }
+                            isCut = false;
+                            break;
+                        } else if (isCut && (endY - startY) < -500) {
+                            Log.e(TAG, endY + "move" + startY);
+                            if (playPosition < musicList.size() - 1) {
+                                playerView.playNext(musicList.get(playPosition + 1));
+                                playPosition += 1;
+                            } else {
+                                Toast.makeText(getActivity(), "这已经是最后一首音乐了", Toast.LENGTH_SHORT).show();
+                            }
+                            isCut = false;
+                            break;
+                        }
+                }
+                return true;
+            }
+        });
+
+        playerView.prepared(musicList.get(0));
+        playPosition = 0;
 
         onCall();
 
@@ -136,6 +183,20 @@ public class HomePageFragment extends Fragment {
                 msg.what = MSG_AV_TIME_INFO_WHAT;
                 msg.obj = timeInfoBean;
                 handler.sendMessage(msg);
+            }
+        });
+        playerView.setCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete() {
+                Log.e(TAG, "onComplete: 播放完成回调" + playPosition);
+//                if (playPosition < musicList.size() - 1) {
+//                    Toast.makeText(getActivity(), "准备播放下一首", Toast.LENGTH_SHORT).show();
+//                    playerView.playNext(musicList.get(playPosition++));
+//                } else {
+//                    Toast.makeText(getActivity(), "已经是最后一首音乐了，准备从头开始", Toast.LENGTH_SHORT).show();
+//                    playPosition = 0;
+//                    playerView.playNext(musicList.get(playPosition));
+//                }
             }
         });
     }
@@ -185,11 +246,22 @@ public class HomePageFragment extends Fragment {
         playerView = new PlayerView();
         path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
-        networkSource = "http://wsaudio.bssdlbig.kugou.com/1812101617/soWMwbaRaxJwrs0mJZXyVQ/1544516232/bss/extname/wsaudio/1b9622ef73c66de3e13c789619a677c4.mp3";
+        networkSource = "http://dl.stream.qqmusic.qq.com/C400003Chs7Y0jd49n.m4a?guid=1122016361&vkey=CB2B81BC8AFAA8E062DBA6147CD8CA439F1823527B8B7F3B070329495568FDABB6D7E2A0A2451220181E9366148ADBD3560C312E52EFFC29&uin=0&fromtag=66";
         recodeBtn = v.findViewById(R.id.homePager_recode_video);
         currentTime = v.findViewById(R.id.homePager_currentTime_tv);
         totalTime = v.findViewById(R.id.homePager_totalTime_tv);
         seekBar = v.findViewById(R.id.homePager_seekBar);
+        musicList = new ArrayList<>();
+        musicList.add("http://mp3.9ku.com/m4a/534481.m4a");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?guid=1122016361&vkey=7EDECCE7ED528AFABCA9F530C2FA0E8CBB0ADABF90DF607A70C302F2C043A34B6F9F894F4E47BFEA065189ADE50D87E95281B9A5D06BFBAA&uin=0&fromtag=66");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400003w4Tn23jENMJ.m4a?guid=1122016361&vkey=4E8440C7383FA8BB97CA238E829E74352645A7BA5E377C7E80B60B3E1E927EE7225EDD838E82DC5145FE2B2127269707AB78DFAE8D737F3E&uin=0&fromtag=66");
+        musicList.add("http://124.193.230.147/amobile.music.tc.qq.com/C400004XePmv4CsaEq.m4a?guid=1122016361&vkey=14D52DBA0025A5A38C4D31AE2B900DD683C74CA7EA3D5FD367C7C20917E920865EB81D371D95D76FAE7C040CD96D960D8852FE8B40448F04&uin=0&fromtag=66");
+        musicList.add("http://124.193.230.24/amobile.music.tc.qq.com/C400004dbfuf1jEjpI.m4a?guid=1122016361&vkey=F369C71AF877138C06D583C09D2582434049B768957492B78F75E2BD2257C7EC9C926606D002E32DB28C8823E1F37CDC9DA50F479A0BB1F1&uin=0&fromtag=66");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400002f6kEI40uYmk.m4a?guid=1122016361&vkey=A41BF207292365BFA43D57172EC94D160AB334877DBCF41659F77BFE07D616C078C78C06040002D6B1138FAF43B5870F202FA34206372065&uin=0&fromtag=66");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400003MsMD70D1xC9.m4a?guid=1122016361&vkey=015F17094EC0C89464D9565596295C2154AAE6F6022069CC844A9982F807365CF838E804A01B6FEA35AD3AEB794D82FAAD2F813281DA86DE&uin=0&fromtag=66");
+        musicList.add("http://124.193.230.149/amobile.music.tc.qq.com/C4000044xahl3svaeK.m4a?guid=1122016361&vkey=B1EE299336328FDE4D8C31C77050795DB5C155246133B525B942EA8843BC17641EBCB3C731E7C528CD83839028BBABCCD4704C9512DF858D&uin=0&fromtag=66");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400000jO3Qe1EEvuq.m4a?guid=1122016361&vkey=BFE6B61A74B0075092BE6F365F21E3881C36F9FE6BA4DF9D259C0893F95A1A03123F6F54D3B90DB0AB95CC674AE3C4B43DAB1A560E297E37&uin=0&fromtag=66");
+        musicList.add("http://124.193.230.144/amobile.music.tc.qq.com/C400000jxuAK3aY3eU.m4a?guid=1122016361&vkey=F5ACA69426E3F307B20C5CC30315A96CA05543C71A56D4153E381EA695B6CD1D4CC7700B734DF232A34B2F32C5AF11E347322FB378B6505B&uin=0&fromtag=66");
     }
 
     Handler handler = new Handler() {
