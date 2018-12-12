@@ -12,11 +12,14 @@ add_library( # Sets the name of the library.
 
         # Provides a relative path to your source file(s).
         native-lib.cpp
-        audio/AudioPlayer.cpp
-        decode/Decode.cpp
         util/BlockQueue.cpp
         util/PlayerCallJava.cpp
         util/PlayerStatuts.cpp
+        util/EGLUtil.cpp
+        util/GLUtil.cpp
+        decode/Decode.cpp
+        audio/AudioPlayer.cpp
+        video/VideoPlayer.cpp
         )
 
 #配置头文件的包含路径

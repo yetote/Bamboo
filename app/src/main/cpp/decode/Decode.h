@@ -9,6 +9,7 @@
 #include "../util/PlayerStatuts.h"
 #include "../util/PlayerCallJava.h"
 #include "../audio/AudioPlayer.h"
+#include "../video/VideoPlayer.h"
 #include <pthread.h>
 
 extern "C" {
@@ -22,7 +23,8 @@ public:
     PlayerStatus *playstatus = null;
     pthread_t decodeThread;
 
-    Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url);
+    Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url,
+           const char *vertexCode, const char *fragCode, ANativeWindow *window, int w, int h);
 
     void prepared();
 
@@ -38,6 +40,7 @@ public:
 
     void ffmpegDecodeThread();
 
+    void setVolume(int percent);
 
     ~Decode();
 
@@ -53,7 +56,16 @@ private:
 
     AVFormatContext *pFmtCtx = null;
     AVStream *pStream = null;
+    bool isReadFrameFinish = false;
     AudioPlayer *audio = null;
+    VideoPlayer *video = null;
+    ANativeWindow *window;
+    const char *vertexCode;
+    const char *fragCode;
+    int w;
+    int h;
+
+    int getCodecId(AVCodecParameters *parameters, AVCodecContext **codecContext);
 };
 
 

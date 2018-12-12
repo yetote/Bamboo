@@ -1,5 +1,7 @@
 package com.example.bamboo.myview;
 
+import android.view.Surface;
+
 import com.example.bamboo.model.TimeInfoBean;
 import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
 import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
@@ -33,6 +35,17 @@ public class PlayerView {
     private OnCompleteListener completeListener;
     public static boolean isNext = false;
     String source;
+    String vertexCode, fragCode;
+    Surface surface;
+    int w, h;
+
+    public PlayerView(String vertexCode, String fragCode, Surface surface, int w, int h) {
+        this.vertexCode = vertexCode;
+        this.fragCode = fragCode;
+        this.surface = surface;
+        this.w = w;
+        this.h = h;
+    }
 
     public void setCompleteListener(OnCompleteListener completeListener) {
         this.completeListener = completeListener;
@@ -66,7 +79,7 @@ public class PlayerView {
     }
 
     public void prepared(String source) {
-        new Thread(() -> ffmpegPrepared(source)).start();
+        new Thread(() -> ffmpegPrepared(source, vertexCode, fragCode, surface, w, h)).start();
     }
 
 
@@ -98,9 +111,16 @@ public class PlayerView {
 
     public void playNext(String url) {
         source = url;
-        isNext=true;
+        isNext = true;
         stop();
     }
+
+    public void setVolume(int percent) {
+        if (percent >= 0 && percent <= 100) {
+            ffmpegSetVolume(percent);
+        }
+    }
+
 
     void onPreparedCall() {
         if (preparedListener != null) {
@@ -146,7 +166,7 @@ public class PlayerView {
     }
 
 
-    private native void ffmpegPrepared(String source);
+    private native void ffmpegPrepared(String source, String vertexCode, String fragCode, Surface surface, int w, int h);
 
     private native void ffmpegStart();
 
@@ -157,5 +177,7 @@ public class PlayerView {
     private native void ffmpegResume();
 
     private native void ffmpegSeek(int secs);
+
+    private native void ffmpegSetVolume(int percent);
 
 }

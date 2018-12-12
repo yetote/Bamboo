@@ -3,7 +3,8 @@
 #include <thread>
 #include "util/PlayerCallJava.h"
 #include "decode/Decode.h"
-
+#include <android/native_window.h>
+#include <android/native_window_jni.h>
 #define  null NULL
 PlayerCallJava *playerCallJava = null;
 PlayerStatus *playerStatus;
@@ -22,22 +23,6 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *version) {
     return JNI_VERSION_1_6;
 }
 
-extern "C"
-JNIEXPORT void JNICALL
-Java_com_example_bamboo_myview_PlayerView_ffmpegPrepared(JNIEnv *env, jobject instance,
-                                                         jstring source_) {
-    const char *source = env->GetStringUTFChars(source_, 0);
-
-    if (decode == null) {
-        if (playerCallJava == null) {
-            playerCallJava = new PlayerCallJava(javaVM, env, instance);
-        }
-        playerStatus = new PlayerStatus();
-        decode = new Decode(playerStatus, playerCallJava, source);
-    }
-    decode->prepared();
-//    env->ReleaseStringUTFChars(source_, source);
-}
 
 void *start(void *data) {
     Decode *decode1 = static_cast<Decode *>(data);
@@ -64,8 +49,8 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instan
         return;
     }
 
-    jclass  jlz=env->GetObjectClass(instance);
-    jmethodID next_jMid=env->GetMethodID(jlz,"onCallPlayNext","()V");
+    jclass jlz = env->GetObjectClass(instance);
+    jmethodID next_jMid = env->GetMethodID(jlz, "onCallPlayNext", "()V");
 
     if (decode != null) {
         decode->release();
@@ -81,7 +66,7 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instan
         playerStatus = null;
     }
     nExit = true;
-    env->CallVoidMethod(instance,next_jMid);
+    env->CallVoidMethod(instance, next_jMid);
 }
 
 extern "C"
@@ -109,4 +94,50 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegResume(JNIEnv *env, jobject inst
     if (decode != null) {
         decode->resume();
     }
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegSetVolume(JNIEnv *env, jobject instance,
+                                                          jint percent) {
+
+    if (decode != null) {
+        decode->setVolume(percent);
+    }
+
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegVideoStart(JNIEnv *env, jobject instance) {
+
+    // TODO
+
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_bamboo_myview_PlayerView_ffmpegPrepared(JNIEnv *env, jobject instance,
+                                                         jstring source_, jstring vertexCode_,
+                                                         jstring fragCode_, jobject surface, jint w,
+                                                         jint h) {
+    const char *source = env->GetStringUTFChars(source_, 0);
+    const char *vertexCode = env->GetStringUTFChars(vertexCode_, 0);
+    const char *fragCode = env->GetStringUTFChars(fragCode_, 0);
+
+
+    if (decode == null) {
+        if (playerCallJava == null) {
+            playerCallJava = new PlayerCallJava(javaVM, env, instance);
+        }
+        playerStatus = new PlayerStatus();
+        ANativeWindow *window = ANativeWindow_fromSurface(env, surface);
+        decode = new Decode(playerStatus, playerCallJava, source, vertexCode, fragCode, window, w,
+                            h);
+    }
+    decode->prepared();
+
+//    env->ReleaseStringUTFChars(source_, source);
+//    env->ReleaseStringUTFChars(vertexCode_, vertexCode);
+//    env->ReleaseStringUTFChars(fragCode_, fragCode);
 }

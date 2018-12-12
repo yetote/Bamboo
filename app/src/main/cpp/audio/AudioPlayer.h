@@ -17,6 +17,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libswresample/swresample.h>
+#include <libavutil/time.h>
 };
 
 #define null NULL
@@ -59,6 +60,8 @@ public:
 
     void resume();
 
+    void setVolume(int percent);
+
     SLuint32 getCurrentSamplRate(int sampleRate);
 
 
@@ -67,10 +70,12 @@ private:
     SLEngineItf engineItf = null;
     SLPlayItf playItf = null;
     SLOutputMixItf mixItf;
+    SLVolumeItf volumeItf;
     SLEnvironmentalReverbItf environmentalReverbItf = null;
     SLEnvironmentalReverbSettings reverbSettings;
 
-    void stop();};
+    void stop();
+};
 
 
 #endif //BAMBOO_AUDIOPLAYER_H

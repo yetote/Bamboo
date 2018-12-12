@@ -7,10 +7,16 @@
 #include <unistd.h>
 
 
-Decode::Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url) {
+Decode::Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url,
+               const char *vertexCode, const char *fragCode, ANativeWindow *window, int w, int h) {
     this->callJava = callJava;
     this->url = url;
     this->playstatus = playStatus;
+    this->window = window;
+    this->vertexCode = vertexCode;
+    this->fragCode = fragCode;
+    this->w = w;
+    this->h = h;
     pthread_mutex_init(&initMutex, null);
     pthread_mutex_init(&seekMutex, null);
 }
@@ -65,13 +71,20 @@ void Decode::ffmpegDecodeThread() {
             if (audio == null) {
                 audio = new AudioPlayer(playstatus, pFmtCtx->streams[i]->codecpar->sample_rate,
                                         callJava);
-                audio->streamIndex = i;
-                audio->codecParameters = pFmtCtx->streams[i]->codecpar;
-                audio->duration = pFmtCtx->duration / AV_TIME_BASE;
-                audio->time_base = pFmtCtx->streams[i]->time_base;
-                duration = audio->duration;
             }
-            break;
+            audio->streamIndex = i;
+            audio->codecParameters = pFmtCtx->streams[i]->codecpar;
+            audio->duration = pFmtCtx->duration / AV_TIME_BASE;
+            audio->time_base = pFmtCtx->streams[i]->time_base;
+            duration = audio->duration;
+
+        } else if (pFmtCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+            if (video == null) {
+                video = new VideoPlayer(callJava, playstatus, vertexCode, fragCode, window, w, h);
+            }
+            video->videoIndex = i;
+            video->parameters = pFmtCtx->streams[i]->codecpar;
+            video->time_base = pFmtCtx->streams[i]->time_base;
         }
     }
     if (audio->streamIndex == -1) {
@@ -80,44 +93,46 @@ void Decode::ffmpegDecodeThread() {
         pthread_mutex_unlock(&initMutex);
         return;
     }
-    AVCodec *pCodec = avcodec_find_decoder(audio->codecParameters->codec_id);
-    if (pCodec == null) {
-        LOGE("未找到对应的解码器");
-        isExit = true;
-        pthread_mutex_unlock(&initMutex);
-        return;
+
+    if (audio != null) {
+        int ret = getCodecId(audio->codecParameters, &audio->pCodecCtx);
+        if (ret == -1) {
+            LOGE("寻找音频解码器失败");
+            return;
+        }
     }
-    audio->pCodecCtx = avcodec_alloc_context3(pCodec);
-    if (avcodec_parameters_to_context(audio->pCodecCtx, audio->codecParameters) < 0) {
-        LOGE("赋值解码器上下文失败");
-        isExit = true;
-        pthread_mutex_unlock(&initMutex);
-        return;
+    if (video != null) {
+        int ret = getCodecId(video->parameters, &video->pCodecCtx);
+        if (ret == -1) {
+            LOGE("寻找视频解码器失败");
+            return;
+        }
     }
-    if (avcodec_open2(audio->pCodecCtx, pCodec, null) != 0) {
-        LOGE("无法打开解码器");
-        isExit = true;
-        pthread_mutex_unlock(&initMutex);
-        return;
-    }
+
     callJava->onCallPrepared(CHILD_THREAD);
     pthread_mutex_unlock(&initMutex);
 }
 
 void Decode::start() {
-    if (audio == NULL) {
+    if (audio == null) {
         LOGE("audio is null");
         return;
     }
+    if (video == null) {
+        LOGE("video is null");
+        return;
+    }
     audio->play();
-
+    video->play();
     while (playstatus != NULL && !playstatus->isExit) {
 
         if (playstatus->isSeek) {
+            av_usleep(1000 * 100);
             continue;
         }
 
         if (audio->blockQueue->getQueueSize() > 40) {
+            av_usleep(1000 * 100);
             continue;
         }
 
@@ -126,17 +141,22 @@ void Decode::start() {
         int ret = av_read_frame(pFmtCtx, avPacket);
         pthread_mutex_unlock(&seekMutex);
         if (ret == 0) {
+            isReadFrameFinish = false;
             if (avPacket->stream_index == audio->streamIndex) {
                 audio->blockQueue->putAvpacket(avPacket);
+            } else if (avPacket->stream_index == video->videoIndex) {
+                video->blockQueue->putAvpacket(avPacket);
             } else {
                 av_packet_free(&avPacket);
                 av_free(avPacket);
             }
         } else {
+            isReadFrameFinish = true;
             av_packet_free(&avPacket);
             av_free(avPacket);
-            while (playstatus != NULL && !playstatus->isExit) {
+            while (playstatus != null && !playstatus->isExit) {
                 if (audio->blockQueue->getQueueSize() > 0) {
+                    av_usleep(1000 * 100);
                     continue;
                 } else {
                     playstatus->isExit = true;
@@ -183,6 +203,11 @@ void Decode::release() {
         delete audio;
         audio = null;
     }
+    if (video != null) {
+        video->release();
+        delete video;
+        video = null;
+    }
     if (pFmtCtx != null) {
         avformat_close_input(&pFmtCtx);
         avformat_free_context(pFmtCtx);
@@ -214,4 +239,34 @@ void Decode::seek(int64_t secs) {
             playstatus->isSeek = false;
         }
     }
+}
+
+void Decode::setVolume(int percent) {
+    if (audio != null) {
+        audio->setVolume(percent);
+    }
+}
+
+int Decode::getCodecId(AVCodecParameters *parameters, AVCodecContext **codecContext) {
+    AVCodec *pCodec = avcodec_find_decoder(parameters->codec_id);
+    if (pCodec == null) {
+        LOGE("未找到对应的解码器");
+        isExit = true;
+        pthread_mutex_unlock(&initMutex);
+        return -1;
+    }
+    *codecContext = avcodec_alloc_context3(pCodec);
+    if (avcodec_parameters_to_context(*codecContext, parameters) < 0) {
+        LOGE("赋值解码器上下文失败");
+        isExit = true;
+        pthread_mutex_unlock(&initMutex);
+        return -1;
+    }
+    if (avcodec_open2(*codecContext, pCodec, null) != 0) {
+        LOGE("无法打开解码器");
+        isExit = true;
+        pthread_mutex_unlock(&initMutex);
+        return -1;
+    }
+    return 0;
 }

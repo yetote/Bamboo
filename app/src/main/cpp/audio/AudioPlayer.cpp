@@ -5,6 +5,7 @@
 
 
 
+
 #include "AudioPlayer.h"
 
 
@@ -56,6 +57,7 @@ int AudioPlayer::resampleAudio() {
                 playstatus->isLoad = true;
                 playerCallJava->onCallLoad(CHILD_THREAD, true);
             }
+            av_usleep(1000*100);
             continue;
         } else {
             if (playstatus->isLoad) {
@@ -170,7 +172,7 @@ void AudioPlayer::initOpenSLES() {
         return;
     }
     const SLInterfaceID ids[1] = {SL_IID_ENVIRONMENTALREVERB};
-    const SLboolean req[1] = {false};
+    const SLboolean req[1] = {sl_true};
 
     result = (*engineItf)->CreateOutputMix(engineItf, &mixObj, 1, ids, req);
     if (result != success) {
@@ -208,10 +210,10 @@ void AudioPlayer::initOpenSLES() {
     SLDataLocator_OutputMix outputMix = {SL_DATALOCATOR_OUTPUTMIX, mixObj};
     SLDataSink audioSink = {&outputMix, null};
 
-    const SLInterfaceID mids[1] = {SL_IID_BUFFERQUEUE};
-    const SLboolean mreq[1] = {sl_true};
+    const SLInterfaceID mids[2] = {SL_IID_BUFFERQUEUE,SL_IID_PLAYBACKRATE};
+    const SLboolean mreq[2] = {sl_true,sl_true};
 
-    result = (*engineItf)->CreateAudioPlayer(engineItf, &playerObj, &audioSrc, &audioSink, 1, mids,
+    result = (*engineItf)->CreateAudioPlayer(engineItf, &playerObj, &audioSrc, &audioSink, 2, mids,
                                              mreq);
     if (result != success) {
         LOGE("创建播放器失败");
@@ -241,6 +243,10 @@ void AudioPlayer::initOpenSLES() {
     if (result != success) {
         LOGE("设置播放状态失败");
         return;
+    }
+    result = (*playerObj)->GetInterface(playerObj, SL_IID_VOLUME, &volumeItf);
+    if (result != success) {
+        LOGE("获取音量接口失败");
     }
     playerCallBack(bufferQueueItf, this);
 }
@@ -349,5 +355,11 @@ void AudioPlayer::release() {
     }
     if (playerCallJava != null) {
         playerCallJava = null;
+    }
+}
+
+void AudioPlayer::setVolume(int percent) {
+    if (volumeItf != null) {
+        (*volumeItf)->SetVolumeLevel(volumeItf, (100 - percent) * -50);
     }
 }

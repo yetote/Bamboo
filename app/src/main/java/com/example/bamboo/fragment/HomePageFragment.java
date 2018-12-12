@@ -20,18 +20,15 @@ import com.example.bamboo.R;
 import com.example.bamboo.RecodeVideoActivity;
 import com.example.bamboo.model.TimeInfoBean;
 import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
-import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPauseListener;
-import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStartListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStopListener;
 import com.example.bamboo.myinterface.ffmpeg.OnTimeInfoListener;
-import com.example.bamboo.opengl.utils.TextRecourseReader;
 import com.example.bamboo.myview.PlayerView;
+import com.example.bamboo.opengl.utils.TextRecourseReader;
 import com.example.bamboo.util.TimeUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.Time;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
@@ -68,6 +65,7 @@ public class HomePageFragment extends Fragment {
     private int playPosition;
     private ArrayList<String> musicList;
     private boolean isCut = false;
+    private String vertexCode, fragCode;
 
     @Nullable
     @Override
@@ -90,6 +88,10 @@ public class HomePageFragment extends Fragment {
                 surfaceHolder = holder;
                 w = width;
                 h = height;
+                playerView = new PlayerView(vertexCode, fragCode, surfaceHolder.getSurface(), w, h);
+                playerView.prepared(musicList.get(0));
+                playPosition = 0;
+                onCall();
             }
 
             @Override
@@ -136,11 +138,6 @@ public class HomePageFragment extends Fragment {
                 return true;
             }
         });
-
-        playerView.prepared(musicList.get(0));
-        playPosition = 0;
-
-        onCall();
 
 
         return v;
@@ -243,7 +240,6 @@ public class HomePageFragment extends Fragment {
     private void initView(View v) {
         surfaceView = v.findViewById(R.id.homePager_surfaceView);
         startBtn = v.findViewById(R.id.homePager_start_btn);
-        playerView = new PlayerView();
         path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
         networkSource = "http://dl.stream.qqmusic.qq.com/C400003Chs7Y0jd49n.m4a?guid=1122016361&vkey=CB2B81BC8AFAA8E062DBA6147CD8CA439F1823527B8B7F3B070329495568FDABB6D7E2A0A2451220181E9366148ADBD3560C312E52EFFC29&uin=0&fromtag=66";
@@ -252,7 +248,9 @@ public class HomePageFragment extends Fragment {
         totalTime = v.findViewById(R.id.homePager_totalTime_tv);
         seekBar = v.findViewById(R.id.homePager_seekBar);
         musicList = new ArrayList<>();
+        musicList.add("http://asklxf.coding.me/liaoxuefeng/v/python/install-py.mp4");
         musicList.add("http://mp3.9ku.com/m4a/534481.m4a");
+        musicList.add("http://dl.stream.qqmusic.qq.com/C400001AFWGk4MKbvX.m4a?guid=1122016361&vkey=8BF2B3930C8B856559B63CDB9135B9BCF4615FC0E9CF6725C74989839A632629EDAB83C4DF1CE00AB3B9F28886B7B4F5996EBE32458DF78D&uin=0&fromtag=66");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?guid=1122016361&vkey=7EDECCE7ED528AFABCA9F530C2FA0E8CBB0ADABF90DF607A70C302F2C043A34B6F9F894F4E47BFEA065189ADE50D87E95281B9A5D06BFBAA&uin=0&fromtag=66");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400003w4Tn23jENMJ.m4a?guid=1122016361&vkey=4E8440C7383FA8BB97CA238E829E74352645A7BA5E377C7E80B60B3E1E927EE7225EDD838E82DC5145FE2B2127269707AB78DFAE8D737F3E&uin=0&fromtag=66");
         musicList.add("http://124.193.230.147/amobile.music.tc.qq.com/C400004XePmv4CsaEq.m4a?guid=1122016361&vkey=14D52DBA0025A5A38C4D31AE2B900DD683C74CA7EA3D5FD367C7C20917E920865EB81D371D95D76FAE7C040CD96D960D8852FE8B40448F04&uin=0&fromtag=66");
@@ -262,6 +260,8 @@ public class HomePageFragment extends Fragment {
         musicList.add("http://124.193.230.149/amobile.music.tc.qq.com/C4000044xahl3svaeK.m4a?guid=1122016361&vkey=B1EE299336328FDE4D8C31C77050795DB5C155246133B525B942EA8843BC17641EBCB3C731E7C528CD83839028BBABCCD4704C9512DF858D&uin=0&fromtag=66");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400000jO3Qe1EEvuq.m4a?guid=1122016361&vkey=BFE6B61A74B0075092BE6F365F21E3881C36F9FE6BA4DF9D259C0893F95A1A03123F6F54D3B90DB0AB95CC674AE3C4B43DAB1A560E297E37&uin=0&fromtag=66");
         musicList.add("http://124.193.230.144/amobile.music.tc.qq.com/C400000jxuAK3aY3eU.m4a?guid=1122016361&vkey=F5ACA69426E3F307B20C5CC30315A96CA05543C71A56D4153E381EA695B6CD1D4CC7700B734DF232A34B2F32C5AF11E347322FB378B6505B&uin=0&fromtag=66");
+        vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
+        fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
     }
 
     Handler handler = new Handler() {
@@ -289,12 +289,6 @@ public class HomePageFragment extends Fragment {
         Log.e(TAG, "onPause: ");
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        playerView.onResume();
-        Log.e(TAG, "onResume: ");
-    }
 
     @Override
     public void onStop() {
