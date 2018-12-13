@@ -10,6 +10,7 @@ import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStartListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStopListener;
 import com.example.bamboo.myinterface.ffmpeg.OnTimeInfoListener;
+import com.example.bamboo.util.DecodeUtil;
 
 /**
  * @author yetote QQ:503779938
@@ -119,6 +120,10 @@ public class PlayerView {
         if (percent >= 0 && percent <= 100) {
             ffmpegSetVolume(percent);
         }
+    }
+
+    public boolean onCallIsSupportHardwareCodec(String codecName) {
+        return DecodeUtil.isSupportCodec(codecName);
     }
 
 

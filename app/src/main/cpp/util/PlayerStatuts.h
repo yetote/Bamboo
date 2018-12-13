@@ -11,6 +11,7 @@ public:
     bool isExit;
     bool isLoad;
     bool isSeek;
+    bool isPause;
 
     PlayerStatus();
 

@@ -13,7 +13,7 @@
 
 #define success SL_RESULT_SUCCESS
 #define sl_true SL_BOOLEAN_TRUE
-#define false SL_BOOLEAN_FALSE
+#define sl_false SL_BOOLEAN_FALSE
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libswresample/swresample.h>
@@ -39,7 +39,7 @@ public:
     double clock = 0;
     double last_time = 0;
     SLAndroidSimpleBufferQueueItf bufferQueueItf;
-
+    pthread_mutex_t codecMutex;
     void release();
 
     void play();

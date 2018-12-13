@@ -20,6 +20,8 @@ PlayerCallJava::PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj) {
     load_jMid = jniEnv->GetMethodID(jlz, "onCallLoad", "(Z)V");
     timeInfo_jMid = jniEnv->GetMethodID(jlz, "onTimeInfoCall", "(II)V");
     complete_jMid = jniEnv->GetMethodID(jlz, "onCallComplete", "()V");
+    supportHardWare_jMid = jniEnv->GetMethodID(jlz, "onCallIsSupportHardwareCodec",
+                                               "(Ljava/lang/String;)Z");
 //    error_jMid = jniEnv->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
 }
 
@@ -97,5 +99,25 @@ void PlayerCallJava::onCallComplete(int type) {
         jniEnv1->CallVoidMethod(jobj, complete_jMid);
         javaVM->DetachCurrentThread();
     }
+}
+
+bool PlayerCallJava::onCallSupportHardwareCodec(int type, const char *ffmpegName) {
+    bool isSupport = false;
+    if (type == MAIN_THREAD) {
+        jstring name = jniEnv->NewStringUTF(ffmpegName);
+        isSupport = jniEnv->CallBooleanMethod(jobj, supportHardWare_jMid, name);
+        jniEnv->DeleteLocalRef(name);
+    } else if (type == CHILD_THREAD) {
+        JNIEnv *jniEnv1;
+        if (javaVM->AttachCurrentThread(&jniEnv1, 0) != JNI_OK) {
+            LOGE("子线程回调java方法失败");
+            return isSupport;
+        }
+        jstring name = jniEnv1->NewStringUTF(ffmpegName);
+        isSupport = jniEnv1->CallBooleanMethod(jobj, supportHardWare_jMid, name);
+        jniEnv1->DeleteLocalRef(name);
+        javaVM->DetachCurrentThread();
+    }
+    return isSupport;
 }
 

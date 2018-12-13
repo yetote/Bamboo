@@ -85,6 +85,14 @@ void Decode::ffmpegDecodeThread() {
             video->videoIndex = i;
             video->parameters = pFmtCtx->streams[i]->codecpar;
             video->time_base = pFmtCtx->streams[i]->time_base;
+
+            int num = pFmtCtx->streams[i]->avg_frame_rate.num;
+            int den = pFmtCtx->streams[i]->avg_frame_rate.den;
+
+            if (num != 0 && den != 0) {
+                int fps = num / den;
+                video->defaultDelayTime = 1.0 / fps;
+            }
         }
     }
     if (audio->streamIndex == -1) {
@@ -122,6 +130,46 @@ void Decode::start() {
         LOGE("video is null");
         return;
     }
+    isSupportHardWareCodec = false;
+    video->audioPlayer = audio;
+
+    const char *codecName = video->pCodecCtx->codec->name;
+    isSupportHardWareCodec = callJava->onCallSupportHardwareCodec(CHILD_THREAD, codecName);
+    isSupportHardWareCodec = false;
+    if (isSupportHardWareCodec) {
+        LOGE("支持的解码器类型%s", codecName);
+        if (strcasecmp(codecName, "h264") == 0) {
+            pStreamFilter = av_bsf_get_by_name("h264_mp4toannexb");
+        } else if (strcasecmp(codecName, "h265") == 0) {
+            pStreamFilter = av_bsf_get_by_name("hevc_mp4toannexb");
+        }
+
+        if (pStreamFilter == null) {
+            goto end;
+        }
+
+        if (av_bsf_alloc(pStreamFilter, &video->pBsfContext) != 0) {
+            isSupportHardWareCodec = false;
+            goto end;
+        }
+        if (avcodec_parameters_copy(video->pBsfContext->par_in, video->parameters) < 0) {
+            isSupportHardWareCodec = false;
+            av_bsf_free(&video->pBsfContext);
+            video->pBsfContext = null;
+            goto end;
+        }
+
+        if (av_bsf_init(video->pBsfContext) != 0) {
+            isSupportHardWareCodec = false;
+            av_bsf_free(&video->pBsfContext);
+            video->pBsfContext = null;
+            goto end;
+        }
+        video->pBsfContext->time_base_in = video->time_base;
+        video->codecType = CODEC_HARDWARE;
+    }
+    end:
+
     audio->play();
     video->play();
     while (playstatus != NULL && !playstatus->isExit) {
@@ -130,8 +178,9 @@ void Decode::start() {
             av_usleep(1000 * 100);
             continue;
         }
-
-        if (audio->blockQueue->getQueueSize() > 40) {
+//
+        if (audio->blockQueue->getQueueSize() > 40 || video->blockQueue->getQueueSize() > 40) {
+            LOGE("队列已满");
             av_usleep(1000 * 100);
             continue;
         }
@@ -159,10 +208,14 @@ void Decode::start() {
                     av_usleep(1000 * 100);
                     continue;
                 } else {
-                    playstatus->isExit = true;
+                    if (!playstatus->isSeek) {
+                        av_usleep(1000 * 500);
+                        playstatus->isExit = true;
+                    }
                     break;
                 }
             }
+            break;
         }
     }
     if (callJava != null) {
@@ -175,12 +228,18 @@ void Decode::start() {
 }
 
 void Decode::pause() {
+    if (playstatus != null) {
+        playstatus->isPause = true;
+    }
     if (audio != null) {
         audio->pause();
     }
 }
 
 void Decode::resume() {
+    if (playstatus != null) {
+        playstatus->isPause = false;
+    }
     if (audio != null) {
         audio->resume();
     }
@@ -227,17 +286,27 @@ void Decode::seek(int64_t secs) {
         return;
     }
     if (secs >= 0 && secs <= duration) {
+        playstatus->isSeek = true;
+        pthread_mutex_lock(&seekMutex);
+        int64_t rel = secs * AV_TIME_BASE;
+        avformat_seek_file(pFmtCtx, -1, INT64_MIN, rel, INT64_MAX, 0);
         if (audio != null) {
-            playstatus->isSeek = true;
             audio->blockQueue->clearPacket();
             audio->clock = 0;
             audio->last_time = 0;
-            pthread_mutex_lock(&seekMutex);
-            int64_t rel = secs * AV_TIME_BASE;
-            avformat_seek_file(pFmtCtx, -1, INT64_MIN, rel, INT64_MAX, 0);
-            pthread_mutex_unlock(&seekMutex);
-            playstatus->isSeek = false;
+            pthread_mutex_lock(&audio->codecMutex);
+            avcodec_flush_buffers(audio->pCodecCtx);
+            pthread_mutex_unlock(&audio->codecMutex);
         }
+        if (video != null) {
+            video->blockQueue->clearPacket();
+            video->clock = 0;
+            pthread_mutex_lock(&video->codecMutex);
+            avcodec_flush_buffers(video->pCodecCtx);
+            pthread_mutex_unlock(&video->codecMutex);
+        }
+        pthread_mutex_unlock(&seekMutex);
+        playstatus->isSeek = false;
     }
 }
 

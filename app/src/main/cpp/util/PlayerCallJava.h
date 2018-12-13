@@ -22,6 +22,7 @@ public:
     jmethodID timeInfo_jMid;
     jmethodID error_jMid;
     jmethodID complete_jMid;
+    jmethodID supportHardWare_jMid;
 
     PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj);
 
@@ -34,7 +35,9 @@ public:
     void onCallTimeInfo(int type, int currentTime, int totalTime);
 
     void onCallError(int type, int code, char *msg);
+
     void onCallComplete(int type);
+    bool onCallSupportHardwareCodec(int type, const char* ffmpegName);
 };
 
 

@@ -89,7 +89,7 @@ public class HomePageFragment extends Fragment {
                 w = width;
                 h = height;
                 playerView = new PlayerView(vertexCode, fragCode, surfaceHolder.getSurface(), w, h);
-                playerView.prepared(musicList.get(0));
+                playerView.prepared(path);
                 playPosition = 0;
                 onCall();
             }
@@ -240,7 +240,7 @@ public class HomePageFragment extends Fragment {
     private void initView(View v) {
         surfaceView = v.findViewById(R.id.homePager_surfaceView);
         startBtn = v.findViewById(R.id.homePager_start_btn);
-        path = getActivity().getExternalCacheDir().getPath() + "/res/sample.mp3";
+        path = getActivity().getExternalCacheDir().getPath() + "/res/891.mp4";
         outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
         networkSource = "http://dl.stream.qqmusic.qq.com/C400003Chs7Y0jd49n.m4a?guid=1122016361&vkey=CB2B81BC8AFAA8E062DBA6147CD8CA439F1823527B8B7F3B070329495568FDABB6D7E2A0A2451220181E9366148ADBD3560C312E52EFFC29&uin=0&fromtag=66";
         recodeBtn = v.findViewById(R.id.homePager_recode_video);
@@ -249,8 +249,8 @@ public class HomePageFragment extends Fragment {
         seekBar = v.findViewById(R.id.homePager_seekBar);
         musicList = new ArrayList<>();
         musicList.add("http://asklxf.coding.me/liaoxuefeng/v/python/install-py.mp4");
-        musicList.add("http://mp3.9ku.com/m4a/534481.m4a");
-        musicList.add("http://dl.stream.qqmusic.qq.com/C400001AFWGk4MKbvX.m4a?guid=1122016361&vkey=8BF2B3930C8B856559B63CDB9135B9BCF4615FC0E9CF6725C74989839A632629EDAB83C4DF1CE00AB3B9F28886B7B4F5996EBE32458DF78D&uin=0&fromtag=66");
+        musicList.add("http://asklxf.coding.me/liaoxuefeng/v/python/start-py.mp4");
+        musicList.add("http://michaelliao.gitcafe.io/video/git-apt-install.mp4");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?guid=1122016361&vkey=7EDECCE7ED528AFABCA9F530C2FA0E8CBB0ADABF90DF607A70C302F2C043A34B6F9F894F4E47BFEA065189ADE50D87E95281B9A5D06BFBAA&uin=0&fromtag=66");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400003w4Tn23jENMJ.m4a?guid=1122016361&vkey=4E8440C7383FA8BB97CA238E829E74352645A7BA5E377C7E80B60B3E1E927EE7225EDD838E82DC5145FE2B2127269707AB78DFAE8D737F3E&uin=0&fromtag=66");
         musicList.add("http://124.193.230.147/amobile.music.tc.qq.com/C400004XePmv4CsaEq.m4a?guid=1122016361&vkey=14D52DBA0025A5A38C4D31AE2B900DD683C74CA7EA3D5FD367C7C20917E920865EB81D371D95D76FAE7C040CD96D960D8852FE8B40448F04&uin=0&fromtag=66");

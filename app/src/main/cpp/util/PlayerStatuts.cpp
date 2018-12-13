@@ -3,9 +3,11 @@
 //
 
 #include "PlayerStatuts.h"
+
 PlayerStatus::PlayerStatus() {
     isExit = false;
     isLoad = true;
+    isPause = false;
     isSeek = false;
 }
 

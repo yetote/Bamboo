@@ -15,10 +15,11 @@ AudioPlayer::AudioPlayer(PlayerStatus *playStatus, int sampleRate, PlayerCallJav
     this->blockQueue = new BlockQueue(playstatus);
     this->playerCallJava = playerCallJava;
     buffer = static_cast<uint8_t *>(malloc(sampleRate * 2 * 2));
+    pthread_mutex_init(&codecMutex, null);
 }
 
 AudioPlayer::~AudioPlayer() {
-
+    pthread_mutex_destroy(&codecMutex);
 }
 
 void playerCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
@@ -57,7 +58,7 @@ int AudioPlayer::resampleAudio() {
                 playstatus->isLoad = true;
                 playerCallJava->onCallLoad(CHILD_THREAD, true);
             }
-            av_usleep(1000*100);
+            av_usleep(1000 * 100);
             continue;
         } else {
             if (playstatus->isLoad) {
@@ -74,12 +75,15 @@ int AudioPlayer::resampleAudio() {
             LOGE("获取packet失败");
             continue;
         }
+        pthread_mutex_lock(&codecMutex);
+
         ret = avcodec_send_packet(pCodecCtx, avPacket);
         if (ret != 0) {
             av_packet_free(&avPacket);
             av_free(avPacket);
             avPacket = NULL;
             LOGE("发送packet失败%d", ret);
+            pthread_mutex_unlock(&codecMutex);
             continue;
         }
         avFrame = av_frame_alloc();
@@ -113,6 +117,7 @@ int AudioPlayer::resampleAudio() {
                 avFrame = NULL;
                 swr_free(&swr_ctx);
                 LOGE("swr初始化失败");
+                pthread_mutex_unlock(&codecMutex);
                 continue;
             }
 
@@ -139,6 +144,7 @@ int AudioPlayer::resampleAudio() {
             av_free(avFrame);
             avFrame = NULL;
             swr_free(&swr_ctx);
+            pthread_mutex_unlock(&codecMutex);
             break;
         } else {
             av_packet_free(&avPacket);
@@ -148,9 +154,11 @@ int AudioPlayer::resampleAudio() {
             av_free(avFrame);
             avFrame = NULL;
             LOGE("接受packet失败%d", ret);
+            pthread_mutex_unlock(&codecMutex);
             continue;
         }
     }
+
     return data_size;
 }
 
@@ -210,8 +218,8 @@ void AudioPlayer::initOpenSLES() {
     SLDataLocator_OutputMix outputMix = {SL_DATALOCATOR_OUTPUTMIX, mixObj};
     SLDataSink audioSink = {&outputMix, null};
 
-    const SLInterfaceID mids[2] = {SL_IID_BUFFERQUEUE,SL_IID_PLAYBACKRATE};
-    const SLboolean mreq[2] = {sl_true,sl_true};
+    const SLInterfaceID mids[2] = {SL_IID_BUFFERQUEUE, SL_IID_PLAYBACKRATE};
+    const SLboolean mreq[2] = {sl_true, sl_true};
 
     result = (*engineItf)->CreateAudioPlayer(engineItf, &playerObj, &audioSrc, &audioSink, 2, mids,
                                              mreq);

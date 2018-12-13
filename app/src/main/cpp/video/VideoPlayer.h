@@ -9,6 +9,10 @@
 #include "../util/PlayerCallJava.h"
 #include "../util/EGLUtil.h"
 #include "../util/GLUtil.h"
+#include "../audio/AudioPlayer.h"
+
+#define CODEC_HARDWARE 0
+#define CODEC_SOFTWARE 1
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -34,11 +38,11 @@ public:
     ANativeWindow *window;
     const char *vertexCode;
     const char *fragCode;
+    pthread_mutex_t codecMutex;
 
     VideoPlayer(PlayerCallJava *playerCallJava, PlayerStatus *playerStatus,
                 const char *vertexCode, const char *fragCode, ANativeWindow *window, int w,
                 int h);
-
 
     void play();
 
@@ -54,6 +58,17 @@ public:
 
     int w;
     int h;
+    AudioPlayer *audioPlayer;
+
+    double getFrameDiffTime(AVFrame *frame);
+
+    double defaultDelayTime = 0;
+
+    double getDelayTime(double diff);
+
+    double clock;
+    int codecType;
+    AVBSFContext *pBsfContext=null;
 private:
     GLfloat *textureArray;
     GLfloat *vertexArray;
@@ -61,8 +76,10 @@ private:
     GLint aPosition, aColor;
     GLint aTextureCoordinates;
     GLint uTexY, uTexU, uTexV;
+    double delayTime;
 
     void draw(AVFrame *pFrame);
+
 };
 
 

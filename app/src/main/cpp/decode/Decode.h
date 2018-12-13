@@ -26,6 +26,8 @@ public:
     Decode(PlayerStatus *playStatus, PlayerCallJava *callJava, const char *url,
            const char *vertexCode, const char *fragCode, ANativeWindow *window, int w, int h);
 
+    bool isSupportHardWareCodec = false;
+
     void prepared();
 
     void pause();
@@ -53,7 +55,7 @@ private:
     pthread_mutex_t initMutex;
     pthread_mutex_t seekMutex;
     PlayerCallJava *callJava = null;
-
+    const AVBitStreamFilter *pStreamFilter = null;
     AVFormatContext *pFmtCtx = null;
     AVStream *pStream = null;
     bool isReadFrameFinish = false;
@@ -64,6 +66,7 @@ private:
     const char *fragCode;
     int w;
     int h;
+
 
     int getCodecId(AVCodecParameters *parameters, AVCodecContext **codecContext);
 };

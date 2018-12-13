@@ -17,12 +17,16 @@ VideoPlayer::VideoPlayer(PlayerCallJava *playerCallJava, PlayerStatus *playerSta
     this->vertexCode = vertexCode;
     this->fragCode = fragCode;
     blockQueue = new BlockQueue(playerStatus);
+    audioPlayer = null;
     eglUtil = null;
     glUtil = null;
+    delayTime = 0;
+    pthread_mutex_init(&codecMutex, null);
+    codecType = CODEC_SOFTWARE;
 }
 
 VideoPlayer::~VideoPlayer() {
-
+    pthread_mutex_destroy(&codecMutex);
 }
 
 void *videoStart(void *data) {
@@ -48,6 +52,10 @@ void *videoStart(void *data) {
             av_usleep(1000 * 100);
             continue;
         }
+        if (videoPlayer->playerStatus->isPause) {
+            av_usleep(1000 * 100);
+            continue;
+        }
         if (videoPlayer->blockQueue->getQueueSize() == 0) {
             if (!videoPlayer->playerStatus->isLoad) {
                 videoPlayer->playerStatus->isLoad = true;
@@ -68,17 +76,104 @@ void *videoStart(void *data) {
             av_free(packet);
             packet = null;
             continue;
-            LOGE("获取视频Packet成功");
         }
-        if (avcodec_send_packet(videoPlayer->pCodecCtx, packet) != 0) {
-            av_packet_free(&packet);
-            av_free(packet);
-            packet = null;
-            continue;
-        }
+        LOGE("获取视频Packet成功");
 
-        AVFrame *frame = av_frame_alloc();
-        if (avcodec_receive_frame(videoPlayer->pCodecCtx, frame) != 0) {
+
+        if (videoPlayer->codecType == CODEC_HARDWARE) {
+
+            if (av_bsf_send_packet(videoPlayer->pBsfContext, packet) != 0) {
+                av_packet_free(&packet);
+                av_free(packet);
+                packet = null;
+                continue;
+            }
+            while (av_bsf_receive_packet(videoPlayer->pBsfContext, packet) == 0) {
+                LOGE("使用硬解码");
+                av_packet_free(&packet);
+                av_free(packet);
+                continue;
+            }
+            packet = null;
+
+        } else {
+            pthread_mutex_lock(&videoPlayer->codecMutex);
+            if (avcodec_send_packet(videoPlayer->pCodecCtx, packet) != 0) {
+                av_packet_free(&packet);
+                av_free(packet);
+                packet = null;
+                pthread_mutex_unlock(&videoPlayer->codecMutex);
+                continue;
+            }
+            LOGE("使用软解码");
+
+            AVFrame *frame = av_frame_alloc();
+            if (avcodec_receive_frame(videoPlayer->pCodecCtx, frame) != 0) {
+
+                av_frame_free(&frame);
+                av_free(frame);
+                av_packet_free(&packet);
+                av_free(packet);
+                packet = null;
+                frame = null;
+                pthread_mutex_unlock(&videoPlayer->codecMutex);
+                continue;
+            }
+
+
+            if (frame->format == AV_PIX_FMT_YUV420P) {
+                double diff = videoPlayer->getFrameDiffTime(frame);
+                av_usleep(videoPlayer->getDelayTime(diff) * 1000000);
+                LOGE("获取frame成功,diff=%f", videoPlayer->getDelayTime(diff * 1000000));
+                videoPlayer->initPlay(frame);
+            } else {
+                AVFrame *pFrame420P = av_frame_alloc();
+                int num = av_image_get_buffer_size(AV_PIX_FMT_YUV420P,
+                                                   videoPlayer->pCodecCtx->width,
+                                                   videoPlayer->pCodecCtx->height, 1);
+                uint8_t *buffer = static_cast<uint8_t *>(av_malloc(num * sizeof(uint8_t)));
+
+                av_image_fill_arrays(pFrame420P->data,
+                                     pFrame420P->linesize,
+                                     buffer,
+                                     AV_PIX_FMT_YUV420P,
+                                     videoPlayer->pCodecCtx->width,
+                                     videoPlayer->pCodecCtx->height,
+                                     1);
+                SwsContext *swsContext = sws_getContext(videoPlayer->pCodecCtx->width,
+                                                        videoPlayer->pCodecCtx->height,
+                                                        videoPlayer->pCodecCtx->pix_fmt,
+                                                        videoPlayer->pCodecCtx->width,
+                                                        videoPlayer->pCodecCtx->height,
+                                                        AV_PIX_FMT_YUV420P,
+                                                        SWS_BICUBIC, null, null, null
+                );
+                if (!swsContext) {
+                    av_frame_free(&pFrame420P);
+                    av_free(pFrame420P);
+                    av_free(buffer);
+                    pFrame420P = null;
+                    pthread_mutex_unlock(&videoPlayer->codecMutex);
+                    continue;
+                }
+                sws_scale(swsContext,
+                          frame->data,
+                          frame->linesize,
+                          0,
+                          frame->height,
+                          pFrame420P->data,
+                          pFrame420P->linesize);
+                double diff = videoPlayer->getFrameDiffTime(pFrame420P);
+
+                av_usleep(videoPlayer->getDelayTime(diff) * 1000000);
+                LOGE("获取frame成功,diff=%f", videoPlayer->getDelayTime(diff * 1000000));
+                videoPlayer->initPlay(pFrame420P);
+                av_frame_free(&pFrame420P);
+                av_free(pFrame420P);
+                av_free(buffer);
+                pFrame420P = null;
+                sws_freeContext(swsContext);
+            }
 
             av_frame_free(&frame);
             av_free(frame);
@@ -86,62 +181,8 @@ void *videoStart(void *data) {
             av_free(packet);
             packet = null;
             frame = null;
-            continue;
+            pthread_mutex_unlock(&videoPlayer->codecMutex);
         }
-
-        LOGE("获取frame成功");
-
-        if (frame->format == AV_PIX_FMT_YUV420P) {
-            videoPlayer->initPlay(frame);
-        } else {
-            AVFrame *pFrame420P = av_frame_alloc();
-            int num = av_image_get_buffer_size(AV_PIX_FMT_YUV420P, videoPlayer->pCodecCtx->width,
-                                               videoPlayer->pCodecCtx->height, 1);
-            uint8_t *buffer = static_cast<uint8_t *>(av_malloc(num * sizeof(uint8_t)));
-
-            av_image_fill_arrays(pFrame420P->data,
-                                 pFrame420P->linesize,
-                                 buffer,
-                                 AV_PIX_FMT_YUV420P,
-                                 videoPlayer->pCodecCtx->width,
-                                 videoPlayer->pCodecCtx->height,
-                                 1);
-            SwsContext *swsContext = sws_getContext(videoPlayer->pCodecCtx->width,
-                                                    videoPlayer->pCodecCtx->height,
-                                                    videoPlayer->pCodecCtx->pix_fmt,
-                                                    videoPlayer->pCodecCtx->width,
-                                                    videoPlayer->pCodecCtx->height,
-                                                    AV_PIX_FMT_YUV420P,
-                                                    SWS_BICUBIC, null, null, null
-            );
-            if (!swsContext) {
-                av_frame_free(&pFrame420P);
-                av_free(pFrame420P);
-                av_free(buffer);
-                pFrame420P = null;
-                continue;
-            }
-            sws_scale(swsContext,
-                      frame->data,
-                      frame->linesize,
-                      0,
-                      frame->height,
-                      pFrame420P->data,
-                      pFrame420P->linesize);
-            videoPlayer->initPlay(pFrame420P);
-            av_frame_free(&pFrame420P);
-            av_free(pFrame420P);
-            av_free(buffer);
-            pFrame420P = null;
-            sws_freeContext(swsContext);
-        }
-
-        av_frame_free(&frame);
-        av_free(frame);
-        av_packet_free(&packet);
-        av_free(packet);
-        packet = null;
-        frame = null;
     }
     pthread_exit(&videoPlayer->startThread);
 }
@@ -156,9 +197,11 @@ void VideoPlayer::release() {
         blockQueue = null;
     }
     if (pCodecCtx != null) {
+        pthread_mutex_lock(&codecMutex);
         avcodec_close(pCodecCtx);
         avcodec_free_context(&pCodecCtx);
         pCodecCtx = null;
+        pthread_mutex_unlock(&codecMutex);
     }
     if (playerCallJava != null) {
         playerCallJava = null;
@@ -255,4 +298,53 @@ void VideoPlayer::draw(AVFrame *pFrame) {
     glEnableVertexAttribArray(aTextureCoordinates);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     eglSwapBuffers(eglUtil->eglDisplay, eglUtil->eglSurface);
+}
+
+double VideoPlayer::getFrameDiffTime(AVFrame *frame) {
+    double pts = av_frame_get_best_effort_timestamp(frame);
+    if (pts == AV_NOPTS_VALUE) {
+        pts = 0;
+    }
+    pts *= av_q2d(time_base);
+    if (pts > 0) {
+        clock = pts;
+    }
+
+    double diff = audioPlayer->clock - clock;
+
+
+    return diff;
+}
+
+double VideoPlayer::getDelayTime(double diff) {
+
+    if (diff > 0.003) {
+        delayTime = delayTime * 2 / 3;
+        if (delayTime < defaultDelayTime / 2) {
+            delayTime = defaultDelayTime * 2 / 3;
+        } else if (delayTime > defaultDelayTime * 2) {
+            delayTime = defaultDelayTime * 2;
+        }
+    } else if (diff < -0.003) {
+        delayTime = delayTime * 3 / 2;
+        if (delayTime < defaultDelayTime / 2) {
+            delayTime = defaultDelayTime * 2 / 3;
+        } else if (delayTime > defaultDelayTime * 2) {
+            delayTime = defaultDelayTime * 2;
+        }
+    } else if (diff == 0.003) {
+
+    }
+
+    if (diff >= 0.5) {
+        delayTime = 0;
+    } else if (diff <= -0.5) {
+        delayTime = defaultDelayTime * 2;
+    }
+
+    if (fabs(diff) >= 10) {
+        delayTime = defaultDelayTime;
+    }
+
+    return delayTime;
 }
