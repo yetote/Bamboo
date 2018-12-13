@@ -1,0 +1,26 @@
+/Users/ether/AppData/Local/Android/Sdk/ndk-bundle/samples/hello-jni/obj/local/armeabi-v7a
+C:\Users\ether\AppData\Local\Android\Sdk\ndk-bundle
+build/intermediates/cmake/debug/obj/arm64-v8a
+adb logcat | ndk-stack -sym $PROJECT/build/intermediates/cmake/debug/obj/arm64-v8a
+ #00 pc 000000000000a0fc  /data/app/com.example.ether.opensldemo-Bcqmr8FJ4Y_LB4wLJigKzA==/lib/arm64/libnative-lib.so (Java_com_example_ether_opensldemo_Ope
+nSLTest_play+680)
+arm-linux-androideabi-addr2line -a 000556ff -e libunisdkdctool.so -f -C
+adb logcat | ndk-stack -sym D:/AndroidStudioProjects/Bamboo/app/src/main/jniLibs/arm64-v8a
+adb logcat | ndk-stack -sym D:/AndroidStudioProjects/Bamboo/app/build/intermediates/cmake/debug/obj/arm64-v8a
+https://samples.mplayerhq.hu/A-codecs/MP3/Enrique.mp3
+0010 0111& 0000 0001 = 0000 0001 
+0010 0111& 0000 0010 = 0000 0010       
+0010 0111& 0000 0100 = 0000 0100
+0010 0111& 0000 1000 = 0000 0000 
+0010 0111& 0001 0000 = 0000 0000
+0010 0111& 0010 0000 = 0010 0000
+0010 0111& 0100 0000 = 0000 0000
+0010 0111& 1000 0000  =0000 0000 
+http://wsaudio.bssdlbig.kugou.com/1812111537/9ebCc4MGJVZ7fWU-SLQTBA/1544600255/bss/extname/wsaudio/e095f47d38c5251ea3eb70fa54acf4b7.mp3
+http://wsaudio.bssdlbig.kugou.com/1812111640/Quvd1ElF4eCx_AjYekx6wg/1544604050/bss/extname/wsaudio/0d7e94b80a8c7a3bbe65ca3ecf1767bd.mp3
+http://mp3.9ku.com/m4a/473290.m4a
+http://music.163.com/song?id=1332424898
+http://wsaudio.bssdlbig.kugou.com/1812121328/0asblSKlNiVkCLX4p_feOA/1544678902/bss/extname/wsaudio/18828290d2bd5cd681b69c920a2b9a6a.mp3
+https://vali.cp31.ott.cibntv.net/youku/6572612C67A4371B01DA6340A/03000801005BC4547D939C4003E8803D6540D8-672E-4DDE-92C6-977DAB330EF7.mp4?sid=054468048367616763290_00_Af4ec41f73b5610da86901ff26775597a&sign=fdfff2bfdd877694255d0b8103249a55&ctype=50&hd=1
+
+<video preload="none" src="http://vali-dns.cp31.ott.cibntv.net/67736FC05C3327140D0372B9C/03000A03005C091DC3A345C188AEEAA003DC7A-D109-4DC3-9200-8A20DCAE018C.mp4?ccode=0502&amp;duration=394&amp;expire=18000&amp;psid=4184a27fcfdbe53a71e1cf4126281db2&amp;ups_client_netip=7ccde8a2&amp;ups_ts=1544680883&amp;ups_userid=&amp;utid=ZOpEE5RB7SsCAXzN6KKed%2FT2&amp;vid=XMzk1MjYyNTUxMg&amp;vkey=A894faa4587226ee219fa177795748a02&amp;s=07efbfbd2658efbfbd4a&amp;sp=" data-orginal-src="http://vali-dns.cp31.ott.cibntv.net/67736FC0C79327140D037361D/03000A03005C091DC3A345C188AEEAA003DC7A-D109-4DC3-9200-8A20DCAE018C.mp4?ccode=0502&amp;duration=394&amp;expire=18000&amp;psid=a5265d0d28f15559a65177fe2cf1b423&amp;ups_client_netip=7ccde8a2&amp;ups_ts=1544680889&amp;ups_userid=&amp;utid=ZOpEE5RB7SsCAXzN6KKed%2FT2&amp;vid=XMzk1MjYyNTUxMg&amp;vkey=A920dfe587ef04d5fd8478573390007fe&amp;s=07efbfbd2658efbfbd4a&amp;
