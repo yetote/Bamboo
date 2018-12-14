@@ -192,6 +192,16 @@ void VideoPlayer::play() {
 }
 
 void VideoPlayer::release() {
+    if (eglUtil != null) {
+        eglUtil->eglRelease();\
+        delete eglUtil;
+        eglUtil = null;
+    }
+    if (glUtil != null) {
+        glUtil->destroy();
+        delete glUtil;
+        glUtil = null;
+    }
     if (blockQueue != null) {
         delete blockQueue;
         blockQueue = null;

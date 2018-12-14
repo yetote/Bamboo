@@ -56,6 +56,9 @@ void EGLUtil::eglCreate(ANativeWindow *window) {
     int *surfaceAttr = new int[1]{EGL_NONE};
     eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, window, surfaceAttr);
     LOGE("window%p", window);
+    LOGE("egldisplay%p", eglDisplay);
+    LOGE("eglConfig%p", eglConfig);
+    LOGE("surfaceAttr%p", surfaceAttr);
     if (eglSurface == null) {
         ret = eglGetError();
         LOGE("创建eglSurface失败,错误码%d", ret);
@@ -90,7 +93,7 @@ void EGLUtil::eglRelease() {
         LOGE("终止egl与display连接失败,错误码%d", ret);
     }
     eglDisplay = null;
-
+    LOGE("egl释放完成");
 }
 
 EGLUtil::~EGLUtil() {
