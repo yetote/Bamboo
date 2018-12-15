@@ -1,5 +1,8 @@
 package com.example.bamboo.myview;
 
+import android.media.MediaCodec;
+import android.media.MediaFormat;
+import android.util.Log;
 import android.view.Surface;
 
 import com.example.bamboo.model.TimeInfoBean;
@@ -11,6 +14,9 @@ import com.example.bamboo.myinterface.ffmpeg.OnStartListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStopListener;
 import com.example.bamboo.myinterface.ffmpeg.OnTimeInfoListener;
 import com.example.bamboo.util.DecodeUtil;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * @author yetote QQ:503779938
@@ -39,6 +45,10 @@ public class PlayerView {
     String vertexCode, fragCode;
     Surface surface;
     int w, h;
+    private MediaFormat mediaFormat;
+    private MediaCodec mediaCodec;
+    private static final String TAG = "PlayerView";
+    MediaCodec.BufferInfo bufferInfo;
 
     public PlayerView(String vertexCode, String fragCode, Surface surface, int w, int h) {
         this.vertexCode = vertexCode;
@@ -170,6 +180,43 @@ public class PlayerView {
         }
     }
 
+    public void initMediaCodec(String codecName, int w, int h, byte[] csd0, byte[] csd1) {
+        if (surface != null) {
+            try {
+                String mime = DecodeUtil.findHardwareCodec(codecName);
+                mediaFormat = MediaFormat.createVideoFormat(mime, w, h);
+                mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, w * h);
+                mediaFormat.setByteBuffer("csd-0", ByteBuffer.wrap(csd0));
+                mediaFormat.setByteBuffer("csd-1", ByteBuffer.wrap(csd1));
+                mediaCodec = MediaCodec.createDecoderByType(mime);
+
+                mediaCodec.configure(mediaFormat, null, null, 0);
+                mediaCodec.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(TAG, "initMediaCodec: surface为空");
+        }
+    }
+
+    private void decode(int dataSize, byte[] data) {
+        if (surface != null) {
+            if (dataSize > 0 && data != null) {
+                int inputIndex = mediaCodec.dequeueInputBuffer(10);
+                if (inputIndex >= 0) {
+                    ByteBuffer byteBuffer = mediaCodec.getInputBuffer(inputIndex);
+                    byteBuffer.put(data);
+                    mediaCodec.queueInputBuffer(inputIndex, 0, dataSize, 0, 0);
+                }
+                int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10);
+                while (outputIndex >= 0) {
+                    mediaCodec.releaseOutputBuffer(outputIndex, true);
+                    outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10);
+                }
+            }
+        }
+    }
 
     private native void ffmpegPrepared(String source, String vertexCode, String fragCode, Surface surface, int w, int h);
 

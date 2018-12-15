@@ -39,7 +39,7 @@ public:
     const char *vertexCode;
     const char *fragCode;
     pthread_mutex_t codecMutex;
-
+    GLfloat *vertexArray;
     VideoPlayer(PlayerCallJava *playerCallJava, PlayerStatus *playerStatus,
                 const char *vertexCode, const char *fragCode, ANativeWindow *window, int w,
                 int h);
@@ -60,7 +60,7 @@ public:
     int h;
     AudioPlayer *audioPlayer;
 
-    double getFrameDiffTime(AVFrame *frame);
+    double getFrameDiffTime(AVFrame *frame, AVPacket *packet);
 
     double defaultDelayTime = 0;
 
@@ -68,10 +68,10 @@ public:
 
     double clock;
     int codecType;
-    AVBSFContext *pBsfContext=null;
+    AVBSFContext *pBsfContext = null;
 private:
     GLfloat *textureArray;
-    GLfloat *vertexArray;
+
     GLuint *textureArr;
     GLint aPosition, aColor;
     GLint aTextureCoordinates;

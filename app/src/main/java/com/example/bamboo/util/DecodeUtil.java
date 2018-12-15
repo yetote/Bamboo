@@ -22,7 +22,7 @@ public class DecodeUtil {
         codecMap.put("h264", "video/avc");
     }
 
-    private static String findHardwareCodec(String ffmpegCodeName) {
+    public static String findHardwareCodec(String ffmpegCodeName) {
         if (codecMap.containsKey(ffmpegCodeName)) {
             return codecMap.get(ffmpegCodeName);
         }

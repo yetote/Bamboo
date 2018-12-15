@@ -22,6 +22,8 @@ PlayerCallJava::PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj) {
     complete_jMid = jniEnv->GetMethodID(jlz, "onCallComplete", "()V");
     supportHardWare_jMid = jniEnv->GetMethodID(jlz, "onCallIsSupportHardwareCodec",
                                                "(Ljava/lang/String;)Z");
+    initCodec_jMid = jniEnv->GetMethodID(jlz, "initMediaCodec", "(Ljava/lang/String;II[B[B)V");
+    decode_jMid = jniEnv->GetMethodID(jlz, "decode", "(I[B)V");
 //    error_jMid = jniEnv->GetMethodID(jlz, "onCallError", "(ILjava/lang/String;)V");
 }
 
@@ -119,5 +121,38 @@ bool PlayerCallJava::onCallSupportHardwareCodec(int type, const char *ffmpegName
         javaVM->DetachCurrentThread();
     }
     return isSupport;
+}
+
+void
+PlayerCallJava::onCallInitCodec(char *mime, int w, int h, int csd0size, int csd1size, uint8_t *csd0,
+                                uint8_t *csd1) {
+    JNIEnv *jniEnv1;
+    if (javaVM->AttachCurrentThread(&jniEnv1, 0) != JNI_OK) {
+        LOGE("子线程回调java方法失败");
+    }
+    jstring type = jniEnv1->NewStringUTF(mime);
+    jbyteArray csd0Arr = jniEnv1->NewByteArray(csd0size);
+    jniEnv1->SetByteArrayRegion(csd0Arr, 0, csd0size, reinterpret_cast<const jbyte *>(csd0));
+    jbyteArray csd1Arr = jniEnv1->NewByteArray(csd1size);
+    jniEnv1->SetByteArrayRegion(csd1Arr, 0, csd1size, reinterpret_cast<const jbyte *>(csd1));
+    jniEnv1->CallVoidMethod(jobj, initCodec_jMid, type, w, h, csd0Arr, csd1Arr);
+
+    jniEnv1->DeleteLocalRef(csd0Arr);
+    jniEnv1->DeleteLocalRef(csd1Arr);
+    jniEnv1->DeleteLocalRef(type);
+    javaVM->DetachCurrentThread();
+}
+
+void PlayerCallJava::onCallDecode(int dataSize, uint8_t *data) {
+    JNIEnv *jniEnv1;
+    if (javaVM->AttachCurrentThread(&jniEnv1, 0) != JNI_OK) {
+        LOGE("子线程回调java方法失败");
+    }
+    jbyteArray dataArr = jniEnv1->NewByteArray(dataSize);
+    jniEnv1->SetByteArrayRegion(dataArr, 0, dataSize, reinterpret_cast<const jbyte *>(data));
+    jniEnv1->CallVoidMethod(jobj, decode_jMid, dataSize,dataArr);
+
+    jniEnv1->DeleteLocalRef(dataArr);
+    javaVM->DetachCurrentThread();
 }
 

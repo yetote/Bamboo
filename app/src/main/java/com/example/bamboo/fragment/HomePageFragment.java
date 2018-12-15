@@ -89,7 +89,7 @@ public class HomePageFragment extends Fragment {
                 w = width;
                 h = height;
                 playerView = new PlayerView(vertexCode, fragCode, surfaceHolder.getSurface(), w, h);
-                playerView.prepared(path);
+                playerView.prepared(musicList.get(0));
                 playPosition = 0;
                 onCall();
             }

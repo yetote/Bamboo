@@ -42,6 +42,13 @@ void *videoStart(void *data) {
                    videoPlayer->eglUtil->eglSurface,
                    videoPlayer->eglUtil->eglContext);
     videoPlayer->initVertex();
+    float changeH =
+            (float) videoPlayer->pCodecCtx->height / (float) videoPlayer->pCodecCtx->width *
+            (float) videoPlayer->w /
+            (float) videoPlayer->h;
+    for (int i = 0; i < 12; ++i) {
+        videoPlayer->vertexArray[++i] *= changeH;
+    }
     videoPlayer->initLocation();
     glViewport(0, 0, videoPlayer->w, videoPlayer->h);
     videoPlayer->glUtil->createProgram(videoPlayer->vertexCode, videoPlayer->fragCode);
@@ -90,6 +97,10 @@ void *videoStart(void *data) {
             }
             while (av_bsf_receive_packet(videoPlayer->pBsfContext, packet) == 0) {
                 LOGE("使用硬解码");
+
+                videoPlayer->playerCallJava->onCallDecode(packet->size, packet->data);
+                double diff = videoPlayer->getFrameDiffTime(null, packet);
+                av_usleep(videoPlayer->getDelayTime(diff) * 1000000);
                 av_packet_free(&packet);
                 av_free(packet);
                 continue;
@@ -122,7 +133,7 @@ void *videoStart(void *data) {
 
 
             if (frame->format == AV_PIX_FMT_YUV420P) {
-                double diff = videoPlayer->getFrameDiffTime(frame);
+                double diff = videoPlayer->getFrameDiffTime(frame, null);
                 av_usleep(videoPlayer->getDelayTime(diff) * 1000000);
                 LOGE("获取frame成功,diff=%f", videoPlayer->getDelayTime(diff * 1000000));
                 videoPlayer->initPlay(frame);
@@ -163,7 +174,7 @@ void *videoStart(void *data) {
                           frame->height,
                           pFrame420P->data,
                           pFrame420P->linesize);
-                double diff = videoPlayer->getFrameDiffTime(pFrame420P);
+                double diff = videoPlayer->getFrameDiffTime(pFrame420P, null);
 
                 av_usleep(videoPlayer->getDelayTime(diff) * 1000000);
                 LOGE("获取frame成功,diff=%f", videoPlayer->getDelayTime(diff * 1000000));
@@ -205,6 +216,10 @@ void VideoPlayer::release() {
     if (blockQueue != null) {
         delete blockQueue;
         blockQueue = null;
+    }
+    if (pBsfContext != null) {
+        av_bsf_free(&pBsfContext);
+        pBsfContext = null;
     }
     if (pCodecCtx != null) {
         pthread_mutex_lock(&codecMutex);
@@ -261,7 +276,7 @@ void VideoPlayer::initLocation() {
     uTexY = glGetUniformLocation(glUtil->program, "u_TexY");
     uTexU = glGetUniformLocation(glUtil->program, "u_TexU");
     uTexV = glGetUniformLocation(glUtil->program, "u_TexV");
-    glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void VideoPlayer::draw(AVFrame *pFrame) {
@@ -310,8 +325,13 @@ void VideoPlayer::draw(AVFrame *pFrame) {
     eglSwapBuffers(eglUtil->eglDisplay, eglUtil->eglSurface);
 }
 
-double VideoPlayer::getFrameDiffTime(AVFrame *frame) {
-    double pts = av_frame_get_best_effort_timestamp(frame);
+double VideoPlayer::getFrameDiffTime(AVFrame *frame, AVPacket *packet) {
+    double pts = 0;
+    if (frame != null) {
+        pts = av_frame_get_best_effort_timestamp(frame);
+    } else if (packet != null) {
+        pts = packet->pts;
+    }
     if (pts == AV_NOPTS_VALUE) {
         pts = 0;
     }

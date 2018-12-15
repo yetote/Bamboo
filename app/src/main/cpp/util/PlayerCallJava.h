@@ -23,6 +23,8 @@ public:
     jmethodID error_jMid;
     jmethodID complete_jMid;
     jmethodID supportHardWare_jMid;
+    jmethodID initCodec_jMid;
+    jmethodID decode_jMid;
 
     PlayerCallJava(JavaVM *jvm, JNIEnv *env, jobject obj);
 
@@ -37,7 +39,14 @@ public:
     void onCallError(int type, int code, char *msg);
 
     void onCallComplete(int type);
-    bool onCallSupportHardwareCodec(int type, const char* ffmpegName);
+
+    bool onCallSupportHardwareCodec(int type, const char *ffmpegName);
+
+
+    void onCallInitCodec(char *mime, int w, int h, int csd0size, int csd1size, uint8_t *csd0,
+                         uint8_t *csd1);
+
+    void onCallDecode(int dataSize, uint8_t *data);
 };
 
 

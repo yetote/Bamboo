@@ -167,6 +167,13 @@ void Decode::start() {
         }
         video->pBsfContext->time_base_in = video->time_base;
         video->codecType = CODEC_HARDWARE;
+        video->playerCallJava->onCallInitCodec(const_cast<char *>(codecName),
+                                               video->pCodecCtx->width,
+                                               video->pCodecCtx->height,
+                                               video->pCodecCtx->extradata_size,
+                                               video->pCodecCtx->extradata_size,
+                                               video->pCodecCtx->extradata,
+                                               video->pCodecCtx->extradata);
     }
     end:
 
@@ -178,7 +185,6 @@ void Decode::start() {
             av_usleep(1000 * 100);
             continue;
         }
-//
         if (audio->blockQueue->getQueueSize() > 40 || video->blockQueue->getQueueSize() > 40) {
             LOGE("队列已满");
             av_usleep(1000 * 100);
