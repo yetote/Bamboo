@@ -250,7 +250,7 @@ public class HomePageFragment extends Fragment {
         musicList = new ArrayList<>();
         musicList.add("http://asklxf.coding.me/liaoxuefeng/v/python/install-py.mp4");
         musicList.add("http://asklxf.coding.me/liaoxuefeng/v/python/start-py.mp4");
-        musicList.add("http://michaelliao.gitcafe.io/video/git-apt-install.mp4");
+//        musicList.add("http://michaelliao.gitcafe.io/video/git-apt-install.mp4");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?guid=1122016361&vkey=7EDECCE7ED528AFABCA9F530C2FA0E8CBB0ADABF90DF607A70C302F2C043A34B6F9F894F4E47BFEA065189ADE50D87E95281B9A5D06BFBAA&uin=0&fromtag=66");
         musicList.add("http://dl.stream.qqmusic.qq.com/C400003w4Tn23jENMJ.m4a?guid=1122016361&vkey=4E8440C7383FA8BB97CA238E829E74352645A7BA5E377C7E80B60B3E1E927EE7225EDD838E82DC5145FE2B2127269707AB78DFAE8D737F3E&uin=0&fromtag=66");
         musicList.add("http://124.193.230.147/amobile.music.tc.qq.com/C400004XePmv4CsaEq.m4a?guid=1122016361&vkey=14D52DBA0025A5A38C4D31AE2B900DD683C74CA7EA3D5FD367C7C20917E920865EB81D371D95D76FAE7C040CD96D960D8852FE8B40448F04&uin=0&fromtag=66");

@@ -5,6 +5,7 @@
 #include "decode/Decode.h"
 #include <android/native_window.h>
 #include <android/native_window_jni.h>
+
 #define  null NULL
 PlayerCallJava *playerCallJava = null;
 PlayerStatus *playerStatus;
@@ -27,7 +28,7 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *jvm, void *version) {
 void *start(void *data) {
     Decode *decode1 = static_cast<Decode *>(data);
     decode1->start();
-    pthread_exit(&startThread);
+    return 0;
 }
 
 extern "C"
@@ -51,9 +52,10 @@ Java_com_example_bamboo_myview_PlayerView_ffmpegStop(JNIEnv *env, jobject instan
 
     jclass jlz = env->GetObjectClass(instance);
     jmethodID next_jMid = env->GetMethodID(jlz, "onCallPlayNext", "()V");
-
+    nExit = false;
     if (decode != null) {
         decode->release();
+        pthread_join(startThread, null);
         delete decode;
         decode = null;
     }

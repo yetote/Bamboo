@@ -31,7 +31,7 @@ void *decode(void *data) {
 
     fFmpegDecode->ffmpegDecodeThread();
 
-    pthread_exit(&fFmpegDecode->decodeThread);
+    return 0;
 }
 
 void Decode::prepared() {
@@ -253,6 +253,9 @@ void Decode::resume() {
 
 void Decode::release() {
     playstatus->isExit = true;
+
+    pthread_join(decodeThread, null);
+
     pthread_mutex_lock(&initMutex);
     int sleepCount = 0;
     while (!isExit) {

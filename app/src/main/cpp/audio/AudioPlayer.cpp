@@ -41,11 +41,13 @@ void playerCallBack(SLAndroidSimpleBufferQueueItf bf, void *context) {
 void *decodePlay(void *data) {
     AudioPlayer *audio = static_cast<AudioPlayer *>(data);
     audio->initOpenSLES();
-    pthread_exit(&audio->playThread);
+    return 0;
 }
 
 void AudioPlayer::play() {
-    pthread_create(&playThread, null, decodePlay, this);
+    if (playstatus != null && !playstatus->isExit) {
+        pthread_create(&playThread, null, decodePlay, this);
+    }
 }
 
 int AudioPlayer::resampleAudio() {
@@ -327,6 +329,10 @@ void AudioPlayer::stop() {
 }
 
 void AudioPlayer::release() {
+    if (blockQueue != null) {
+        blockQueue->noticeQueue();
+    }
+    pthread_join(playThread, null);
     stop();
     if (blockQueue != null) {
         delete blockQueue;

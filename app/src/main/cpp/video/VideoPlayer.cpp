@@ -195,16 +195,22 @@ void *videoStart(void *data) {
             pthread_mutex_unlock(&videoPlayer->codecMutex);
         }
     }
-    pthread_exit(&videoPlayer->startThread);
+    return 0;
 }
 
 void VideoPlayer::play() {
-    pthread_create(&startThread, null, videoStart, this);
+    if (playerStatus != null && !playerStatus->isExit) {
+        pthread_create(&startThread, null, videoStart, this);
+    }
 }
 
 void VideoPlayer::release() {
+    if (blockQueue != null) {
+        blockQueue->noticeQueue();
+    }
+    pthread_join(startThread, null);
     if (eglUtil != null) {
-        eglUtil->eglRelease();\
+        eglUtil->eglRelease();
         delete eglUtil;
         eglUtil = null;
     }

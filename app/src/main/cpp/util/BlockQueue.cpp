@@ -3,6 +3,7 @@
 //
 
 #include "BlockQueue.h"
+
 BlockQueue::BlockQueue(PlayerStatus *playstatus) {
     this->playstatus = playstatus;
     pthread_mutex_init(&mutexPacket, NULL);
@@ -78,4 +79,9 @@ void BlockQueue::clearPacket() {
         packet = NULL;
     }
     pthread_mutex_unlock(&mutexPacket);
+}
+
+void BlockQueue::noticeQueue() {
+    pthread_cond_signal(&condPacket);
+
 }
