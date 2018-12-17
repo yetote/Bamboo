@@ -58,7 +58,7 @@ void EGLUtil::eglCreate(ANativeWindow *window) {
     LOGE("window%p", window);
     LOGE("egldisplay%p", eglDisplay);
     LOGE("eglConfig%p", eglConfig);
-    LOGE("surfaceAttr%p", surfaceAttr);
+    LOGE("eglSurface%p", eglSurface);
     if (eglSurface == null) {
         ret = eglGetError();
         LOGE("创建eglSurface失败,错误码%d", ret);

@@ -214,19 +214,23 @@ void VideoPlayer::release() {
         delete eglUtil;
         eglUtil = null;
     }
+    LOGE("EGL");
     if (glUtil != null) {
         glUtil->destroy();
         delete glUtil;
         glUtil = null;
     }
+    LOGE("GL");
     if (blockQueue != null) {
         delete blockQueue;
         blockQueue = null;
     }
+    LOGE("BLOCKQUEUE");
     if (pBsfContext != null) {
         av_bsf_free(&pBsfContext);
         pBsfContext = null;
     }
+    LOGE("PBSFCTX");
     if (pCodecCtx != null) {
         pthread_mutex_lock(&codecMutex);
         avcodec_close(pCodecCtx);
@@ -234,12 +238,15 @@ void VideoPlayer::release() {
         pCodecCtx = null;
         pthread_mutex_unlock(&codecMutex);
     }
+    LOGE("PCODECCTX");
     if (playerCallJava != null) {
         playerCallJava = null;
     }
+    LOGE("CALLJAVA");
     if (playerStatus != null) {
         playerStatus = null;
     }
+    LOGE("PLAYSTATYS");
 }
 
 void VideoPlayer::initPlay(AVFrame *frame) {

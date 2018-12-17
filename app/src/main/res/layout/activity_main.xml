@@ -12,17 +12,17 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/drawerlayout_head"
-        app:menu="@menu/drawerlayout_menu"
-        />
+        app:menu="@menu/drawerlayout_menu" />
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homePager_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/main_viewPager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_above="@id/main_tabLayout"
             app:layout_constraintBottom_toTopOf="@+id/main_tabLayout"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +39,6 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
 

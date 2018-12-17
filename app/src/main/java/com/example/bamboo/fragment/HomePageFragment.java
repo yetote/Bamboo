@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -66,6 +69,10 @@ public class HomePageFragment extends Fragment {
     private ArrayList<String> musicList;
     private boolean isCut = false;
     private String vertexCode, fragCode;
+    private boolean isShow = true;
+    private ConstraintSet constraintStart, constraintReply;
+    private ConstraintLayout constraintLayout;
+    private boolean isPrepared = false;
 
     @Nullable
     @Override
@@ -80,18 +87,22 @@ public class HomePageFragment extends Fragment {
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+
             }
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 Log.e(TAG, "surfaceChanged: " + path);
-                surfaceHolder = holder;
-                w = width;
-                h = height;
-                playerView = new PlayerView(vertexCode, fragCode, surfaceHolder.getSurface(), w, h);
-                playerView.prepared(musicList.get(0));
-                playPosition = 0;
-                onCall();
+                if (!isPrepared) {
+                    surfaceHolder = holder;
+                    w = width;
+                    h = height;
+                    playerView = new PlayerView(vertexCode, fragCode, surfaceHolder.getSurface(), w, h);
+                    playerView.prepared(path);
+                    playPosition = 0;
+                    onCall();
+                    isPrepared = true;
+                }
             }
 
             @Override
@@ -111,6 +122,7 @@ public class HomePageFragment extends Fragment {
                         startY = (int) event.getY();
                         Log.e(TAG, "onTouch: down" + startY);
                         isCut = true;
+                        isShow = constraintAnimation(isShow);
                     case MotionEvent.ACTION_MOVE:
                         endY = (int) event.getY();
                         if (isCut && (endY - startY) > 500) {
@@ -205,11 +217,13 @@ public class HomePageFragment extends Fragment {
             if (isPlaying) {
                 startBtn.setBackgroundResource(R.mipmap.play);
                 playerView.pause();
+
             } else {
                 startBtn.setBackgroundResource(R.mipmap.pause);
                 playerView.onResume();
             }
             isPlaying = !isPlaying;
+            isShow = constraintAnimation(true);
         });
 
         recodeBtn.setOnClickListener(vRecode -> {
@@ -262,6 +276,12 @@ public class HomePageFragment extends Fragment {
         musicList.add("http://124.193.230.144/amobile.music.tc.qq.com/C400000jxuAK3aY3eU.m4a?guid=1122016361&vkey=F5ACA69426E3F307B20C5CC30315A96CA05543C71A56D4153E381EA695B6CD1D4CC7700B734DF232A34B2F32C5AF11E347322FB378B6505B&uin=0&fromtag=66");
         vertexCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_vertex_shader);
         fragCode = TextRecourseReader.readTextFileFromResource(getActivity(), R.raw.yuv_frag_shader);
+        constraintLayout = v.findViewById(R.id.homePager_constraintLayout);
+        constraintStart = new ConstraintSet();
+        constraintStart.clone(getActivity(), R.layout.fragment_homepage_finish);
+
+        constraintReply = new ConstraintSet();
+        constraintReply.clone(getActivity(), R.layout.fragment_homepage);
     }
 
     Handler handler = new Handler() {
@@ -293,6 +313,7 @@ public class HomePageFragment extends Fragment {
     @Override
     public void onStop() {
         playerView.stop();
+        isPrepared = false;
         super.onStop();
         Log.e(TAG, "onStop: ");
     }
@@ -306,6 +327,17 @@ public class HomePageFragment extends Fragment {
             Log.e(TAG, "setUserVisibleHint: ");
         }
         super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    private boolean constraintAnimation(boolean isShow) {
+        if (isShow) {
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            constraintStart.applyTo(constraintLayout);
+        } else {
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            constraintReply.applyTo(constraintLayout);
+        }
+        return !isShow;
     }
 }
 

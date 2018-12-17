@@ -240,6 +240,9 @@ void Decode::pause() {
     if (audio != null) {
         audio->pause();
     }
+    if (video != null) {
+        video->playerStatus->isPause = true;
+    }
 }
 
 void Decode::resume() {
@@ -248,6 +251,9 @@ void Decode::resume() {
     }
     if (audio != null) {
         audio->resume();
+    }
+    if (video != null) {
+        video->playerStatus->isPause = false;
     }
 }
 

@@ -1,6 +1,8 @@
 package com.example.bamboo;
 
 import android.os.Bundle;
+import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
 
 import com.example.bamboo.adapter.MainViewPagerAdapter;
@@ -14,6 +16,8 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -27,7 +31,11 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Fragment> fmList;
     private ArrayList<String> titleList;
     private ViewPager viewPager;
-    View statusBar;
+    private ConstraintLayout constraintLayout;
+    private ConstraintSet constraintStart;
+    private ConstraintSet constraintReply;
+    private boolean isFirst = true;
+    private static final String TAG = "MainActivity";
 
     @Override
 
@@ -60,11 +68,48 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
         tabLayout.setupWithViewPager(viewPager);
+
+        if (isFirst) {
+            TransitionManager.beginDelayedTransition(constraintLayout);
+            constraintStart.applyTo(constraintLayout);
+            isFirst = false;
+        }
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                Log.e(TAG, "onTabSelected: " + tab.getPosition());
+                if (tab.getPosition() == 1) {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    constraintStart.applyTo(constraintLayout);
+                } else {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    constraintReply.applyTo(constraintLayout);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void initView() {
         tabLayout = findViewById(R.id.main_tabLayout);
         viewPager = findViewById(R.id.main_viewPager);
+        constraintLayout = findViewById(R.id.homePager_constraintLayout);
+
+        constraintStart = new ConstraintSet();
+        constraintStart.clone(this, R.layout.activity_main_finish);
+
+        constraintReply = new ConstraintSet();
+        constraintReply.clone(constraintLayout);
     }
 
 }
