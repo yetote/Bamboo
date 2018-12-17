@@ -59,7 +59,7 @@
                     android:layout_toStartOf="@id/personal_im_follow_btn"
                     android:background="@drawable/personal_im_sendmsg_btn"
                     android:text="@string/sendMsg"
-                    android:textColor="@color/pink" />
+                    android:textColor="@color/darkcyan" />
 
                 <Button
                     android:id="@+id/personal_im_follow_btn"

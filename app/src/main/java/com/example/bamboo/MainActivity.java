@@ -3,7 +3,6 @@ package com.example.bamboo;
 import android.os.Bundle;
 import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.View;
 
 import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.fragment.HomePageFragment;
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintSet constraintReply;
     private boolean isFirst = true;
     private static final String TAG = "MainActivity";
+    private MattersFragment mattersFragment;
 
     @Override
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         fmList.add(new RecommendFragment());
         fmList.add(new HomePageFragment());
         fmList.add(new NearFragment());
-        fmList.add(new MattersFragment());
+        fmList.add(mattersFragment);
 
         titleList = new ArrayList<>();
         titleList.add("推荐");
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), fmList, titleList);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
+        viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);
 
         if (isFirst) {
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     constraintStart.applyTo(constraintLayout);
                 } else {
+                    if (tab.getPosition() == 3) {
+//                        mattersFragment.
+                    }
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     constraintReply.applyTo(constraintLayout);
                 }
@@ -103,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         tabLayout = findViewById(R.id.main_tabLayout);
         viewPager = findViewById(R.id.main_viewPager);
+        mattersFragment = new MattersFragment();
         constraintLayout = findViewById(R.id.homePager_constraintLayout);
 
         constraintStart = new ConstraintSet();
