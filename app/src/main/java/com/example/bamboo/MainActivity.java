@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
+import com.example.bamboo.fragment.MessageFragment;
 import com.example.bamboo.fragment.NearFragment;
 import com.example.bamboo.fragment.RecommendFragment;
 import com.example.bamboo.util.StatusBarUtils;
@@ -49,19 +50,19 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout.addTab(tabLayout.newTab().setText("推荐"), false);
         tabLayout.addTab(tabLayout.newTab().setText("首页"), true);
-        tabLayout.addTab(tabLayout.newTab().setText("附近"), false);
+        tabLayout.addTab(tabLayout.newTab().setText("消息"), false);
         tabLayout.addTab(tabLayout.newTab().setText("动态"), false);
 
         fmList = new ArrayList<>();
         fmList.add(new RecommendFragment());
         fmList.add(new HomePageFragment());
-        fmList.add(new NearFragment());
+        fmList.add(new MessageFragment());
         fmList.add(mattersFragment);
 
         titleList = new ArrayList<>();
         titleList.add("推荐");
         titleList.add("首页");
-        titleList.add("附近");
+        titleList.add("消息");
         titleList.add("动态");
 
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), fmList, titleList);

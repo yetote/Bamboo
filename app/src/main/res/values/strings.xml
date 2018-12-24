@@ -71,4 +71,10 @@
     <string name="collect">收藏</string>
     <string name="dynamics">动态</string>
     <string name="contributes">投稿</string>
+    <string name="message">消息</string>
+    <string name="my_friend">我的好友</string>
+    <string name="fans">粉丝</string>
+    <string name="acclaim">赞</string>
+    <string name="mine">\@我的</string>
+    <string name="discuss">评论</string>
 </resources>
