@@ -6,9 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".RecodeVideoActivity">
 
+    <Button
+        android:id="@+id/recode_video_switchCamera_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@mipmap/camera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <SurfaceView
         android:id="@+id/recode_video_surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.example.bamboo.myview.RecodeButton
+        android:id="@+id/recode_video_recodeBtn"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="@+id/recode_video_surfaceView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:radius="100" />
 </androidx.constraintlayout.widget.ConstraintLayout>

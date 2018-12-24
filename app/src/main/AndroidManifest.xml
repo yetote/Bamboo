@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".application.MyApplication"
@@ -19,21 +20,35 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".SelectTagActivity" />
-        <activity android:name=".StartActivity" />
+        <activity
+            android:name=".SelectTagActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".StartActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/GradientTheme" />
-        <activity android:name=".TestActivity" />
-        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".TestActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PwdLoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Translucent" />
         <activity
             android:name=".CodeLoginActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Translucent" />
         <activity
             android:name=".WaitActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,8 +56,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PersonalImActivity" />
-        <activity android:name=".RecodeVideoActivity"></activity>
+        <activity
+            android:name=".PersonalImActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RecodeVideoActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
     </application>
 
 </manifest>
