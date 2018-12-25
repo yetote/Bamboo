@@ -35,4 +35,18 @@ public class MathUtil {
         }
         return EVEN;
     }
+
+    /**
+     * 未读的消息数
+     *
+     * @param num 消息数量
+     * @return 经过处理的消息数量
+     */
+    public static String msgNum(int num) {
+        if (num > 99) {
+            return "99+";
+        }
+        return num + "";
+    }
+
 }

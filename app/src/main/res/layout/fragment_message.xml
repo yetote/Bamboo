@@ -17,6 +17,7 @@
         app:titleTextColor="@color/white" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -28,39 +29,48 @@
         app:layout_constraintTop_toBottomOf="@+id/fragment_message_toolbar">
 
         <TextView
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/fans"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             android:text="@string/fans" />
 
         <TextView
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/acclaim"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             android:text="@string/acclaim" />
 
         <TextView
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/callme"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             android:text="@string/mine" />
 
         <TextView
-            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:drawableTop="@drawable/discuss"
             android:gravity="center_horizontal"
+            android:padding="10dp"
             android:text="@string/discuss" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragment_message_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

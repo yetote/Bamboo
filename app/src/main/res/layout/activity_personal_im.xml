@@ -91,7 +91,7 @@
                     android:layout_alignBottom="@id/personal_im_username_tv"
                     android:layout_marginStart="10dp"
                     android:layout_toEndOf="@id/personal_im_username_tv"
-                    android:drawableStart="@mipmap/lv_one"
+                    android:drawableStart="@drawable/lv_one"
                     android:gravity="center|start"
                     android:text="uid:123456789" />
 

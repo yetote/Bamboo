@@ -78,13 +78,13 @@ public class PersonalImActivity extends AppCompatActivity {
             case 0:
                 break;
             case 1:
-                drawableId = R.mipmap.lv_one;
+                drawableId = R.drawable.lv_one;
                 break;
             case 2:
-                drawableId = R.mipmap.lv_two;
+                drawableId = R.drawable.lv_two;
                 break;
             case 3:
-                drawableId = R.mipmap.lv_three;
+                drawableId = R.drawable.lv_three;
                 break;
             default:
                 break;
