@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
 import com.example.bamboo.model.MessageListModel;
+import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.IdentityUtils;
 import com.example.bamboo.util.MathUtil;
 import com.example.bamboo.util.TimeUtil;
@@ -32,6 +33,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MessageListAdapter extends RecyclerView.Adapter {
     private Context context;
     private ArrayList<MessageListModel> list;
+    private RecyclerViewOnClickListener onClickListener;
+
+    public void setOnClickListener(RecyclerViewOnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
 
     public MessageListAdapter(Context context, ArrayList<MessageListModel> list) {
         this.context = context;
@@ -80,7 +86,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.item_message, parent, false));
+        View v = LayoutInflater.from(context).inflate(R.layout.item_message, parent, false);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onClick(v.getTag());
+            }
+        });
+
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -92,6 +106,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         vh.getContent().setText(list.get(position).getContent());
         vh.getTime().setText(TimeUtil.msgTime(list.get(position).getTime()));
         vh.getMsgNum().setText(MathUtil.msgNum(list.get(position).getMsgNum()));
+        vh.itemView.setTag(list.get(position));
+
     }
 
     @Override

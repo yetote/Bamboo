@@ -1,16 +1,28 @@
 package com.example.bamboo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.bamboo.ChatActivity;
+import com.example.bamboo.FriendActivity;
 import com.example.bamboo.R;
 import com.example.bamboo.adapter.MessageListAdapter;
 import com.example.bamboo.model.MessageListModel;
+import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
+import com.hyphenate.EMMessageListener;
+import com.hyphenate.chat.EMClient;
+import com.hyphenate.chat.EMConversation;
+import com.hyphenate.chat.EMMessage;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,6 +46,9 @@ public class MessageFragment extends Fragment {
     private ArrayList<MessageListModel> list;
     private MessageListAdapter adapter;
     private Toolbar toolbar;
+    private EMMessageListener msgListener;
+
+    private static final String TAG = "MessageFragment";
 
     @Nullable
     @Override
@@ -45,6 +60,9 @@ public class MessageFragment extends Fragment {
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.message_menu_people:
+                    Intent i = new Intent();
+                    i.setClass(getActivity(), FriendActivity.class);
+                    startActivity(i);
                     break;
                 default:
                     break;
@@ -54,7 +72,62 @@ public class MessageFragment extends Fragment {
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.setAdapter(adapter);
+        adapter.setOnClickListener(obj -> {
+            MessageListModel model = (MessageListModel) obj;
+            Intent i = new Intent();
+            i.putExtra("u_id", model.getUserID());
+            i.putExtra("u_name", model.getUser());
+            i.putExtra("u_header", model.getHeads());
+            i.setClass(getActivity(), ChatActivity.class);
+            startActivity(i);
+        });
+
+        receiveMsg();
+
         return v;
+    }
+
+    private void receiveMsg() {
+        //获取会话
+        EMClient.getInstance().chatManager().loadAllConversations();
+        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+
+        EMClient.getInstance().chatManager().addMessageListener(msgListener);
+        msgListener = new EMMessageListener() {
+
+            @Override
+            public void onMessageReceived(List<EMMessage> messages) {
+                //收到消息
+                Log.e(TAG, "onMessageReceived: " + messages.toString());
+            }
+
+            @Override
+            public void onCmdMessageReceived(List<EMMessage> messages) {
+                //收到透传消息
+            }
+
+            @Override
+            public void onMessageRead(List<EMMessage> messages) {
+                //收到已读回执
+            }
+
+            @Override
+            public void onMessageDelivered(List<EMMessage> message) {
+                //收到已送达回执
+            }
+
+            @Override
+            public void onMessageRecalled(List<EMMessage> messages) {
+                //消息被撤回
+            }
+
+            @Override
+            public void onMessageChanged(EMMessage message, Object change) {
+                //消息状态变动
+            }
+        };
+
+
     }
 
     private void init(View v) {
@@ -85,4 +158,5 @@ public class MessageFragment extends Fragment {
 
         adapter = new MessageListAdapter(getActivity(), list);
     }
+
 }

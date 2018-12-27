@@ -84,8 +84,8 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
              */
             @Override
             public void onTransitionEnd(Transition transition) {
-                transition.removeListener(this);
                 animateRevelShow();
+                transition.removeListener(this);
             }
 
             /**

@@ -19,6 +19,11 @@ import com.example.bamboo.R;
  */
 public class StatusBarUtils {
 
+    /**
+     * 将状态栏改变为自定义的状态栏
+     *
+     * @param activity activity
+     */
     public static void changedStatusBar(Activity activity) {
         activity.getWindow().getDecorView().addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
@@ -34,6 +39,11 @@ public class StatusBarUtils {
         });
     }
 
+    /**
+     * 透明状态栏
+     *
+     * @param activity activity
+     */
     public static void transparentStatusBar(Activity activity) {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
     }

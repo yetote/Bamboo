@@ -1,51 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="180dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    tools:layout_editor_absoluteY="25dp">
+
     <ImageView
-        android:contentDescription="@string/headimg"
         android:id="@+id/drawerlayout_head_bc"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="126dp"
+        android:contentDescription="@string/headimg"
         android:scaleType="centerCrop"
-        android:src="@drawable/test_head" />
+        android:src="@drawable/test_head"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/drawerlayout_head_headIv"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignTop="@+id/drawerlayout_head_bc"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/test_headimg" />
+        android:src="@drawable/test_headimg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/drawerlayout_head_bc" />
 
     <TextView
         android:id="@+id/drawerlayout_head_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/drawerlayout_head_headIv"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:textColor="@color/white"
-        android:paddingEnd="10dp"
-        android:textSize="@dimen/titleSize"
         android:paddingStart="10dp"
-        android:text="@string/test_title" />
+        android:paddingEnd="10dp"
+        android:text="@string/test_title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/titleSize"
+        app:layout_constraintTop_toBottomOf="@+id/drawerlayout_head_headIv" />
 
     <TextView
         android:id="@+id/drawerlayout_head_describe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
         android:layout_below="@id/drawerlayout_head_name"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:ellipsize="end"
         android:gravity="center"
-        android:textSize="@dimen/contentSize"
-        android:paddingEnd="10dp"
         android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:singleLine="true"
-        android:text="@string/test_content" />
-</RelativeLayout>
+        android:text="@string/test_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/contentSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawerlayout_head_name" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_matter_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintEnd_toStartOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_matter_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="动态"
+        app:layout_constraintBottom_toBottomOf="@+id/drawerlayout_head_follow_text"
+        app:layout_constraintEnd_toEndOf="@+id/drawerlayout_head_matter_num"
+        app:layout_constraintStart_toStartOf="@+id/drawerlayout_head_matter_num"
+        app:layout_constraintTop_toTopOf="@+id/drawerlayout_head_follow_text" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_follow_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawerlayout_head_describe" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_follow_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关注"
+        app:layout_constraintEnd_toEndOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintStart_toStartOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintTop_toBottomOf="@+id/drawerlayout_head_follow_num" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_fans_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        app:layout_constraintBottom_toBottomOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/drawerlayout_head_follow_num"
+        app:layout_constraintTop_toTopOf="@+id/drawerlayout_head_follow_num" />
+
+    <TextView
+        android:id="@+id/drawerlayout_head_fans_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="粉丝"
+        app:layout_constraintBottom_toBottomOf="@+id/drawerlayout_head_follow_text"
+        app:layout_constraintEnd_toEndOf="@+id/drawerlayout_head_fans_num"
+        app:layout_constraintStart_toStartOf="@+id/drawerlayout_head_fans_num"
+        app:layout_constraintTop_toTopOf="@+id/drawerlayout_head_follow_text" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/gray_cc"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/drawerlayout_head_follow_text" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

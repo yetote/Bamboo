@@ -14,8 +14,8 @@ public interface RecyclerViewOnClickListener {
     /**
      * 点击事件
      *
-     * @param id 点击的item的id
+     * @param obj Object对象
      */
-    void onClick(int id);
+    void onClick(Object obj);
 
 }

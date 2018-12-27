@@ -13,17 +13,19 @@ package com.example.bamboo.model;
 public class PersonalBean {
     private String bg, headImg;
     private String uName;
-    private int followNum, fansNum, level, uid;
+    private int followNum, fansNum, uid;
+    private String identity;
+    //简介
     private String synopsis;
 
-    public PersonalBean(String bg, String headImg, String uName, int uid, int followNum, int fansNum, int level, String synopsis) {
+    public PersonalBean(String bg, String headImg, String uName, int uid, int followNum, int fansNum, String identity, String synopsis) {
         this.bg = bg;
         this.headImg = headImg;
         this.uName = uName;
         this.uid = uid;
         this.followNum = followNum;
         this.fansNum = fansNum;
-        this.level = level;
+        this.identity = identity;
         this.synopsis = synopsis;
     }
 
@@ -75,12 +77,12 @@ public class PersonalBean {
         this.fansNum = fansNum;
     }
 
-    public int getLevel() {
-        return level;
+    public String getIdentity() {
+        return identity;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setIdentity(String identity) {
+        this.identity = identity;
     }
 
     public String getSynopsis() {

@@ -21,6 +21,7 @@ import com.example.bamboo.fragment.PersonalMainContributes;
 import com.example.bamboo.fragment.PersonalMainDynamics;
 import com.example.bamboo.fragment.PersonalMainPager;
 import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.util.IdentityUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
@@ -60,9 +61,9 @@ public class PersonalImActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout, i1) -> {
-            if (-i1 >= appBarLayout.getTotalScrollRange()*0.75) {
+            if (-i1 >= appBarLayout.getTotalScrollRange() * 0.75) {
                 toolbar.setTitle(dataList.get(0).getName());
-            }else {
+            } else {
                 toolbar.setTitle("");
             }
         });
@@ -74,22 +75,8 @@ public class PersonalImActivity extends AppCompatActivity {
         Glide.with(this).load(dataList.get(0).getHeadImg()).into(headIv);
         userName.setText(dataList.get(0).getName());
         int drawableId = -1;
-        switch (dataList.get(0).getLevel()) {
-            case 0:
-                break;
-            case 1:
-                drawableId = R.drawable.lv_one;
-                break;
-            case 2:
-                drawableId = R.drawable.lv_two;
-                break;
-            case 3:
-                drawableId = R.drawable.lv_three;
-                break;
-            default:
-                break;
-        }
-        Drawable drawable = getResources().getDrawable(drawableId);
+
+        Drawable drawable = getResources().getDrawable(IdentityUtils.getIdentityDrawable(dataList.get(0).getIdentity()));
         drawable.setBounds(0, 0, 70, 70);
         userId.setCompoundDrawables(drawable, null, null, null);
         userId.setText(dataList.get(0).getUid() + "");
@@ -122,6 +109,6 @@ public class PersonalImActivity extends AppCompatActivity {
         title.add("收藏");
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), list, title);
         dataList = new ArrayList<>();
-        dataList.add(new PersonalBean("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544006393996&di=06f232e186c7ad846f977ec2b36c7484&imgtype=0&src=http%3A%2F%2Fbmp.skxox.com%2F201703%2F27%2Fxz123456.162643.jpg", "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3484494144,556561024&fm=26&gp=0.jpg", "yetote", 13004265, 32, 40, 3, "一个非常无聊的人"));
+        dataList.add(new PersonalBean("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544006393996&di=06f232e186c7ad846f977ec2b36c7484&imgtype=0&src=http%3A%2F%2Fbmp.skxox.com%2F201703%2F27%2Fxz123456.162643.jpg", "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3484494144,556561024&fm=26&gp=0.jpg", "yetote", 13004265, 32, 40, "vip3", "一个非常无聊的人"));
     }
 }

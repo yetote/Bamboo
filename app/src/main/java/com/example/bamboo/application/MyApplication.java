@@ -17,6 +17,7 @@ import com.example.bamboo.util.CoordinateTransformation;
 import com.example.bamboo.util.CrashHandle;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
+import com.hyphenate.easeui.EaseUI;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ public class MyApplication extends Application {
     private View statusBar;
     private static final String TAG = "MyApplication";
     public static boolean isFirst;
+    public static boolean isLogin = false;
 
     public static MyApplication getContext() {
         return mContext;
@@ -92,6 +94,7 @@ public class MyApplication extends Application {
         initRetrofit();
         SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
         isFirst = sp.getBoolean("is_first", true);
+//        isLogin = sp.getBoolean("is_login", false);
     }
 
     /**
@@ -119,11 +122,14 @@ public class MyApplication extends Application {
 
         // 是否自动下载附件类消息的缩略图等，默认为 true 这里和上边这个参数相关联
         options.setAutoDownloadThumbnail(true);
-
+        //是否自动登录
+        options.setAutoLogin(false);
         //初始化
         EMClient.getInstance().init(getApplicationContext(), options);
         //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(true);
+        //初始化easyUi
+        EaseUI.getInstance().init(this, options);
     }
 
     private void initRetrofit() {
