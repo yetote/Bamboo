@@ -17,5 +17,5 @@ public interface OnLoginInterface {
      * @param isLogin 是否登录成功
      * @param uName   用户名
      */
-    void login(boolean isLogin, String uName);
+    void login(boolean isLogin, String uName, int error);
 }

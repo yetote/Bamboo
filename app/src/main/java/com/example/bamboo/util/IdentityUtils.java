@@ -28,6 +28,9 @@ public class IdentityUtils {
     }
 
     public static int getIdentityDrawable(String identity) {
-        return identityMap.get(identity);
+        if (!CheckUtils.checkNull(identity)) {
+            return identityMap.get(identity);
+        }
+        return 0;
     }
 }

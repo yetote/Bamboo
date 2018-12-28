@@ -6,6 +6,8 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -51,6 +53,32 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
     private TextView toVerifyCodeLogin;
     private static final String TAG = "PwdLoginActivity";
     private OnLoginInterface loginInterface;
+    public static final int HANDLER_LOGIN_CODE = 1;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case HANDLER_LOGIN_CODE:
+                    Bundle bundle = (Bundle) msg.obj;
+                    boolean loginState = bundle.getBoolean("login_state");
+                    if (loginState) {
+                        String uName = bundle.getString("u_name");
+                        Toast.makeText(PwdLoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                        MyApplication.isLogin = true;
+                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putBoolean("is_login", true);
+                        editor.apply();
+                        CallBackUtils.setSuccess(uName);
+                        finish();
+                    } else {
+                        Toast.makeText(PwdLoginActivity.this, "登录失败,错误码" + bundle.getInt("error_code"), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
 
     public void setLoginInterface(OnLoginInterface loginInterface) {
         this.loginInterface = loginInterface;
@@ -73,7 +101,23 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
         startAnimation();
 
         onClick();
+        callBack();
     }
+
+    private void callBack() {
+        CallBackUtils.setLoginInterface((isLogin, uName, error) -> {
+            Message msg = new Message();
+            msg.what = HANDLER_LOGIN_CODE;
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("login_state", isLogin);
+            bundle.putString("u_name", uName);
+            bundle.putInt("error_code", error);
+            msg.obj = bundle;
+            handler.sendMessage(msg);
+
+        });
+    }
+
 
     private void onClick() {
         fab.setOnClickListener(this);
@@ -103,32 +147,8 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                 if (CheckUtils.checkNull(telText, pwdText)) {
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-
-                    int loginState = HuanXinHelper.login(telText, pwdText);
-                    if (loginState == 0) {
-                        Toast.makeText(this, "登录成功", Toast.LENGTH_SHORT).show();
-
-                        MyApplication.isLogin = true;
-                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putBoolean("is_login", true);
-                        editor.apply();
-//                        if (MyApplication.isFirst) {
-//                            Intent i = new Intent();
-//                            i.putExtra("u_name", telText);
-//                            i.setClass(this, MainActivity.class);
-//                            startActivity(i);
-//                        } else {
-//                            Log.e(TAG, "onClick: " + telText);
-//                            CallBackUtils.setLogin(true, telText);
-//                        }
-//                        finish();
-                    } else {
-                        Toast.makeText(this, "登录失败" + loginState, Toast.LENGTH_SHORT).show();
-                    }
+                    HuanXinHelper.login(telText, pwdText);
                 }
-//                startActivity(new Intent(this, MainActivity.class));
-
                 break;
             default:
                 break;

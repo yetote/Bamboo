@@ -1,6 +1,7 @@
 package com.example.bamboo.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private Context context;
     private ArrayList<MessageListModel> list;
     private RecyclerViewOnClickListener onClickListener;
+    private static final String TAG = "MessageListAdapter";
 
     public void setOnClickListener(RecyclerViewOnClickListener onClickListener) {
         this.onClickListener = onClickListener;
@@ -103,6 +105,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         Glide.with(context).load(list.get(position).getHeads()).into(vh.getHeadImg());
         Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getIdentity())).into(vh.getIdentityImg());
         vh.getUser().setText(list.get(position).getUser());
+        Log.e(TAG, "onBindViewHolder: " + list.get(position).getContent());
         vh.getContent().setText(list.get(position).getContent());
         vh.getTime().setText(TimeUtil.msgTime(list.get(position).getTime()));
         vh.getMsgNum().setText(MathUtil.msgNum(list.get(position).getMsgNum()));

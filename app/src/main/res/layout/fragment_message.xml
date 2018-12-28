@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,54 +15,104 @@
         app:title="@string/message"
         app:titleTextColor="@color/white" />
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+    <ImageView
+        android:id="@+id/fragment_message_fans_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/fans"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_acclaim_iv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_message_toolbar">
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_acclaim_iv" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/fans"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/fans" />
+    <TextView
+        android:id="@+id/fragment_message_fans_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/fans"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_acclaim_tv"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_message_fans_iv"
+        app:layout_constraintStart_toStartOf="@+id/fragment_message_fans_iv"
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_acclaim_tv" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/acclaim"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/acclaim" />
+    <ImageView
+        android:id="@+id/fragment_message_acclaim_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/acclaim"
+        app:layout_constraintBottom_toTopOf="@+id/fragment_message_acclaim_tv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_message_toolbar" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/callme"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/mine" />
+    <TextView
+        android:id="@+id/fragment_message_acclaim_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/acclaim"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_message_acclaim_iv"
+        app:layout_constraintStart_toStartOf="@+id/fragment_message_acclaim_iv" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/discuss"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/discuss" />
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/fragment_message_callme_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/callme"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_acclaim_iv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_acclaim_iv"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/fragment_message_callme_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/mine"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_acclaim_tv"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_message_callme_iv"
+        app:layout_constraintStart_toStartOf="@+id/fragment_message_callme_iv"
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_acclaim_tv" />
+
+    <ImageView
+        android:id="@+id/fragment_message_discuss_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/discuss"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_callme_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_callme_iv"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/fragment_message_discuss_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_horizontal"
+        android:text="@string/discuss"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_message_callme_tv"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_message_discuss_iv"
+        app:layout_constraintStart_toStartOf="@+id/fragment_message_discuss_iv"
+        app:layout_constraintTop_toTopOf="@+id/fragment_message_callme_tv" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_message_rv"
@@ -72,5 +121,33 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toTopOf="@+id/guideline4" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="144dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

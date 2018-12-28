@@ -6,6 +6,8 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.myinterface.OnLoginInterface;
 import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.CheckUtils;
 import com.example.bamboo.util.HuanXinHelper;
@@ -36,6 +39,37 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private static final String TAG = "RegisterActivity";
     private Button sure;
     private EditText telEdit, codeEdit, pwdEdit;
+    private static final int HANDLER_REGISTER_CODE = 1;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case HANDLER_REGISTER_CODE:
+                    Bundle bundle = (Bundle) msg.obj;
+
+                    if (bundle.getBoolean("login_state")) {
+                        String uName = bundle.getString("u_name");
+                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        MyApplication.isLogin = true;
+                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putBoolean("is_login", true);
+                        editor.apply();
+                        if (MyApplication.isFirst) {
+                            Intent i = new Intent();
+                            i.putExtra("u_name", uName);
+                            i.setClass(RegisterActivity.this, MainActivity.class);
+                            startActivity(i);
+                        }
+                        finish();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "注册失败" + bundle.getInt("error_code"), Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +85,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         initData();
         initViews();
         onClick();
+        callBack();
+    }
+
+    private void callBack() {
+        CallBackUtils.setLoginInterface((isLogin, uName, error) -> {
+            Message msg = new Message();
+            msg.what = HANDLER_REGISTER_CODE;
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("login_state", isLogin);
+            bundle.putString("u_name", uName);
+            bundle.putInt("error_code", error);
+            msg.obj = bundle;
+            handler.sendMessage(msg);
+        });
     }
 
     private void initData() {
@@ -94,27 +142,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (CheckUtils.checkNull(uNameText, pwdText)) {
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (HuanXinHelper.register(uNameText, pwdText) == 0) {
-                        Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
-                        MyApplication.isLogin = true;
-                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putBoolean("is_login", true);
-                        editor.apply();
-
-                        if (MyApplication.isFirst) {
-                            Intent i = new Intent();
-                            i.putExtra("u_name", uNameText);
-                            i.setClass(this, MainActivity.class);
-                            startActivity(i);
-                        } else {
-                            CallBackUtils.setLogin(true, uNameText);
-                        }
-                        finish();
-
-                    } else {
-                        Toast.makeText(this, "注册失败", Toast.LENGTH_SHORT).show();
-                    }
+                    HuanXinHelper.register(uNameText, pwdText);
                 }
                 break;
             default:

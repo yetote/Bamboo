@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telecom.Call;
 import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,9 +17,8 @@ import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.MessageFragment;
-import com.example.bamboo.fragment.NearFragment;
 import com.example.bamboo.fragment.RecommendFragment;
-import com.example.bamboo.myinterface.OnLoginInterface;
+import com.example.bamboo.myinterface.OnLoginSuccess;
 import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.navigation.NavigationView;
@@ -82,12 +81,12 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
 
-        if (MyApplication.isLogin) {
-//            Intent i = getIntent();
-//            String uName = i.getStringExtra("u_name");
-//            nameTv.setText(uName);
-//            Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
-//            Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
+        if (MyApplication.isFirst && MyApplication.isLogin) {
+            Intent i = getIntent();
+            String uName = i.getStringExtra("u_name");
+            nameTv.setText(uName);
+            Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
+            Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
         } else {
             Glide.with(MainActivity.this).load(R.drawable.question_mark).into(headIv);
             Glide.with(MainActivity.this).load(R.drawable.default_bc).into(headBcIv);
@@ -148,26 +147,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        nameTv.setText("12121");
+//        nameTv.setText("12121");
         onClick();
 
         callBack();
     }
 
     private void callBack() {
-        CallBackUtils.setLoginInterface((isLogin, uName) -> {
-
-            if (isLogin) {
-//                nameTv.setText("12121");
-                Message msg = new Message();
-                MainActivity.this.nameTv.setText(uName);
-                msg.what = 0;
-                msg.obj = uName;
-                handler.sendMessage(msg);
-                Log.e(TAG, "callBack: " + Thread.currentThread().getName());
-                Toast.makeText(this, uName, Toast.LENGTH_SHORT).show();
-             }
+        CallBackUtils.setLoginSuccess(username -> {
+            nameTv.setText(username);
+            Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
+            Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
         });
+
     }
 
     private void onClick() {

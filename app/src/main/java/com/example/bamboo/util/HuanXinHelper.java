@@ -2,6 +2,7 @@ package com.example.bamboo.util;
 
 import android.util.Log;
 
+import com.example.bamboo.myinterface.OnLoginInterface;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.exceptions.HyphenateException;
@@ -20,27 +21,28 @@ public class HuanXinHelper {
     private static final String TAG = "HuanXinHelper";
     public static int REGISTER_STATE, LOGIN_STATE;
 
-    public static int register(String uname, String pwd) {
+    public static void register(String uname, String pwd) {
         REGISTER_STATE = 0;
         new Thread(() -> {
             try {
                 EMClient.getInstance().createAccount(uname, pwd);
+                CallBackUtils.setLogin(true, uname, 0);
             } catch (HyphenateException e) {
                 Log.e(TAG, "register: " + e.getErrorCode() + "\n" + e.getDescription());
-                REGISTER_STATE = e.getErrorCode();
+                CallBackUtils.setLogin(false, uname, e.getErrorCode());
             }
         }).start();
-        return REGISTER_STATE;
     }
 
-    public static int login(String uname, String pwd) {
+    public static void login(String uname, String pwd) {
         LOGIN_STATE = 0;
-        new Thread(() -> EMClient.getInstance().login("1234567901", "1", new EMCallBack() {//回调
+        new Thread(() -> EMClient.getInstance().login(uname, pwd, new EMCallBack() {//回调
             @Override
             public void onSuccess() {
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.e(TAG, "登录聊天服务器成功！");
+                CallBackUtils.setLogin(true, uname, 0);
             }
 
             @Override
@@ -51,9 +53,8 @@ public class HuanXinHelper {
             @Override
             public void onError(int code, String message) {
                 Log.e(TAG, "登录聊天服务器失败！" + code);
-                LOGIN_STATE = code;
+                CallBackUtils.setLogin(false, uname, code);
             }
         })).start();
-        return LOGIN_STATE;
     }
 }
