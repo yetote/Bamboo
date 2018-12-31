@@ -94,7 +94,7 @@ public class MattersFollowAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.item_matters_layout_image, parent, false);
         ImageHolder holder = new ImageHolder(v);
-        v.setOnClickListener(v1 -> listener.onClick((Integer) v1.getTag()));
+        v.setOnClickListener(v1 -> listener.onClick((Integer) v1.getTag(), (Integer) v1.getTag(R.id.list_position)));
         return holder;
     }
 
@@ -126,6 +126,7 @@ public class MattersFollowAdapter extends RecyclerView.Adapter {
             i.setClass(context, PersonalImActivity.class);
             context.startActivity(i);
         });
+        vh.itemView.setTag(R.id.list_position, position);
     }
 
     @Override

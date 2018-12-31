@@ -13,10 +13,16 @@
  */
 package com.hyphenate.easeui.ui;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ProgressBar;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -28,17 +34,7 @@ import com.hyphenate.easeui.widget.photoview.EasePhotoView;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.ImageUtils;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ProgressBar;
+import java.io.File;
 
 /**
  * download and show original image
@@ -103,7 +99,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 	/**
 	 * download image
 	 * 
-	 * @param remoteFilePath
+	 * @param msgId
 	 */
 	@SuppressLint("NewApi")
 	private void downloadImage(final String msgId) {
@@ -117,6 +113,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 		File temp = new File(localFilePath);
 		final String tempPath = temp.getParent() + "/temp_" + temp.getName();
 		final EMCallBack callback = new EMCallBack() {
+			@Override
 			public void onSuccess() {
 			    EMLog.e(TAG, "onSuccess" );
 				runOnUiThread(new Runnable() {
@@ -147,6 +144,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 				});
 			}
 
+			@Override
 			public void onError(int error, String msg) {
 				EMLog.e(TAG, "offline file transfer error:" + msg);
 				File file = new File(tempPath);
@@ -165,6 +163,7 @@ public class EaseShowBigImageActivity extends EaseBaseActivity {
 				});
 			}
 
+			@Override
 			public void onProgress(final int progress, String status) {
 				EMLog.d(TAG, "Progress: " + progress);
 				final String str2 = getResources().getString(R.string.Download_the_pictures_new);

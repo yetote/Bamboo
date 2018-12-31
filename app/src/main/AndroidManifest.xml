@@ -59,7 +59,6 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-
         <activity
             android:name=".SelectTagActivity"
             android:screenOrientation="portrait" />
@@ -101,7 +100,7 @@
             android:name=".RecodeVideoActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".FriendActivity" />
-        <activity android:name=".ChatActivity"></activity>
+        <activity android:name=".ChatActivity" />
     </application>
 
 </manifest>

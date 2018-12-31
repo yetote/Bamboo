@@ -14,8 +14,9 @@ public interface RecyclerViewOnClickListener {
     /**
      * 点击事件
      *
-     * @param obj Object对象
+     * @param obj      Object对象
+     * @param position 点击的列表索引
      */
-    void onClick(Object obj);
+    void onClick(Object obj, int position);
 
 }

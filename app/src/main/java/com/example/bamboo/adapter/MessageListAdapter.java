@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * @author ether QQ:503779938
@@ -47,8 +48,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        private ImageView headImg, identityImg;
+        private ImageView identityImg;
         private TextView user, content, time, msgNum;
+        private CircleImageView headImg;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -60,7 +62,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             msgNum = itemView.findViewById(R.id.item_message_msgNum);
         }
 
-        public ImageView getHeadImg() {
+        public CircleImageView getHeadImg() {
             return headImg;
         }
 
@@ -92,7 +94,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickListener.onClick(v.getTag());
+
+                onClickListener.onClick(v.getTag(), (Integer) v.getTag(R.id.list_position));
             }
         });
 
@@ -108,9 +111,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         Log.e(TAG, "onBindViewHolder: " + list.get(position).getContent());
         vh.getContent().setText(list.get(position).getContent());
         vh.getTime().setText(TimeUtil.msgTime(list.get(position).getTime()));
-        vh.getMsgNum().setText(MathUtil.msgNum(list.get(position).getMsgNum()));
+        if (list.get(position).getMsgNum() == 0) {
+            vh.getMsgNum().setVisibility(View.INVISIBLE);
+        } else {
+            vh.getMsgNum().setText(MathUtil.msgNum(list.get(position).getMsgNum()));
+        }
         vh.itemView.setTag(list.get(position));
-
+        vh.itemView.setTag(R.id.list_position, position);
     }
 
     @Override

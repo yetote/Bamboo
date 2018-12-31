@@ -4,12 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.telecom.Call;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
@@ -18,7 +16,6 @@ import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.MessageFragment;
 import com.example.bamboo.fragment.RecommendFragment;
-import com.example.bamboo.myinterface.OnLoginSuccess;
 import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.navigation.NavigationView;
@@ -26,6 +23,7 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView nameTv, describeTv;
     private NavigationView headerView;
     private CircleImageView headIv;
+    public static final int LOGIN_CODE = 1;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -154,12 +153,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callBack() {
-        CallBackUtils.setLoginSuccess(username -> {
-            nameTv.setText(username);
-            Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
-            Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
-        });
-
     }
 
     private void onClick() {
@@ -170,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
                 i.setClass(MainActivity.this, PersonalImActivity.class);
                 startActivity(i);
             } else {
-                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+//                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, PwdLoginActivity.class), LOGIN_CODE);
             }
         });
     }
@@ -194,5 +188,17 @@ public class MainActivity extends AppCompatActivity {
         describeTv = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_describe);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case LOGIN_CODE:
+                String username = data.getStringExtra("u_name");
+                nameTv.setText(username);
+                Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
+                Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
+                break;
+        }
+    }
 }
 

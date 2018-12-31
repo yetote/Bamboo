@@ -12,6 +12,7 @@ import com.example.bamboo.R;
 import com.example.bamboo.adapter.MattersFollowAdapter;
 import com.example.bamboo.model.MattersFollowBean;
 import com.example.bamboo.myinterface.OnLoadDataListener;
+import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 
 import java.util.ArrayList;
 
@@ -50,7 +51,7 @@ public class MattersFollowFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         adapter = new MattersFollowAdapter(list, getActivity());
         rv.setAdapter(adapter);
-        adapter.setListener(id -> Toast.makeText(getActivity(), id + "", Toast.LENGTH_SHORT).show());
+        adapter.setListener((obj, position) -> Toast.makeText(MattersFollowFragment.this.getActivity(), position + "", Toast.LENGTH_SHORT).show());
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

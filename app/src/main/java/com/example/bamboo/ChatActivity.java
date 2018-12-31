@@ -1,6 +1,7 @@
 package com.example.bamboo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.bamboo.util.StatusBarUtils;
 import com.hyphenate.EMMessageListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMMessage;
@@ -33,7 +35,7 @@ import javax.security.auth.login.LoginException;
  * @class describe
  */
 public class ChatActivity extends AppCompatActivity {
-    private EaseTitleBar charToolbar;
+    private Toolbar charToolbar;
     private EaseChatMessageList charMsgList;
     private SwipeRefreshLayout swipeRefreshLayout;
     private EaseChatInputMenu chatInputMenu;
@@ -43,6 +45,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtils.changedStatusBar(this);
         setContentView(R.layout.activity_chat);
 
         initView();
@@ -54,13 +57,14 @@ public class ChatActivity extends AppCompatActivity {
 
         if (uName != null) {
             charToolbar.setTitle(uName);
-            charMsgList.init(uid + "", EaseConstant.CHATTYPE_SINGLE, null);
+            charMsgList.init(uName, EaseConstant.CHATTYPE_SINGLE, null);
         }
 
         charMsgList.setItemClickListener(new EaseChatMessageList.MessageListItemClickListener() {
             @Override
             public boolean onBubbleClick(EMMessage message) {
                 //气泡框点击事件，EaseUI有默认实现这个事件，如果需要覆盖，return值要返回true
+
                 return false;
             }
 
@@ -103,8 +107,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onSendMessage(String content) {
                 //发送文本消息
-                EMMessage msg = EMMessage.createTxtSendMessage(content, "17611189537");
+                EMMessage msg = EMMessage.createTxtSendMessage(content, uName);
                 EMClient.getInstance().chatManager().sendMessage(msg);
+                charMsgList.refresh();
             }
 
             @Override
@@ -124,14 +129,11 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void receiveMsg() {
-        EMClient.getInstance().chatManager().addMessageListener(msgListener);
         msgListener = new EMMessageListener() {
             @Override
             public void onMessageReceived(List<EMMessage> messages) {
                 //收到消息
-                for (int i = 0; i < messages.size(); i++) {
-                    Log.e(TAG, "onMessageReceived: " + messages.get(i).toString());
-                }
+                charMsgList.refresh();
             }
 
             @Override
@@ -160,6 +162,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         };
 
+        EMClient.getInstance().chatManager().addMessageListener(msgListener);
     }
 
     private void initView() {

@@ -40,7 +40,7 @@ public class FriendActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
         adapter.setClickListener(new RecyclerViewOnClickListener() {
             @Override
-            public void onClick(Object obj) {
+            public void onClick(Object obj, int position) {
 
             }
         });

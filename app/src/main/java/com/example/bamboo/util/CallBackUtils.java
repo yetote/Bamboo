@@ -1,7 +1,6 @@
 package com.example.bamboo.util;
 
 import com.example.bamboo.myinterface.OnLoginInterface;
-import com.example.bamboo.myinterface.OnLoginSuccess;
 
 /**
  * @author ether QQ:503779938
@@ -15,7 +14,6 @@ import com.example.bamboo.myinterface.OnLoginSuccess;
  */
 public class CallBackUtils {
     private static OnLoginInterface loginInterface;
-    private static OnLoginSuccess loginSuccess;
 
     public static void setLoginInterface(OnLoginInterface loginInterface) {
         CallBackUtils.loginInterface = loginInterface;
@@ -27,14 +25,5 @@ public class CallBackUtils {
         }
     }
 
-    public static void setLoginSuccess(OnLoginSuccess loginSuccess) {
-        CallBackUtils.loginSuccess = loginSuccess;
-    }
-
-    public static void setSuccess(String username) {
-        if (loginSuccess != null) {
-            loginSuccess.success(username);
-        }
-    }
 
 }

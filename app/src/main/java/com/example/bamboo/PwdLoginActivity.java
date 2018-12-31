@@ -66,11 +66,13 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                         String uName = bundle.getString("u_name");
                         Toast.makeText(PwdLoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                         MyApplication.isLogin = true;
-                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putBoolean("is_login", true);
-                        editor.apply();
-                        CallBackUtils.setSuccess(uName);
+//                        SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = sp.edit();
+//                        editor.putBoolean("is_login", true);
+//                        editor.apply();
+                        Intent i = new Intent();
+                        i.putExtra("u_name", uName);
+                        PwdLoginActivity.this.setResult(RESULT_OK, i);
                         finish();
                     } else {
                         Toast.makeText(PwdLoginActivity.this, "登录失败,错误码" + bundle.getInt("error_code"), Toast.LENGTH_SHORT).show();

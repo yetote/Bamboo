@@ -7,15 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
-    <com.hyphenate.easeui.widget.EaseTitleBar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/char_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/MyToolbarStyle"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        hyphenate:titleBarLeftImage="@mipmap/back" />
+        app:navigationIcon="@mipmap/back"
+        app:titleTextColor="@color/white" />
 
     <com.hyphenate.easeui.widget.EaseChatMessageList
         android:id="@+id/char_msgRow"

@@ -83,7 +83,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.item_friend, parent, false);
         MyViewHolder viewHolder = new MyViewHolder(v);
-        v.setOnClickListener(v1 -> clickListener.onClick((Integer) v1.getTag()));
+        v.setOnClickListener(v1 -> clickListener.onClick((Integer) v1.getTag(), (Integer) v1.getTag(R.id.list_position)));
         return viewHolder;
     }
 
@@ -94,6 +94,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
         Glide.with(context).load(list.get(position).getHeadImg()).into(vh.getHeadIv());
         Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getIdentity())).into(vh.getIdentityIv());
         vh.itemView.setTag(list.get(position).getUid());
+        vh.itemView.setTag(R.id.list_position, position);
     }
 
     @Override
