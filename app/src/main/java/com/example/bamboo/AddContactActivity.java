@@ -1,9 +1,11 @@
 package com.example.bamboo;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -11,16 +13,13 @@ import com.example.bamboo.adapter.FriendAdapter;
 import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.model.PersonalBean;
 import com.example.bamboo.myinterface.OnAddFriendInterface;
-import com.example.bamboo.myview.RecodeButton;
 import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.HuanXinHelper;
 
 import java.util.ArrayList;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+public class AddContactActivity extends AppCompatActivity {
 
-public class TestActivity extends AppCompatActivity {
     private SearchView searchView;
     private RecyclerView recyclerView;
     private ArrayList<PersonalBean> list;
@@ -34,10 +33,10 @@ public class TestActivity extends AppCompatActivity {
                 case HANDLER_ADD_CODE:
                     Bundle bundle = (Bundle) msg.obj;
                     if (bundle.getBoolean("state")) {
-                        Toast.makeText(TestActivity.this, "添加成功,等待响应中", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddContactActivity.this, "添加成功,等待响应中", Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(TestActivity.this, "error" + bundle.getInt("error"), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddContactActivity.this, "error" + bundle.getInt("error"), Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -48,7 +47,7 @@ public class TestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_test);
+        setContentView(R.layout.activity_add_contact);
         initView();
 
         callBack();

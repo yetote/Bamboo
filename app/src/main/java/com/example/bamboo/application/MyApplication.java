@@ -38,6 +38,7 @@ public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
     public static boolean isFirst;
     public static boolean isLogin = false;
+    public static String uName;
 
     public static MyApplication getContext() {
         return mContext;

@@ -76,6 +76,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
             return uName;
         }
 
+
     }
 
     @NonNull

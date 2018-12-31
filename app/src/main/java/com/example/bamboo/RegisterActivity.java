@@ -52,6 +52,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         String uName = bundle.getString("u_name");
                         Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                         MyApplication.isLogin = true;
+                        MyApplication.uName = uName;
                         SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.putBoolean("is_login", true);

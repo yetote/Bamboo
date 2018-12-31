@@ -1,6 +1,10 @@
 package com.example.bamboo.util;
 
+import com.example.bamboo.myinterface.OnAddFriendInterface;
 import com.example.bamboo.myinterface.OnLoginInterface;
+import com.example.bamboo.myinterface.OnSelectFriendInterface;
+
+import java.util.List;
 
 /**
  * @author ether QQ:503779938
@@ -14,6 +18,8 @@ import com.example.bamboo.myinterface.OnLoginInterface;
  */
 public class CallBackUtils {
     private static OnLoginInterface loginInterface;
+    private static OnSelectFriendInterface friendInterface;
+    private static OnAddFriendInterface addFriendInterface;
 
     public static void setLoginInterface(OnLoginInterface loginInterface) {
         CallBackUtils.loginInterface = loginInterface;
@@ -26,4 +32,23 @@ public class CallBackUtils {
     }
 
 
+    public static void setFriendInterface(OnSelectFriendInterface friendInterface) {
+        CallBackUtils.friendInterface = friendInterface;
+    }
+
+    public static void setFriendList(List<String> list, int error) {
+        if (friendInterface != null) {
+            friendInterface.onSelect(list, error);
+        }
+    }
+
+    public static void setAddFriendInterface(OnAddFriendInterface addFriendInterface) {
+        CallBackUtils.addFriendInterface = addFriendInterface;
+    }
+
+    public static void setAddSuccess(boolean isSuccess, int error) {
+        if (addFriendInterface != null) {
+            addFriendInterface.add(isSuccess, error);
+        }
+    }
 }

@@ -70,6 +70,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
 //                        SharedPreferences.Editor editor = sp.edit();
 //                        editor.putBoolean("is_login", true);
 //                        editor.apply();
+                        MyApplication.uName = uName;
                         Intent i = new Intent();
                         i.putExtra("u_name", uName);
                         PwdLoginActivity.this.setResult(RESULT_OK, i);

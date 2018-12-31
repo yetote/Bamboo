@@ -36,7 +36,7 @@
         android:layout_height="30dp"
         android:layout_gravity="end"
         android:layout_marginEnd="8dp"
-        android:src="@mipmap/chat"
+        android:src="@drawable/chat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +45,6 @@
         android:id="@+id/item_friend_identity"
         android:layout_width="20dp"
         android:layout_height="20dp"
-
         app:layout_constraintBottom_toBottomOf="@+id/item_friend_headIv"
         app:layout_constraintEnd_toEndOf="@+id/item_friend_headIv" />
 

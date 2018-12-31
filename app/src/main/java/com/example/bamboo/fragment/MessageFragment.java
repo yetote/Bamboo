@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.bamboo.ChatActivity;
 import com.example.bamboo.FriendActivity;
@@ -97,9 +98,14 @@ public class MessageFragment extends Fragment {
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.message_menu_people:
-                    Intent i = new Intent();
-                    i.setClass(getActivity(), FriendActivity.class);
-                    startActivity(i);
+                    if (MyApplication.isLogin) {
+                        Intent i = new Intent();
+                        i.putExtra("u_name", MyApplication.uName);
+                        i.setClass(getActivity(), FriendActivity.class);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 default:
                     break;
