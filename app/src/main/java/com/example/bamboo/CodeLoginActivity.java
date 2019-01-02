@@ -19,6 +19,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 /**
  * @author yetote QQ:503779938
@@ -32,10 +33,10 @@ import androidx.cardview.widget.CardView;
  */
 public class CodeLoginActivity extends AppCompatActivity implements View.OnClickListener {
     private FloatingActionButton fab;
-    private CardView cardView;
     private EditText tel, verifyCode;
     private Button getVerifyCode, sure;
     private static final String TAG = "VerifyCodeLoginActivity";
+    private ConstraintLayout cl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +58,11 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
 
     private void initViews() {
         fab = findViewById(R.id.login_code_fab);
-        cardView = findViewById(R.id.login_code_cardView);
         tel = findViewById(R.id.login_code_tel_et);
         verifyCode = findViewById(R.id.login_code_verifyCode_et);
         getVerifyCode = findViewById(R.id.login_code_getVerifyCode_btn);
         sure = findViewById(R.id.login_code_sure);
+        cl = findViewById(R.id.login_code_cl);
     }
 
     private void startAnimation() {
@@ -75,7 +76,6 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
              */
             @Override
             public void onTransitionStart(Transition transition) {
-                cardView.setVisibility(View.GONE);
                 Log.e(TAG, "onTransitionStart: " + "bbb");
             }
 
@@ -121,10 +121,10 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
      * 开启水波纹动画
      */
     private void animateRevelShow() {
-        int centerY = fab.getBottom() - fab.getHeight() / 2 - cardView.getTop();
+        int centerY = fab.getBottom() - fab.getHeight() / 2 - cl.getTop();
         int centerX = fab.getLeft() + fab.getWidth() / 2;
-        float endRadius = (float) Math.sqrt((cardView.getHeight() - centerY) * (cardView.getHeight() - centerY) + cardView.getWidth() * cardView.getWidth());
-        Animator animation = ViewAnimationUtils.createCircularReveal(cardView, centerX, centerY, 0, endRadius);
+        float endRadius = (float) Math.sqrt((cl.getHeight() - centerY) * (cl.getHeight() - centerY) + cl.getWidth() * cl.getWidth());
+        Animator animation = ViewAnimationUtils.createCircularReveal(cl, centerX, centerY, 0, endRadius);
         animation.setDuration(500);
         //AccelerateInterpolator插值器为线性加速
         animation.setInterpolator(new AccelerateInterpolator());
@@ -136,7 +136,7 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onAnimationStart(Animator animation) {
-                cardView.setVisibility(View.VISIBLE);
+//                cardView.setVisibility(View.VISIBLE);
                 super.onAnimationStart(animation);
             }
         });
@@ -148,14 +148,14 @@ public class CodeLoginActivity extends AppCompatActivity implements View.OnClick
      * 关闭水波纹动画
      */
     private void animationRevelClose() {
-        int centerY = fab.getBottom() - fab.getHeight() / 2 - cardView.getTop();
+        int centerY = fab.getBottom() - fab.getHeight() / 2 - cl.getTop();
         int centerX = fab.getLeft() + fab.getWidth() / 2;
-        float startRadius = (float) Math.sqrt((cardView.getHeight() - centerY) * (cardView.getHeight() - centerY) + cardView.getWidth() * cardView.getWidth());
-        Animator animator = ViewAnimationUtils.createCircularReveal(cardView, centerX, centerY, startRadius, fab.getWidth() / 2);
+        float startRadius = (float) Math.sqrt((cl.getHeight() - centerY) * (cl.getHeight() - centerY) + cl.getWidth() * cl.getWidth());
+        Animator animator = ViewAnimationUtils.createCircularReveal(cl, centerX, centerY, startRadius, fab.getWidth() / 2);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                cardView.setVisibility(View.GONE);
+//                cardView.setVisibility(View.GONE);
                 super.onAnimationEnd(animation);
                 CodeLoginActivity.super.onBackPressed();
             }

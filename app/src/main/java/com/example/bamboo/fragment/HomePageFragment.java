@@ -2,8 +2,6 @@ package com.example.bamboo.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +35,9 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * @author yetote QQ:503779938
@@ -188,10 +189,17 @@ public class HomePageFragment extends Fragment {
         playerView.setTimeInfoListener(new OnTimeInfoListener() {
             @Override
             public void onTimeInfo(TimeInfoBean timeInfoBean) {
-                Message msg = new Message();
-                msg.what = MSG_AV_TIME_INFO_WHAT;
-                msg.obj = timeInfoBean;
-                handler.sendMessage(msg);
+
+           Observable.create((ObservableOnSubscribe<TimeInfoBean>) emitter -> emitter.onNext(timeInfoBean))
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe(bean -> {
+                            if (!isSetTime) {
+                                totalTime.setText(TimeUtil.caseTime(bean.getTotalTime()));
+                                seekBar.setMax(bean.getTotalTime());
+                            }
+                            currentTime.setText(TimeUtil.caseTime(bean.getCurrentTime()));
+                            seekBar.setProgress(bean.getCurrentTime());
+                        });
             }
         });
         playerView.setCompleteListener(new OnCompleteListener() {
@@ -284,23 +292,6 @@ public class HomePageFragment extends Fragment {
         constraintReply.clone(getActivity(), R.layout.fragment_homepage);
     }
 
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case MSG_AV_TIME_INFO_WHAT:
-                    TimeInfoBean bean = (TimeInfoBean) msg.obj;
-                    if (!isSetTime) {
-                        totalTime.setText(TimeUtil.caseTime(bean.getTotalTime()));
-                        seekBar.setMax(bean.getTotalTime());
-                    }
-                    currentTime.setText(TimeUtil.caseTime(bean.getCurrentTime()));
-                    seekBar.setProgress(bean.getCurrentTime());
-                    break;
-            }
-        }
-    };
 
     @Override
     public void onPause() {

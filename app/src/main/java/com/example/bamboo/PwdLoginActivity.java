@@ -33,6 +33,7 @@ import com.hyphenate.chat.EMClient;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 
 /**
@@ -47,7 +48,7 @@ import androidx.cardview.widget.CardView;
  */
 public class PwdLoginActivity extends AppCompatActivity implements View.OnClickListener {
     private FloatingActionButton fab;
-    private CardView cardView;
+    private ConstraintLayout cl;
     private EditText tel, pwd;
     private Button sure;
     private TextView toVerifyCodeLogin;
@@ -129,7 +130,6 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
 
     private void initViews() {
         fab = findViewById(R.id.login_pwd_fab);
-        cardView = findViewById(R.id.login_pwd_cardview);
         tel = findViewById(R.id.login_pwd_tel_et);
         pwd = findViewById(R.id.login_pwd_pwd_et);
         sure = findViewById(R.id.login_pwd_sure);
@@ -171,7 +171,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
              */
             @Override
             public void onTransitionStart(Transition transition) {
-                cardView.setVisibility(View.GONE);
+//                cardView.setVisibility(View.GONE);
                 Log.e(TAG, "onTransitionStart: " + "asa");
             }
 
@@ -218,10 +218,10 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
      */
     private void animateRevelShow() {
         Log.e(TAG, "animateRevelShow: " + "111");
-        int centerX = cardView.getWidth() / 2;
+        int centerX = cl.getWidth() / 2;
         int centerY = 0;
-        float endRadius = (float) Math.sqrt(centerX * centerX + cardView.getHeight() * cardView.getHeight());
-        Animator animation = ViewAnimationUtils.createCircularReveal(cardView, centerX, centerY, 0, endRadius);
+        float endRadius = (float) Math.sqrt(centerX * centerX + cl.getHeight() * cl.getHeight());
+        Animator animation = ViewAnimationUtils.createCircularReveal(cl, centerX, centerY, 0, endRadius);
         animation.setDuration(500);
         //AccelerateInterpolator插值器为线性加速
         animation.setInterpolator(new AccelerateInterpolator());
@@ -233,7 +233,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onAnimationStart(Animator animation) {
-                cardView.setVisibility(View.VISIBLE);
+//                cardView.setVisibility(View.VISIBLE);
                 super.onAnimationStart(animation);
             }
         });
@@ -244,14 +244,14 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
      * 关闭水波纹动画
      */
     private void animationRevelClose() {
-        int centerX = cardView.getWidth() / 2;
+        int centerX = cl.getWidth() / 2;
         int centerY = 0;
-        float startRadius = (float) Math.sqrt(centerX * centerX + cardView.getHeight() * cardView.getHeight());
-        Animator animator = ViewAnimationUtils.createCircularReveal(cardView, centerX, centerY, startRadius, fab.getWidth() / 2);
+        float startRadius = (float) Math.sqrt(centerX * centerX + cl.getHeight() * cl.getHeight());
+        Animator animator = ViewAnimationUtils.createCircularReveal(cl, centerX, centerY, startRadius, fab.getWidth() / 2);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                cardView.setVisibility(View.INVISIBLE);
+//                cardView.setVisibility(View.INVISIBLE);
                 super.onAnimationEnd(animation);
                 PwdLoginActivity.super.onBackPressed();
             }

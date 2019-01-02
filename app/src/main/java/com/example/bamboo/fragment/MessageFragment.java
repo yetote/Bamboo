@@ -36,6 +36,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 /**
  * @author ether QQ:503779938
@@ -55,38 +60,6 @@ public class MessageFragment extends Fragment {
     private EMMessageListener msgListener;
     public static final int HANDLER_MESSAGE_CODE = 1;
     private static final String TAG = "MessageFragment";
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case HANDLER_MESSAGE_CODE:
-                    List<EMMessage> emmMessageList = (List<EMMessage>) msg.obj;
-                    for (int i = 0; i < emmMessageList.size(); i++) {
-                        EMMessage emmMessage = emmMessageList.get(i);
-//                    Log.e(TAG, "onMessageReceived: "+msg.toString() );
-                        String from = emmMessage.getFrom();
-                        if (list.size() == 0) {
-                            list.add(new MessageListModel("", from, MessageUtil.getMessageText(emmMessage), "", 1, emmMessage.getMsgTime(), 1));
-                        } else {
-                            for (int j = 0; j < list.size(); j++) {
-                                if (list.get(j).getUser().equals(from)) {
-                                    list.get(j).setMsgNum(list.get(i).getMsgNum() + 1);
-                                    Log.e(TAG, "handleMessage: " + (list.get(i).getMsgNum()));
-                                    list.get(j).setContent(MessageUtil.getMessageText(emmMessage));
-                                    list.get(j).setTime(emmMessage.getMsgTime());
-                                    break;
-                                } else if (j == list.size() - 1) {
-                                    list.add(new MessageListModel("", from, MessageUtil.getMessageText(emmMessage), "", 1, emmMessage.getMsgTime(), 1));
-                                }
-                            }
-                        }
-                    }
-                    adapter.notifyDataSetChanged();
-                    break;
-            }
-        }
-    };
 
     @Nullable
     @Override
@@ -157,21 +130,21 @@ public class MessageFragment extends Fragment {
     }
 
     private void receiveMsg() {
-        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-        Log.e(TAG, "onCreateView:2 " + conversations.size());
-        if (conversations.size() != 0) {
-            for (String username : conversations.keySet()) {
-                EMConversation conversation = conversations.get(username);
-                int num = EMClient.getInstance().chatManager().getConversation(username).getUnreadMsgCount();
-                EMMessage msg = EMClient.getInstance().chatManager().getConversation(username).getLastMessage();
-                String text = "";
-                if (msg.getType() == EMMessage.Type.TXT) {
-                    text = ((EMTextMessageBody) msg.getBody()).getMessage();
-                }
-                list.add(new MessageListModel("", username, text, "", 0, msg.getMsgTime(), num));
-            }
-            adapter.notifyDataSetChanged();
-        }
+//        Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+//        Log.e(TAG, "onCreateView:2 " + conversations.size());
+//        if (conversations.size() != 0) {
+//            for (String username : conversations.keySet()) {
+//                EMConversation conversation = conversations.get(username);
+//                int num = EMClient.getInstance().chatManager().getConversation(username).getUnreadMsgCount();
+//                EMMessage msg = EMClient.getInstance().chatManager().getConversation(username).getLastMessage();
+//                String text = "";
+//                if (msg.getType() == EMMessage.Type.TXT) {
+//                    text = ((EMTextMessageBody) msg.getBody()).getMessage();
+//                }
+//                list.add(new MessageListModel("", username, text, "", 0, msg.getMsgTime(), num));
+//            }
+//            adapter.notifyDataSetChanged();
+//        }
 
 
         msgListener = new EMMessageListener() {
@@ -180,10 +153,30 @@ public class MessageFragment extends Fragment {
             public void onMessageReceived(List<EMMessage> messages) {
                 //收到消息
                 Log.e(TAG, "onMessageReceived: " + messages.toString());
-                Message msg = new Message();
-                msg.what = HANDLER_MESSAGE_CODE;
-                msg.obj = messages;
-                handler.sendMessage(msg);
+                Observable.create((ObservableOnSubscribe<List<EMMessage>>) emitter -> emitter.onNext(messages))
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribe(emMessages -> {
+                            for (int i = 0; i < emMessages.size(); i++) {
+                                EMMessage emmMessage = emMessages.get(i);
+                                String from = emmMessage.getFrom();
+                                if (list.size() == 0) {
+                                    list.add(new MessageListModel("", from, MessageUtil.getMessageText(emmMessage), "", 1, emmMessage.getMsgTime(), 1));
+                                } else {
+                                    for (int j = 0; j < list.size(); j++) {
+                                        if (list.get(j).getUser().equals(from)) {
+                                            list.get(j).setMsgNum(list.get(i).getMsgNum() + 1);
+                                            Log.e(TAG, "handleMessage: " + (list.get(i).getMsgNum()));
+                                            list.get(j).setContent(MessageUtil.getMessageText(emmMessage));
+                                            list.get(j).setTime(emmMessage.getMsgTime());
+                                            break;
+                                        } else if (j == list.size() - 1) {
+                                            list.add(new MessageListModel("", from, MessageUtil.getMessageText(emmMessage), "", 1, emmMessage.getMsgTime(), 1));
+                                        }
+                                    }
+                                }
+                            }
+                            adapter.notifyDataSetChanged();
+                        });
             }
 
             @Override

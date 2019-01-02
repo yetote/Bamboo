@@ -2,8 +2,6 @@ package com.example.bamboo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.widget.ImageView;
@@ -16,7 +14,6 @@ import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.MessageFragment;
 import com.example.bamboo.fragment.RecommendFragment;
-import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -52,23 +49,6 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView headerView;
     private CircleImageView headIv;
     public static final int LOGIN_CODE = 1;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case 0:
-                    nameTv.setText(msg.obj.toString());
-                    Log.e(TAG, "handleMessage: " + nameTv.getText().toString() + "1");
-                    Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
-                    Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
-
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
 
     @Override
 
@@ -193,10 +173,12 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case LOGIN_CODE:
-                String username = data.getStringExtra("u_name");
-                nameTv.setText(username);
-                Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
-                Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
+                if (data != null) {
+                    String username = data.getStringExtra("u_name");
+                    nameTv.setText(username);
+                    Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
+                    Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
+                }
                 break;
         }
     }
