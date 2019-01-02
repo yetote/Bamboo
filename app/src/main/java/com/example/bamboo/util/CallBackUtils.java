@@ -17,36 +17,36 @@ import java.util.List;
  * @class describe
  */
 public class CallBackUtils {
-    private static OnLoginInterface loginInterface;
-    private static OnSelectFriendInterface friendInterface;
-    private static OnAddFriendInterface addFriendInterface;
+    private OnLoginInterface loginInterface;
+    private OnSelectFriendInterface friendInterface;
+    private OnAddFriendInterface addFriendInterface;
 
-    public static void setLoginInterface(OnLoginInterface loginInterface) {
-        CallBackUtils.loginInterface = loginInterface;
+    public void setLoginInterface(OnLoginInterface loginInterface) {
+        this.loginInterface = loginInterface;
     }
 
-    public static void setLogin(boolean isLogin, String uName, int error) {
+    public void setLogin(boolean isLogin, String uName, int error) {
         if (loginInterface != null) {
             loginInterface.login(isLogin, uName, error);
         }
     }
 
 
-    public static void setFriendInterface(OnSelectFriendInterface friendInterface) {
-        CallBackUtils.friendInterface = friendInterface;
+    public void setFriendInterface(OnSelectFriendInterface friendInterface) {
+        this.friendInterface = friendInterface;
     }
 
-    public static void setFriendList(List<String> list, int error) {
+    public void setFriendList(List<String> list, int error) {
         if (friendInterface != null) {
             friendInterface.onSelect(list, error);
         }
     }
 
-    public static void setAddFriendInterface(OnAddFriendInterface addFriendInterface) {
-        CallBackUtils.addFriendInterface = addFriendInterface;
+    public void setAddFriendInterface(OnAddFriendInterface addFriendInterface) {
+        this.addFriendInterface = addFriendInterface;
     }
 
-    public static void setAddSuccess(boolean isSuccess, int error) {
+    public void setAddSuccess(boolean isSuccess, int error) {
         if (addFriendInterface != null) {
             addFriendInterface.add(isSuccess, error);
         }

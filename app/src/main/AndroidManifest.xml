@@ -74,11 +74,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".PwdLoginActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Translucent" />
         <activity
             android:name=".CodeLoginActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/Translucent" />
         <activity
             android:name=".WaitActivity"

@@ -136,6 +136,7 @@ public class MessageFragment extends Fragment {
 
         if (MyApplication.isLogin) {
             Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
+            Log.e(TAG, "onCreateView: " + conversations.size());
             if (conversations.size() != 0) {
                 for (String username : conversations.keySet()) {
                     EMConversation conversation = conversations.get(username);
@@ -157,7 +158,7 @@ public class MessageFragment extends Fragment {
 
     private void receiveMsg() {
         Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-
+        Log.e(TAG, "onCreateView: " + conversations.size());
         if (conversations.size() != 0) {
             for (String username : conversations.keySet()) {
                 EMConversation conversation = conversations.get(username);

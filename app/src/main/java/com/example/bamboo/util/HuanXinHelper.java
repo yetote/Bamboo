@@ -2,6 +2,7 @@ package com.example.bamboo.util;
 
 import android.util.Log;
 
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.myinterface.OnLoginInterface;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
@@ -35,10 +36,10 @@ public class HuanXinHelper {
         new Thread(() -> {
             try {
                 EMClient.getInstance().createAccount(uname, pwd);
-                CallBackUtils.setLogin(true, uname, 0);
+                MyApplication.getContext().getCallBackUtils().setLogin(true, uname, 0);
             } catch (HyphenateException e) {
                 Log.e(TAG, "register: " + e.getErrorCode() + "\n" + e.getDescription());
-                CallBackUtils.setLogin(false, uname, e.getErrorCode());
+                MyApplication.getContext().getCallBackUtils().setLogin(false, uname, e.getErrorCode());
             }
         }).start();
     }
@@ -57,7 +58,7 @@ public class HuanXinHelper {
                 EMClient.getInstance().groupManager().loadAllGroups();
                 EMClient.getInstance().chatManager().loadAllConversations();
                 Log.e(TAG, "登录聊天服务器成功！");
-                CallBackUtils.setLogin(true, uname, 0);
+                MyApplication.getContext().getCallBackUtils().setLogin(true, uname, 0);
             }
 
             @Override
@@ -68,7 +69,7 @@ public class HuanXinHelper {
             @Override
             public void onError(int code, String message) {
                 Log.e(TAG, "登录聊天服务器失败！" + code);
-                CallBackUtils.setLogin(false, uname, code);
+                MyApplication.getContext().getCallBackUtils().setLogin(false, uname, code);
             }
         })).start();
     }
@@ -81,9 +82,9 @@ public class HuanXinHelper {
             try {
                 Log.e(TAG, "run: " + Thread.currentThread().getName());
                 List<String> usernames = EMClient.getInstance().contactManager().getAllContactsFromServer();
-                CallBackUtils.setFriendList(usernames, 0);
+                MyApplication.getContext().getCallBackUtils().setFriendList(usernames, 0);
             } catch (HyphenateException e) {
-                CallBackUtils.setFriendList(null, e.getErrorCode());
+                MyApplication.getContext().getCallBackUtils().setFriendList(null, e.getErrorCode());
                 Log.e(TAG, "selectFriendList: error" + e.getErrorCode());
                 e.printStackTrace();
             }
@@ -101,9 +102,9 @@ public class HuanXinHelper {
             public void run() {
                 try {
                     EMClient.getInstance().contactManager().addContact(uName, reason);
-                    CallBackUtils.setAddSuccess(true, 0);
+                    MyApplication.getContext().getCallBackUtils().setAddSuccess(true, 0);
                 } catch (HyphenateException e) {
-                    CallBackUtils.setAddSuccess(false, e.getErrorCode());
+                    MyApplication.getContext().getCallBackUtils().setAddSuccess(false, e.getErrorCode());
                     e.printStackTrace();
                 }
             }

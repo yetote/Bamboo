@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.bamboo.adapter.FriendAdapter;
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.model.PersonalBean;
 import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.CallBackUtils;
@@ -78,7 +79,11 @@ public class FriendActivity extends AppCompatActivity {
         adapter.setClickListener(new RecyclerViewOnClickListener() {
             @Override
             public void onClick(Object obj, int position) {
-
+                Intent i = new Intent();
+                i.putExtra("u_name", (String) (obj + ""));
+                i.putExtra("u_header", "");
+                i.setClass(FriendActivity.this, ChatActivity.class);
+                startActivity(i);
             }
         });
 
@@ -86,7 +91,7 @@ public class FriendActivity extends AppCompatActivity {
     }
 
     private void onCallBack() {
-        CallBackUtils.setFriendInterface((friendList, error) -> {
+        ((MyApplication)getApplication()).getCallBackUtils().setFriendInterface((friendList, error) -> {
             if (error == 0) {
                 Observable.create((ObservableOnSubscribe<List<String>>) emitter -> emitter.onNext(friendList)).subscribeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<String>>() {

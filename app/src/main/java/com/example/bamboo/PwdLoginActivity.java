@@ -108,7 +108,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void callBack() {
-        CallBackUtils.setLoginInterface((isLogin, uName, error) -> {
+        ((MyApplication)getApplication()).getCallBackUtils().setLoginInterface((isLogin, uName, error) -> {
             Message msg = new Message();
             msg.what = HANDLER_LOGIN_CODE;
             Bundle bundle = new Bundle();

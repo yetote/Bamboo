@@ -66,7 +66,7 @@ public class AddContactActivity extends AppCompatActivity {
     }
 
     private void callBack() {
-        CallBackUtils.setAddFriendInterface(new OnAddFriendInterface() {
+        ((MyApplication)getApplication()).getCallBackUtils().setAddFriendInterface(new OnAddFriendInterface() {
             @Override
             public void add(boolean isSuccess, int code) {
                 Bundle bundle = new Bundle();

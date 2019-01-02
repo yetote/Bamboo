@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.bamboo.util.AbstractActivityLifeCycleCallbacks;
+import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.CoordinateTransformation;
 import com.example.bamboo.util.CrashHandle;
 import com.hyphenate.chat.EMClient;
@@ -39,10 +40,16 @@ public class MyApplication extends Application {
     public static boolean isFirst;
     public static boolean isLogin = false;
     public static String uName;
+    private CallBackUtils callBackUtils;
+
+    public CallBackUtils getCallBackUtils() {
+        return callBackUtils;
+    }
 
     public static MyApplication getContext() {
         return mContext;
     }
+
 
     @Override
     public void onCreate() {
@@ -51,6 +58,8 @@ public class MyApplication extends Application {
         mContext = this;
 
         initHuanxin();
+        callBackUtils = new CallBackUtils();
+
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
