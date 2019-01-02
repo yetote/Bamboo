@@ -114,6 +114,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         if (list.get(position).getMsgNum() == 0) {
             vh.getMsgNum().setVisibility(View.INVISIBLE);
         } else {
+            if (vh.getMsgNum().getVisibility() == View.INVISIBLE) {
+                vh.getMsgNum().setVisibility(View.VISIBLE);
+            }
             vh.getMsgNum().setText(MathUtil.msgNum(list.get(position).getMsgNum()));
         }
         vh.itemView.setTag(list.get(position));

@@ -72,11 +72,11 @@ public class MessageFragment extends Fragment {
                             for (int j = 0; j < list.size(); j++) {
                                 if (list.get(j).getUser().equals(from)) {
                                     list.get(j).setMsgNum(list.get(i).getMsgNum() + 1);
+                                    Log.e(TAG, "handleMessage: " + (list.get(i).getMsgNum()));
                                     list.get(j).setContent(MessageUtil.getMessageText(emmMessage));
                                     list.get(j).setTime(emmMessage.getMsgTime());
                                     break;
-                                }
-                                if (j == list.size() - 1) {
+                                } else if (j == list.size() - 1) {
                                     list.add(new MessageListModel("", from, MessageUtil.getMessageText(emmMessage), "", 1, emmMessage.getMsgTime(), 1));
                                 }
                             }
@@ -136,7 +136,7 @@ public class MessageFragment extends Fragment {
 
         if (MyApplication.isLogin) {
             Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-            Log.e(TAG, "onCreateView: " + conversations.size());
+            Log.e(TAG, "onCreateView:1 " + conversations.size());
             if (conversations.size() != 0) {
                 for (String username : conversations.keySet()) {
                     EMConversation conversation = conversations.get(username);
@@ -158,7 +158,7 @@ public class MessageFragment extends Fragment {
 
     private void receiveMsg() {
         Map<String, EMConversation> conversations = EMClient.getInstance().chatManager().getAllConversations();
-        Log.e(TAG, "onCreateView: " + conversations.size());
+        Log.e(TAG, "onCreateView:2 " + conversations.size());
         if (conversations.size() != 0) {
             for (String username : conversations.keySet()) {
                 EMConversation conversation = conversations.get(username);
