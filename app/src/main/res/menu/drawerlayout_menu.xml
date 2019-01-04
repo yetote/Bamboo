@@ -7,21 +7,23 @@
         <item
 
             android:id="@+id/drawerlayout_menu_mine_order"
-            android:title="@string/menu_mine_order" />
+            android:title="@string/menu_mine_history" />
         <item
 
             android:id="@+id/drawerlayout_menu_mine_topic"
-            android:title="@string/menu_mine_topic" />
+            android:title="@string/menu_mine_download" />
+        <item
+
+            android:id="@+id/drawerlayout_menu_mine_collect"
+            android:title="@string/menu_mine_collect" />
     </group>
     <group android:id="@+id/drawerlayout_menu_safe">
         <item
-
             android:id="@+id/drawerlayout_menu_safe_item"
             android:title="@string/menu_safe" />
     </group>
     <group android:id="@+id/drawerlayout_menu_setting">
         <item
-
             android:id="@+id/drawerlayout_menu_setting_changePwd"
             android:title="@string/menu_setting_changePwd" />
         <item
@@ -29,8 +31,7 @@
             android:id="@+id/drawerlayout_menu_setting_changeInfo"
             android:title="@string/menu_setting_changeInfo" />
     </group>
-        <item
-            android:id="@+id/drawerlayout_menu_exit"
-            android:title="@string/menu_exit"
-            />
+    <item
+        android:id="@+id/drawerlayout_menu_exit"
+        android:title="@string/menu_exit" />
 </menu>

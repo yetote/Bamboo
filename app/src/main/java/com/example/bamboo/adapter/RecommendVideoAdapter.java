@@ -1,6 +1,7 @@
 package com.example.bamboo.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
-import com.example.bamboo.model.RecommendBean;
+import com.example.bamboo.model.RecommendVideoBean;
+import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.TimeUtil;
 
 import java.util.ArrayList;
@@ -28,15 +30,20 @@ import androidx.recyclerview.widget.RecyclerView;
  * @chang time
  * @class describe
  */
-public class RecommendAdapter extends RecyclerView.Adapter {
+public class RecommendVideoAdapter extends RecyclerView.Adapter {
     private Context context;
-    private ArrayList<RecommendBean> list;
+    private ArrayList<RecommendVideoBean> list;
     private static final String RECOMMEND_ARTICLE_TAG = "article";
     private static final String RECOMMEND_VIDEO_TAG = "video";
     private static final String RECOMMEND_AD_TAG = "ad";
     private static final int TYPE_ARTICLE = 0;
     private static final int TYPE_VIDEO = 1;
     private static final int TYPE_AD = 2;
+    private RecyclerViewOnClickListener recyclerViewOnClickListener;
+
+    public void setRecyclerViewOnClickListener(RecyclerViewOnClickListener recyclerViewOnClickListener) {
+        this.recyclerViewOnClickListener = recyclerViewOnClickListener;
+    }
 
     class ArticleViewHolder extends RecyclerView.ViewHolder {
         private TextView title, content, time, discussNum, category;
@@ -74,6 +81,12 @@ public class RecommendAdapter extends RecyclerView.Adapter {
             discussNum = itemView.findViewById(R.id.item_recommend_article_discuss);
             category = itemView.findViewById(R.id.item_recommend_article_tag);
             img = itemView.findViewById(R.id.item_recommend_article_iv);
+            Drawable discussImage = context.getResources().getDrawable(R.mipmap.discuss);
+            discussImage.setBounds(0, 0, 60, 60);
+            discussNum.setCompoundDrawables(discussImage, null, null, null);
+            Drawable timeImage = context.getResources().getDrawable(R.mipmap.time);
+            timeImage.setBounds(0, 0, 60, 60);
+            time.setCompoundDrawables(timeImage, null, null, null);
         }
     }
 
@@ -91,7 +104,7 @@ public class RecommendAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public RecommendAdapter(Context context, ArrayList<RecommendBean> list) {
+    public RecommendVideoAdapter(Context context, ArrayList<RecommendVideoBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -107,13 +120,13 @@ public class RecommendAdapter extends RecyclerView.Adapter {
                     int type = getItemViewType(position);
                     switch (type) {
                         case TYPE_ARTICLE:
-                            return 6;
+                            return 2;
                         case TYPE_VIDEO:
-                            return 3;
+                            return 1;
                         case TYPE_AD:
-                            return 6;
+                            return 2;
                         default:
-                            return 3;
+                            return 1;
                     }
 
                 }
@@ -130,6 +143,12 @@ public class RecommendAdapter extends RecyclerView.Adapter {
                 break;
             case TYPE_ARTICLE:
                 v = LayoutInflater.from(context).inflate(R.layout.item_recommend_video_article, parent, false);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position));
+                    }
+                });
                 return new ArticleViewHolder(v);
             case TYPE_AD:
                 break;
@@ -142,12 +161,14 @@ public class RecommendAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ArticleViewHolder) {
-            Glide.with(context).load(list.get(position).getUrl()).into(((ArticleViewHolder) holder).img);
-            ((ArticleViewHolder) holder).getContent().setText(list.get(position).getContent());
-            ((ArticleViewHolder) holder).getCategory().setText(list.get(position).getCategory());
-            ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getTitle());
-            ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getDiscussNum()));
+            Glide.with(context).load(list.get(position).getVideoBcImage()).into(((ArticleViewHolder) holder).img);
+            ((ArticleViewHolder) holder).getContent().setText(list.get(position).getVideoContent());
+            ((ArticleViewHolder) holder).getCategory().setText(list.get(position).getVideoCategory());
+            ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
+            ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getVideoDiscussNum()));
             ((ArticleViewHolder) holder).getTime().setText(TimeUtil.caseTime(list.get(position).getVideoTime()));
+            holder.itemView.setTag(R.id.list_item_content, list.get(position).getVideoContent());
+            holder.itemView.setTag(R.id.list_position, position);
         }
     }
 
@@ -158,13 +179,13 @@ public class RecommendAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (list.get(position).getTag().equals(RECOMMEND_VIDEO_TAG)) {
+        if (list.get(position).getVideoTag().equals(RECOMMEND_VIDEO_TAG)) {
             return TYPE_VIDEO;
         }
-        if (list.get(position).getTag().equals(RECOMMEND_ARTICLE_TAG)) {
+        if (list.get(position).getVideoTag().equals(RECOMMEND_ARTICLE_TAG)) {
             return TYPE_ARTICLE;
         }
-        if (list.get(position).getTag().equals(RECOMMEND_AD_TAG)) {
+        if (list.get(position).getVideoTag().equals(RECOMMEND_AD_TAG)) {
             return TYPE_AD;
         }
         return -1;

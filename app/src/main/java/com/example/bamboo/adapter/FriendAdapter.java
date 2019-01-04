@@ -36,6 +36,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
     private ArrayList<PersonalBean> list;
     private RecyclerViewOnClickListener clickListener;
 
+
     public void setClickListener(RecyclerViewOnClickListener clickListener) {
         this.clickListener = clickListener;
     }
@@ -75,8 +76,6 @@ public class FriendAdapter extends RecyclerView.Adapter {
         public TextView getuName() {
             return uName;
         }
-
-
     }
 
     @NonNull
@@ -94,7 +93,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
         vh.getuName().setText(list.get(position).getName());
         Glide.with(context).load(list.get(position).getHeadImg()).into(vh.getHeadIv());
         Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getIdentity())).into(vh.getIdentityIv());
-        vh.itemView.setTag(R.id.user_name_tag,list.get(position).getName());
+        vh.itemView.setTag(R.id.user_name_tag, list.get(position).getName());
         vh.itemView.setTag(R.id.list_position, position);
     }
 

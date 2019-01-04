@@ -109,7 +109,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void callBack() {
-        ((MyApplication)getApplication()).getCallBackUtils().setLoginInterface((isLogin, uName, error) -> {
+        ((MyApplication) getApplication()).getCallBackUtils().setLoginInterface((isLogin, uName, error) -> {
             Message msg = new Message();
             msg.what = HANDLER_LOGIN_CODE;
             Bundle bundle = new Bundle();
@@ -134,6 +134,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
         pwd = findViewById(R.id.login_pwd_pwd_et);
         sure = findViewById(R.id.login_pwd_sure);
         toVerifyCodeLogin = findViewById(R.id.login_pwd_to_verifyCodeLogin);
+        cl = findViewById(R.id.login_pwd_cl);
     }
 
     @Override

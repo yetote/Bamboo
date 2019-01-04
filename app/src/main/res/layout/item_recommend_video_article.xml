@@ -82,7 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/item_recommend_article_contentCardView"
         android:layout_alignStart="@+id/item_recommend_article_contentCardView"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/missOld"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
@@ -90,15 +91,15 @@
     <TextView
         android:id="@+id/item_recommend_article_time"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_below="@+id/item_recommend_article_contentCardView"
+        android:layout_marginEnd="8dp"
         android:layout_toStartOf="@+id/item_recommend_article_discuss"
-        android:drawableStart="@mipmap/time"
         android:gravity="center"
         android:text="@string/testDate"
         app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_tag"
         app:layout_constraintEnd_toStartOf="@+id/item_recommend_article_discuss"
-        app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
+        app:layout_constraintTop_toTopOf="@+id/item_recommend_article_tag" />
 
     <TextView
         android:id="@+id/item_recommend_article_discuss"
@@ -107,12 +108,12 @@
         android:layout_below="@+id/item_recommend_article_contentCardView"
         android:layout_alignEnd="@+id/item_recommend_article_contentCardView"
         android:layout_alignBottom="@id/item_recommend_article_time"
-        android:drawableStart="@mipmap/discuss"
+        android:layout_marginEnd="16dp"
         android:gravity="center"
         android:text="@string/testDiscuss"
         app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
+        app:layout_constraintTop_toTopOf="@+id/item_recommend_article_time" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

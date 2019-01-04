@@ -1,6 +1,7 @@
 package com.example.bamboo;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private Button sure;
     private EditText telEdit, codeEdit, pwdEdit;
     private static final int HANDLER_REGISTER_CODE = 1;
+    private ConstraintLayout cl;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -90,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void callBack() {
-        ((MyApplication)getApplication()).getCallBackUtils().setLoginInterface((isLogin, uName, error) -> {
+        ((MyApplication) getApplication()).getCallBackUtils().setLoginInterface((isLogin, uName, error) -> {
             Message msg = new Message();
             msg.what = HANDLER_REGISTER_CODE;
             Bundle bundle = new Bundle();
@@ -122,6 +124,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         telEdit = findViewById(R.id.register_tel_et);
         codeEdit = findViewById(R.id.register_verifyCode_et);
         pwdEdit = findViewById(R.id.register_pwd_et);
+        cl = findViewById(R.id.register_cl);
     }
 
     @Override

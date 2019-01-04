@@ -20,6 +20,7 @@ import com.example.bamboo.RecodeVideoActivity;
 import com.example.bamboo.model.TimeInfoBean;
 import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPauseListener;
+import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStartListener;
 import com.example.bamboo.myinterface.ffmpeg.OnStopListener;
 import com.example.bamboo.myinterface.ffmpeg.OnTimeInfoListener;
@@ -157,11 +158,13 @@ public class HomePageFragment extends Fragment {
     }
 
     private void onCall() {
-        playerView.setPreparedListener(() -> {
-            Log.e(TAG, "onPrepared: 准备好了，开始播放");
-            playerView.start();
-            isPlaying = true;
-        });
+       playerView.setPreparedListener(new OnPreparedListener() {
+           @Override
+           public void onPrepared() {
+               playerView.start();
+               isPlaying = true;
+           }
+       });
 
         playerView.setLoadListener(isLoad -> Log.e(TAG, "onLoad: 加载中,请稍等"));
         playerView.setPauseListener(new OnPauseListener() {

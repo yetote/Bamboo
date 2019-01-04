@@ -28,7 +28,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".AddContactActivity"></activity>
+        <activity android:name=".RecommendVideoArticleActivity"/>
+        <activity android:name=".AddContactActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"

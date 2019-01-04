@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">Bamboo</string>
     <string name="login">点击开启精彩之旅</string>
     <string name="register">没有账号立即加入</string>
@@ -78,4 +78,7 @@
     <string name="mine">\@我的</string>
     <string name="discuss">评论</string>
     <string name="add_friend">添加好友</string>
+    <string name="menu_mine_history">历史记录</string>
+    <string name="menu_mine_download">下载管理</string>
+    <string name="menu_mine_collect">我的收藏</string>
 </resources>

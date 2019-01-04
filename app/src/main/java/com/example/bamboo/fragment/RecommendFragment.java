@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import com.example.bamboo.R;
 import com.example.bamboo.SelectTagActivity;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
-import com.example.bamboo.adapter.RecommendAdapter;
-import com.example.bamboo.model.RecommendBean;
 import com.example.bamboo.myinterface.MattersInterface;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 /**
@@ -57,7 +54,6 @@ public class RecommendFragment extends Fragment implements View.OnClickListener,
         tabLayout.setupWithViewPager(viewPager);
 
         onClick();
-
 
         return v;
     }

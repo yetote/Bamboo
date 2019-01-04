@@ -60,7 +60,6 @@ public class MyApplication extends Application {
         initHuanxin();
         callBackUtils = new CallBackUtils();
 
-
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
