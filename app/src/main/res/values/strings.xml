@@ -81,4 +81,8 @@
     <string name="menu_mine_history">历史记录</string>
     <string name="menu_mine_download">下载管理</string>
     <string name="menu_mine_collect">我的收藏</string>
+    <string name="prise">称赞</string>
+    <string name="booing">差评</string>
+    <string name="coin">打赏</string>
+    <string name="share">分享</string>
 </resources>

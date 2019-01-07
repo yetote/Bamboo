@@ -78,7 +78,7 @@ public class FriendActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
         adapter.setClickListener(new RecyclerViewOnClickListener() {
             @Override
-            public void onClick(Object obj, int position) {
+            public void onClick(Object obj, int position, Object tag) {
                 Intent i = new Intent();
                 i.putExtra("u_name", (String) (obj + ""));
                 i.putExtra("u_header", "");
@@ -91,7 +91,7 @@ public class FriendActivity extends AppCompatActivity {
     }
 
     private void onCallBack() {
-        ((MyApplication)getApplication()).getCallBackUtils().setFriendInterface((friendList, error) -> {
+        ((MyApplication) getApplication()).getCallBackUtils().setFriendInterface((friendList, error) -> {
             if (error == 0) {
                 Observable.create((ObservableOnSubscribe<List<String>>) emitter -> emitter.onNext(friendList)).subscribeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<List<String>>() {

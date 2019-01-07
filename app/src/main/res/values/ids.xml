@@ -5,4 +5,5 @@
     <item name="list_position" type="id" />
     <item name="user_name_tag" type="id" />
     <item name="list_item_content" type="id" />
+    <item name="list_item_tag" type="id" />
 </resources>

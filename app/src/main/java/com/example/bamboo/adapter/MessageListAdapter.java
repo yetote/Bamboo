@@ -95,7 +95,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
 
-                onClickListener.onClick(v.getTag(), (Integer) v.getTag(R.id.list_position));
+                onClickListener.onClick(v.getTag(), (Integer) v.getTag(R.id.list_position), null);
             }
         });
 

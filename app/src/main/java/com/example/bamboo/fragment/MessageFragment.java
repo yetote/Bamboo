@@ -90,7 +90,7 @@ public class MessageFragment extends Fragment {
 
         rv.setAdapter(adapter);
 
-        adapter.setOnClickListener((obj, position) -> {
+        adapter.setOnClickListener((obj, position,tag) -> {
             MessageListModel model = (MessageListModel) obj;
             Intent i = new Intent();
             i.putExtra("u_id", model.getUserID());

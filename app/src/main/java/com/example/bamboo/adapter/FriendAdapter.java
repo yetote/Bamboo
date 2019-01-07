@@ -83,7 +83,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(context).inflate(R.layout.item_friend, parent, false);
         MyViewHolder viewHolder = new MyViewHolder(v);
-        v.setOnClickListener(v1 -> clickListener.onClick(v1.getTag(R.id.user_name_tag), (Integer) v1.getTag(R.id.list_position)));
+        v.setOnClickListener(v1 -> clickListener.onClick(v1.getTag(R.id.user_name_tag), (Integer) v1.getTag(R.id.list_position), null));
         return viewHolder;
     }
 

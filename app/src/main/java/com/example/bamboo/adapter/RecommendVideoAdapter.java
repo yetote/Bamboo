@@ -91,9 +91,39 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
     }
 
     class VideoViewHolder extends RecyclerView.ViewHolder {
+        private ImageView iv;
+        private ImageView menu;
+        private TextView title;
+        private TextView category;
+        private TextView topic;
 
         private VideoViewHolder(@NonNull View itemView) {
             super(itemView);
+            iv = itemView.findViewById(R.id.item_recommend_video_iv);
+            menu = itemView.findViewById(R.id.item_recommend_video_menu);
+            title = itemView.findViewById(R.id.item_recommend_video_title);
+            category = itemView.findViewById(R.id.item_recommend_video_category);
+            topic = itemView.findViewById(R.id.item_recommend_video_topic);
+        }
+
+        public ImageView getIv() {
+            return iv;
+        }
+
+        public ImageView getMenu() {
+            return menu;
+        }
+
+        public TextView getTitle() {
+            return title;
+        }
+
+        public TextView getCategory() {
+            return category;
+        }
+
+        public TextView getTopic() {
+            return topic;
         }
     }
 
@@ -140,13 +170,20 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
         View v = null;
         switch (viewType) {
             case TYPE_VIDEO:
-                break;
+                v = LayoutInflater.from(context).inflate(R.layout.item_recommend_video_video, parent, false);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position),v.getTag(R.id.list_item_tag));
+                    }
+                });
+                return new VideoViewHolder(v);
             case TYPE_ARTICLE:
                 v = LayoutInflater.from(context).inflate(R.layout.item_recommend_video_article, parent, false);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position));
+                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position),v.getTag(R.id.list_item_tag));
                     }
                 });
                 return new ArticleViewHolder(v);
@@ -167,9 +204,17 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
             ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getVideoDiscussNum()));
             ((ArticleViewHolder) holder).getTime().setText(TimeUtil.caseTime(list.get(position).getVideoTime()));
-            holder.itemView.setTag(R.id.list_item_content, list.get(position).getVideoContent());
-            holder.itemView.setTag(R.id.list_position, position);
+            holder.itemView.setTag(R.id.list_item_tag, RECOMMEND_ARTICLE_TAG);
+
+        } else if (holder instanceof VideoViewHolder) {
+            Glide.with(context).load(list.get(position).getVideoBcImage()).into(((VideoViewHolder) holder).getIv());
+            ((VideoViewHolder) holder).getCategory().setText(list.get(position).getVideoCategory());
+            ((VideoViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
+            ((VideoViewHolder) holder).getTopic().setText(list.get(position).getVideoTopic());
+            holder.itemView.setTag(R.id.list_item_tag, RECOMMEND_VIDEO_TAG);
         }
+        holder.itemView.setTag(R.id.list_item_content, list.get(position).getVideoContent());
+        holder.itemView.setTag(R.id.list_position, position);
     }
 
     @Override
