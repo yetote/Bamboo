@@ -34,10 +34,7 @@ public class RecommendVideoArticleActivity extends AppCompatActivity {
         if (i != null) {
             String content = i.getStringExtra("video_content");
             //取消滚动条
-            wv.setScrollBarStyle(SCROLLBARS_OUTSIDE_OVERLAY);
-            //不支持缩放功能
-            wv.getSettings().setSupportZoom(false);
-            wv.loadDataWithBaseURL(null, content, "text/html", "UTF-8", null);
+            
         }
     }
 
