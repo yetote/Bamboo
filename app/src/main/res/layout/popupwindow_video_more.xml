@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="16dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/popup_video_more_laterShow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center|start"
+        android:text="@string/latter_show"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray_cc"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_feedback"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/popup_video_more_feedback"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center|start"
+        android:text="@string/feedback"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_feedback_sex"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/popup_video_more_feedback_blood"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/popupwindow_btn_background"
+        android:gravity="center|start"
+        android:padding="5dp"
+        android:text="@string/blood"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintEnd_toStartOf="@+id/guideline9"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_feedback"
+        app:layout_constraintTop_toBottomOf="@+id/popup_video_more_feedback" />
+
+    <TextView
+        android:id="@+id/popup_video_more_feedback_sex"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/popupwindow_btn_background"
+        android:gravity="center|start"
+        android:padding="5dp"
+        android:text="@string/sex"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_feedback_inconformity"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_feedback_inconformity"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_feedback_inconformity" />
+
+    <TextView
+        android:id="@+id/popup_video_more_feedback_nausea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/popupwindow_btn_background"
+        android:gravity="center|start"
+        android:padding="5dp"
+        android:text="@string/nausea"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toBottomOf="@+id/popup_video_more_feedback_inconformity"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_feedback_blood"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_feedback_blood"
+        app:layout_constraintTop_toBottomOf="@+id/popup_video_more_feedback_blood" />
+
+    <TextView
+        android:id="@+id/popup_video_more_feedback_inconformity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/popupwindow_btn_background"
+        android:gravity="center|start"
+        android:padding="5dp"
+        android:text="@string/inconformity"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_feedback"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline9" />
+
+    <RelativeLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/gray_cc"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_loseInterest"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/popup_video_more_loseInterest"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center|start"
+        android:text="@string/lose_interest"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_loseInterest_category"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/popup_video_more_loseInterest_writer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center|start"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toBottomOf="@+id/popup_video_more_loseInterest_category"
+        app:layout_constraintEnd_toStartOf="@+id/guideline9"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_loseInterest"
+        app:layout_constraintTop_toBottomOf="@+id/popup_video_more_loseInterest" />
+
+    <TextView
+        android:id="@+id/popup_video_more_loseInterest_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center|start"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_loseInterest_all"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_loseInterest"
+        app:layout_constraintStart_toStartOf="@+id/guideline9" />
+
+    <TextView
+        android:id="@+id/popup_video_more_loseInterest_topic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center|start"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toBottomOf="@+id/popup_video_more_loseInterest_all"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_loseInterest_writer"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_loseInterest_writer"
+        app:layout_constraintTop_toTopOf="@+id/popup_video_more_loseInterest_all" />
+
+    <TextView
+        android:id="@+id/popup_video_more_loseInterest_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center|start"
+        android:textColor="@color/gray_8f"
+        app:layout_constraintBottom_toTopOf="@+id/popup_video_more_cancel"
+        app:layout_constraintEnd_toEndOf="@+id/popup_video_more_loseInterest_category"
+        app:layout_constraintStart_toStartOf="@+id/popup_video_more_loseInterest_category" />
+
+    <Button
+        android:id="@+id/popup_video_more_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/personal_im_follow_btn"
+        android:text="@string/cancel"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+</androidx.constraintlayout.widget.ConstraintLayout>

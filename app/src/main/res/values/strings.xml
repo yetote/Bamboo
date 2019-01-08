@@ -84,5 +84,12 @@
     <string name="prise">称赞</string>
     <string name="booing">差评</string>
     <string name="coin">打赏</string>
-    <string name="share">分享</string>
+    <string name="cancel">取消</string>
+    <string name="latter_show">添加至稍后在看列表</string>
+    <string name="feedback">举报</string>
+    <string name="blood">恐怖血腥</string>
+    <string name="sex">色情暴力</string>
+    <string name="nausea">内容恶心</string>
+    <string name="inconformity">封面与事实不符</string>
+    <string name="lose_interest">不感兴趣</string>
 </resources>

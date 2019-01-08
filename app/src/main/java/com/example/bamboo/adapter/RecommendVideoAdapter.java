@@ -1,16 +1,20 @@
 package com.example.bamboo.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
 import com.example.bamboo.model.RecommendVideoBean;
+import com.example.bamboo.myinterface.OnRecyclerViewItemViewClickListener;
 import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.TimeUtil;
 
@@ -40,6 +44,11 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
     private static final int TYPE_VIDEO = 1;
     private static final int TYPE_AD = 2;
     private RecyclerViewOnClickListener recyclerViewOnClickListener;
+    private OnRecyclerViewItemViewClickListener itemViewClickListener;
+
+    public void setItemViewClickListener(OnRecyclerViewItemViewClickListener itemViewClickListener) {
+        this.itemViewClickListener = itemViewClickListener;
+    }
 
     public void setRecyclerViewOnClickListener(RecyclerViewOnClickListener recyclerViewOnClickListener) {
         this.recyclerViewOnClickListener = recyclerViewOnClickListener;
@@ -104,6 +113,8 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             title = itemView.findViewById(R.id.item_recommend_video_title);
             category = itemView.findViewById(R.id.item_recommend_video_category);
             topic = itemView.findViewById(R.id.item_recommend_video_topic);
+
+            menu.setOnClickListener(v -> itemViewClickListener.onClick((Integer) itemView.getTag(R.id.list_position)));
         }
 
         public ImageView getIv() {
@@ -174,7 +185,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position),v.getTag(R.id.list_item_tag));
+                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position), v.getTag(R.id.list_item_tag));
                     }
                 });
                 return new VideoViewHolder(v);
@@ -183,7 +194,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position),v.getTag(R.id.list_item_tag));
+                        recyclerViewOnClickListener.onClick(v.getTag(R.id.list_item_content), (Integer) v.getTag(R.id.list_position), v.getTag(R.id.list_item_tag));
                     }
                 });
                 return new ArticleViewHolder(v);
