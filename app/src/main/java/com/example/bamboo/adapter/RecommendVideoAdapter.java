@@ -223,8 +223,9 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             ((VideoViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
             ((VideoViewHolder) holder).getTopic().setText(list.get(position).getVideoTopic());
             holder.itemView.setTag(R.id.list_item_tag, RECOMMEND_VIDEO_TAG);
+
         }
-        holder.itemView.setTag(R.id.list_item_content, list.get(position).getVideoContent());
+        holder.itemView.setTag(R.id.list_item_content, list.get(position));
         holder.itemView.setTag(R.id.list_position, position);
     }
 

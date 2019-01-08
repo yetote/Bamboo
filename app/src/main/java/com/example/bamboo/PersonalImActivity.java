@@ -1,18 +1,10 @@
 package com.example.bamboo;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
@@ -24,11 +16,15 @@ import com.example.bamboo.model.PersonalBean;
 import com.example.bamboo.util.IdentityUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 public class PersonalImActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -62,7 +58,7 @@ public class PersonalImActivity extends AppCompatActivity {
 
         appBarLayout.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout, i1) -> {
             if (-i1 >= appBarLayout.getTotalScrollRange() * 0.75) {
-                toolbar.setTitle(dataList.get(0).getName());
+                toolbar.setTitle(dataList.get(0).getuName());
             } else {
                 toolbar.setTitle("");
             }
@@ -71,18 +67,18 @@ public class PersonalImActivity extends AppCompatActivity {
     }
 
     private void setData(List<PersonalBean> dataList) {
-        Glide.with(this).load(dataList.get(0).getBg()).into(bgIv);
-        Glide.with(this).load(dataList.get(0).getHeadImg()).into(headIv);
-        userName.setText(dataList.get(0).getName());
+        Glide.with(this).load(dataList.get(0).getuBg()).into(bgIv);
+        Glide.with(this).load(dataList.get(0).getuHeader()).into(headIv);
+        userName.setText(dataList.get(0).getuName());
         int drawableId = -1;
 
-        Drawable drawable = getResources().getDrawable(IdentityUtils.getIdentityDrawable(dataList.get(0).getIdentity()));
+        Drawable drawable = getResources().getDrawable(IdentityUtils.getIdentityDrawable(dataList.get(0).getuIdentity()));
         drawable.setBounds(0, 0, 70, 70);
         userId.setCompoundDrawables(drawable, null, null, null);
-        userId.setText(dataList.get(0).getUid() + "");
-        followNum.setText(dataList.get(0).getFollowNum() + "关注");
-        fansNum.setText(dataList.get(0).getFansNum() + "粉丝");
-        synopsis.setText(dataList.get(0).getSynopsis());
+        userId.setText(dataList.get(0).getuId() + "");
+        followNum.setText(dataList.get(0).getuFollow() + "关注");
+        fansNum.setText(dataList.get(0).getuFans() + "粉丝");
+        synopsis.setText(dataList.get(0).getuSynopsis());
     }
 
     private void initView() {

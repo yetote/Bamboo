@@ -11,85 +11,85 @@ package com.example.bamboo.model;
  * @class describe
  */
 public class PersonalBean {
-    private String bg, headImg;
+    private String uBg, uHeader;
     private String uName;
-    private int followNum, fansNum, uid;
-    private String identity;
+    private int uFollow, uFans, uId;
+    private String uIdentity;
     //简介
-    private String synopsis;
+    private String uSynopsis;
 
-    public PersonalBean(String bg, String headImg, String uName, int uid, int followNum, int fansNum, String identity, String synopsis) {
-        this.bg = bg;
-        this.headImg = headImg;
+    public PersonalBean(String uBg, String uHeader, String uName, int uFollow, int uFans, int uId, String uIdentity, String uSynopsis) {
+        this.uBg = uBg;
+        this.uHeader = uHeader;
         this.uName = uName;
-        this.uid = uid;
-        this.followNum = followNum;
-        this.fansNum = fansNum;
-        this.identity = identity;
-        this.synopsis = synopsis;
+        this.uFollow = uFollow;
+        this.uFans = uFans;
+        this.uId = uId;
+        this.uIdentity = uIdentity;
+        this.uSynopsis = uSynopsis;
     }
 
-    public String getBg() {
-        return bg;
+    public String getuBg() {
+        return uBg;
     }
 
-    public void setBg(String bg) {
-        this.bg = bg;
+    public void setuBg(String uBg) {
+        this.uBg = uBg;
     }
 
-    public String getHeadImg() {
-        return headImg;
+    public String getuHeader() {
+        return uHeader;
     }
 
-    public void setHeadImg(String headImg) {
-        this.headImg = headImg;
+    public void setuHeader(String uHeader) {
+        this.uHeader = uHeader;
     }
 
-    public String getName() {
+    public String getuName() {
         return uName;
     }
 
-    public void setName(String uName) {
+    public void setuName(String uName) {
         this.uName = uName;
     }
 
-    public int getUid() {
-        return uid;
+    public int getuFollow() {
+        return uFollow;
     }
 
-    public void setUid(int uid) {
-        this.uid = uid;
+    public void setuFollow(int uFollow) {
+        this.uFollow = uFollow;
     }
 
-    public int getFollowNum() {
-        return followNum;
+    public int getuFans() {
+        return uFans;
     }
 
-    public void setFollowNum(int followNum) {
-        this.followNum = followNum;
+    public void setuFans(int uFans) {
+        this.uFans = uFans;
     }
 
-    public int getFansNum() {
-        return fansNum;
+    public int getuId() {
+        return uId;
     }
 
-    public void setFansNum(int fansNum) {
-        this.fansNum = fansNum;
+    public void setuId(int uId) {
+        this.uId = uId;
     }
 
-    public String getIdentity() {
-        return identity;
+    public String getuIdentity() {
+        return uIdentity;
     }
 
-    public void setIdentity(String identity) {
-        this.identity = identity;
+    public void setuIdentity(String uIdentity) {
+        this.uIdentity = uIdentity;
     }
 
-    public String getSynopsis() {
-        return synopsis;
+    public String getuSynopsis() {
+        return uSynopsis;
     }
 
-    public void setSynopsis(String synopsis) {
-        this.synopsis = synopsis;
+    public void setuSynopsis(String uSynopsis) {
+        this.uSynopsis = uSynopsis;
     }
 }

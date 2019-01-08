@@ -90,10 +90,10 @@ public class FriendAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
-        vh.getuName().setText(list.get(position).getName());
-        Glide.with(context).load(list.get(position).getHeadImg()).into(vh.getHeadIv());
-        Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getIdentity())).into(vh.getIdentityIv());
-        vh.itemView.setTag(R.id.user_name_tag, list.get(position).getName());
+        vh.getuName().setText(list.get(position).getuName());
+        Glide.with(context).load(list.get(position).getuHeader()).into(vh.getHeadIv());
+        Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getuIdentity())).into(vh.getIdentityIv());
+        vh.itemView.setTag(R.id.user_name_tag, list.get(position).getuName());
         vh.itemView.setTag(R.id.list_position, position);
     }
 

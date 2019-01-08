@@ -62,6 +62,7 @@ public class RecommendVideoFragment extends Fragment {
                         i.setClass(getActivity(), RecommendVideoArticleActivity.class);
                         break;
                     case "video":
+                        i.putExtra("video_id", list.get(position).getId());
                         i.setClass(getActivity(), RecommendVideoDetailedActivity.class);
                         break;
                     case "ad":
