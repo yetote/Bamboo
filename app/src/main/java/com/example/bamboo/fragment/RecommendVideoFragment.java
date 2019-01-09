@@ -56,7 +56,7 @@ public class RecommendVideoFragment extends Fragment {
             @Override
             public void onClick(Object obj, int position, Object tag) {
                 Intent i = new Intent();
-                i.putExtra("video_content", (String) obj);
+//                i.putExtra("video_content", (String) obj);
                 switch ((String) tag) {
                     case "article":
                         i.setClass(getActivity(), RecommendVideoArticleActivity.class);

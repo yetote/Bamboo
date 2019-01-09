@@ -41,7 +41,6 @@
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_user_fans"
-
         android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginStart="8dp"
@@ -121,73 +120,139 @@
 
     <Button
         android:id="@+id/fragment_recommend_video_detailed_im_praiseBtn"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@color/transparent"
-        android:text="@string/prise"
-        android:textColor="@color/mediumaquamarine"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/prise"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_play_num" />
 
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_praiseTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/prise"
+        android:textColor="@color/mediumaquamarine"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_praiseBtn" />
+
     <Button
         android:id="@+id/fragment_recommend_video_detailed_im_booingBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
-        android:text="@string/booing"
-        android:textColor="@color/mediumaquamarine"
+        android:background="@drawable/booing"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_praiseBtn"
         app:layout_constraintEnd_toStartOf="@+id/guideline5"
         app:layout_constraintStart_toStartOf="@+id/guideline6"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_praiseBtn" />
 
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_booingTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/booing"
+        android:textColor="@color/mediumaquamarine"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_praiseTv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintStart_toStartOf="@+id/guideline6"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_booingBtn" />
+
     <Button
         android:id="@+id/fragment_recommend_video_detailed_im_coinBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
-        android:text="@string/coin"
-        android:textColor="@color/mediumaquamarine"
+        android:background="@drawable/coin"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_booingBtn"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_booingBtn"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_coinTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/coin"
+        android:textColor="@color/mediumaquamarine"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_booingTv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline7"
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_coinBtn" />
+
     <Button
         android:id="@+id/fragment_recommend_video_detailed_im_collectBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
-        android:text="@string/collect"
-        android:textColor="@color/mediumaquamarine"
+        android:background="@drawable/collect"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_coinBtn"
         app:layout_constraintEnd_toStartOf="@+id/guideline8"
         app:layout_constraintStart_toStartOf="@+id/guideline7"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_coinBtn"
         app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_collectTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/collect"
+        android:textColor="@color/mediumaquamarine"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_coinTv"
+        app:layout_constraintEnd_toStartOf="@+id/guideline8"
+        app:layout_constraintStart_toStartOf="@+id/guideline7"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_collectBtn" />
+
     <Button
         android:id="@+id/fragment_recommend_video_detailed_im_shareBtn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/transparent"
-        android:text="@string/share"
-        android:textColor="@color/mediumaquamarine"
+        android:background="@drawable/share"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_collectBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline8"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_collectBtn" />
+
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_shareTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/share"
+        android:textColor="@color/mediumaquamarine"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_collectTv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline8"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_shareBtn" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_recommend_video_detailed_im_rv"
@@ -197,7 +262,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_collectBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_coinTv" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline5"
@@ -226,4 +291,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

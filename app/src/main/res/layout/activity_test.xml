@@ -6,32 +6,4 @@
     android:layout_height="match_parent"
     tools:context=".TestActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/add_friend_toolbar"
-        style="@style/MyToolbarStyle"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="@mipmap/back"
-        app:title="@string/add_friend"
-        app:titleTextColor="@color/white" />
-
-    <SearchView
-        android:id="@+id/add_friend_search_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_friend_toolbar" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/add_friend_rv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_friend_search_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>
