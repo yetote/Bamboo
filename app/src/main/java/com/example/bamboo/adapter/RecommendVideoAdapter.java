@@ -1,19 +1,16 @@
 package com.example.bamboo.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.R;
-import com.example.bamboo.model.RecommendVideoBean;
+import com.example.bamboo.model.VideoBean;
 import com.example.bamboo.myinterface.OnRecyclerViewItemViewClickListener;
 import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.TimeUtil;
@@ -36,7 +33,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class RecommendVideoAdapter extends RecyclerView.Adapter {
     private Context context;
-    private ArrayList<RecommendVideoBean> list;
+    private ArrayList<VideoBean> list;
     private static final String RECOMMEND_ARTICLE_TAG = "article";
     private static final String RECOMMEND_VIDEO_TAG = "video";
     private static final String RECOMMEND_AD_TAG = "ad";
@@ -145,7 +142,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public RecommendVideoAdapter(Context context, ArrayList<RecommendVideoBean> list) {
+    public RecommendVideoAdapter(Context context, ArrayList<VideoBean> list) {
         this.context = context;
         this.list = list;
     }

@@ -95,7 +95,7 @@ public class TimeButton extends View {
 
     public void startAnimation() {
         ObjectAnimator oa = ObjectAnimator.ofInt(this, "angle", 0, 360);
-        oa.setDuration(2000);
+        oa.setDuration(1000);
         oa.setInterpolator(new LinearInterpolator());
         oa.setRepeatCount(2);
         oa.start();
