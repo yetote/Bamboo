@@ -21,8 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.model.JsonBean;
 import com.example.bamboo.myinterface.OnLoginInterface;
 import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
+import com.example.bamboo.myinterface.services.LoginService;
 import com.example.bamboo.util.CallBackUtils;
 import com.example.bamboo.util.CheckUtils;
 import com.example.bamboo.util.HuanXinHelper;
@@ -34,6 +36,18 @@ import com.hyphenate.chat.EMClient;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+
+import static com.example.bamboo.util.NetworkUtil.NETWORK_LOGIN_ERR_UN_USER;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_ERR;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
 
 
 /**
@@ -118,7 +132,6 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
             bundle.putInt("error_code", error);
             msg.obj = bundle;
             handler.sendMessage(msg);
-
         });
     }
 
@@ -151,7 +164,27 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                 if (CheckUtils.checkNull(telText, pwdText)) {
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    HuanXinHelper.login(telText, pwdText);
+                    MyApplication.retrofit.create(LoginService.class)
+                            .login(telText, pwdText)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeOn(Schedulers.newThread())
+                            .subscribe(integerJsonBean -> {
+                                switch (integerJsonBean.getCode()) {
+                                    case NETWORK_RESULT_OK:
+                                        HuanXinHelper.login(telText, pwdText);
+                                        break;
+                                    case NETWORK_RESULT_ERR:
+                                        Toast.makeText(PwdLoginActivity.this, "未知错误", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case NETWORK_LOGIN_ERR_UN_USER:
+                                        Toast.makeText(PwdLoginActivity.this, "未找到用户", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    default:
+                                        Toast.makeText(PwdLoginActivity.this, "default" + integerJsonBean.getCode(), Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                            });
+
                 }
                 break;
             default:

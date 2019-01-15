@@ -17,6 +17,7 @@ import com.example.bamboo.R;
 import com.example.bamboo.RecommendVideoArticleActivity;
 import com.example.bamboo.RecommendVideoDetailedActivity;
 import com.example.bamboo.adapter.RecommendVideoAdapter;
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.model.JsonBean;
 import com.example.bamboo.model.VideoBean;
 import com.example.bamboo.myinterface.OnRecyclerViewItemViewClickListener;
@@ -24,6 +25,7 @@ import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.myinterface.services.RecommendVideoService;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +41,8 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.bamboo.util.NetworkUtil.NETWORK_BASE_URL;
-import static com.example.bamboo.util.NetworkUtil.RESULT_OK;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE;
 
 /**
  * @author ether QQ:503779938
@@ -54,10 +57,10 @@ import static com.example.bamboo.util.NetworkUtil.RESULT_OK;
 public class RecommendVideoFragment extends Fragment {
     private RecyclerView rv;
     private RecommendVideoAdapter adapter;
-    private ArrayList<VideoBean> list;
+    private LinkedList<VideoBean> list;
     private static final String TAG = "RecommendVideoFragment";
     private SwipeRefreshLayout srl;
-    private Retrofit retrofit;
+    private int position = 0;
 
     @Nullable
     @Override
@@ -71,7 +74,6 @@ public class RecommendVideoFragment extends Fragment {
             @Override
             public void onClick(Object obj, int position, Object tag) {
                 Intent i = new Intent();
-//                i.putExtra("video_content", (String) obj);
                 switch ((String) tag) {
                     case "article":
                         i.setClass(getActivity(), RecommendVideoArticleActivity.class);
@@ -115,20 +117,30 @@ public class RecommendVideoFragment extends Fragment {
         });
 
 
-        srl.setOnRefreshListener(() -> retrofit.create(RecommendVideoService.class)
-                .getRecommendVideo(0)
+        srl.setOnRefreshListener(() -> MyApplication.retrofit.create(RecommendVideoService.class)
+                .getRecommendVideo(position)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(videoBeanJsonBean -> {
                     int code = videoBeanJsonBean.getCode();
-                    if (code == RESULT_OK) {
-                        list.addAll(videoBeanJsonBean.getBody());
-                        Log.e(TAG, "accept: ");
-                    } else {
-                        Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+                    switch (code) {
+                        case NETWORK_RESULT_OK:
+                            for (int i = 0; i < videoBeanJsonBean.getBody().size(); i++) {
+                                list.addFirst(videoBeanJsonBean.getBody().get(i));
+                                adapter.notifyItemChanged(i);
+                            }
+                            Toast.makeText(getActivity(), "刷新成功", Toast .LENGTH_SHORT).show();
+                            break;
+                        case NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE:
+                            Toast.makeText(getActivity(), "没有更新的推荐", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+                            break;
                     }
-                    adapter.notifyDataSetChanged();
+
                     srl.setRefreshing(false);
+                    position += 2;
                 }));
         return v;
 
@@ -136,10 +148,9 @@ public class RecommendVideoFragment extends Fragment {
 
     private void initView(View v) {
         rv = v.findViewById(R.id.recommend_video_rv);
-        list = new ArrayList<>();
+        list = new LinkedList<>();
         adapter = new RecommendVideoAdapter(getActivity(), list);
         srl = v.findViewById(R.id.recommend_video_srl);
-        retrofit = new Retrofit.Builder().baseUrl(NETWORK_BASE_URL).addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build();
     }
 
 }

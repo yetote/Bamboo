@@ -24,8 +24,15 @@ import static com.example.bamboo.util.NetworkUtil.NETWORK_REGISTER;
  */
 public interface RegisterService {
 
+    /**
+     * 注册
+     *
+     * @param tel 用户手机号码
+     * @param pwd 密码
+     * @return result code
+     */
     @FormUrlEncoded
     @POST(NETWORK_REGISTER)
-    Observable<JsonBean<VideoBean>> register(@Field("uTel") String tel,
-                                             @Field("uPwd") String pwd);
+    Observable<JsonBean<Integer>> register(@Field("uTel") String tel,
+                                           @Field("uPwd") String pwd);
 }

@@ -25,6 +25,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.bamboo.util.NetworkUtil.NETWORK_BASE_URL;
+
 
 /**
  * com.demo.yetote.cubegame.application
@@ -41,6 +47,7 @@ public class MyApplication extends Application {
     public static boolean isLogin = false;
     public static String uName;
     private CallBackUtils callBackUtils;
+    public static Retrofit retrofit;
 
     public CallBackUtils getCallBackUtils() {
         return callBackUtils;
@@ -101,6 +108,7 @@ public class MyApplication extends Application {
         });
 
         initRetrofit();
+
         SharedPreferences sp = getSharedPreferences("sp", MODE_PRIVATE);
         isFirst = sp.getBoolean("is_first", true);
 //        isLogin = sp.getBoolean("is_login", false);
@@ -142,7 +150,7 @@ public class MyApplication extends Application {
     }
 
     private void initRetrofit() {
-
+        retrofit = new Retrofit.Builder().baseUrl(NETWORK_BASE_URL).addConverterFactory(GsonConverterFactory.create()).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).build();
     }
 
     private void startCrash() {

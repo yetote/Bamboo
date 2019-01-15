@@ -161,13 +161,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
 //                    HuanXinHelper.register(uNameText, pwdText);
-                    Retrofit retrofit = new Retrofit.Builder().baseUrl(NETWORK_BASE_URL).addCallAdapterFactory(RxJava2CallAdapterFactory.create()).addConverterFactory(GsonConverterFactory.create()).build();
-                    retrofit.create(RegisterService.class)
+                    MyApplication.retrofit.create(RegisterService.class)
                             .register(uNameText, pwdText)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.newThread())
                             .subscribe(videoBeanJsonBean -> {
-                                if (videoBeanJsonBean.getCode() == NetworkUtil.RESULT_OK) {
+                                if (videoBeanJsonBean.getCode() == NetworkUtil.NETWORK_RESULT_OK) {
                                     Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                                     MyApplication.isLogin = true;
                                     MyApplication.uName = uNameText;

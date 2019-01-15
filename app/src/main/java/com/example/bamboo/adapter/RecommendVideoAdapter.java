@@ -16,6 +16,7 @@ import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.TimeUtil;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,7 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class RecommendVideoAdapter extends RecyclerView.Adapter {
     private Context context;
-    private ArrayList<VideoBean> list;
+    private LinkedList<VideoBean> list;
     private static final String RECOMMEND_ARTICLE_TAG = "article";
     private static final String RECOMMEND_VIDEO_TAG = "video";
     private static final String RECOMMEND_AD_TAG = "ad";
@@ -142,7 +143,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public RecommendVideoAdapter(Context context, ArrayList<VideoBean> list) {
+    public RecommendVideoAdapter(Context context, LinkedList<VideoBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -222,7 +223,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             holder.itemView.setTag(R.id.list_item_tag, RECOMMEND_VIDEO_TAG);
 
         }
-        holder.itemView.setTag(R.id.list_item_content, list.get(position));
+        holder.itemView.setTag(R.id.list_item_content, list.get(position).getVideoContent());
         holder.itemView.setTag(R.id.list_position, position);
     }
 
