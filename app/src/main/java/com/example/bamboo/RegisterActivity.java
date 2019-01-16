@@ -2,14 +2,8 @@ package com.example.bamboo;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -24,18 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.bamboo.application.MyApplication;
-import com.example.bamboo.model.JsonBean;
-import com.example.bamboo.model.VideoBean;
-import com.example.bamboo.myinterface.OnLoginInterface;
-import com.example.bamboo.myinterface.services.RegisterService;
-import com.example.bamboo.util.CallBackUtils;
+import com.example.bamboo.myinterface.services.UserService;
 import com.example.bamboo.util.CheckUtils;
-import com.example.bamboo.util.HuanXinHelper;
 import com.example.bamboo.util.NetworkUtil;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import static com.example.bamboo.util.NetworkUtil.NETWORK_BASE_URL;
 
 /**
  * @author yetote QQ:503779938
@@ -160,8 +147,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 if (CheckUtils.checkNull(uNameText, pwdText)) {
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-//                    HuanXinHelper.register(uNameText, pwdText);
-                    MyApplication.retrofit.create(RegisterService.class)
+                    MyApplication.retrofit.create(UserService.class)
                             .register(uNameText, pwdText)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.newThread())

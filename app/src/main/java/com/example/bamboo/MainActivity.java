@@ -14,11 +14,15 @@ import com.example.bamboo.fragment.HomePageFragment;
 import com.example.bamboo.fragment.MattersFragment;
 import com.example.bamboo.fragment.MessageFragment;
 import com.example.bamboo.fragment.RecommendFragment;
+import com.example.bamboo.model.JsonBean;
+import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.myinterface.services.UserService;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +31,9 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author yetote
@@ -45,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private MattersFragment mattersFragment;
     private ImageView headBcIv;
-    private TextView nameTv, describeTv;
+    private TextView nameTv, describeTv, mattersNum, followNum, fansNum;
     private NavigationView headerView;
     private CircleImageView headIv;
     public static final int LOGIN_CODE = 1;
@@ -139,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         headerView.getHeaderView(0).setOnClickListener(v -> {
             if (MyApplication.isLogin) {
                 Intent i = new Intent();
-                i.putExtra("id", 123);
+                i.putExtra("u_name", MyApplication.uName);
                 i.setClass(MainActivity.this, PersonalImActivity.class);
                 startActivity(i);
             } else {
@@ -166,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         headBcIv = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_bc);
         nameTv = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_name);
         describeTv = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_describe);
+        mattersNum = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_matter_num);
+        fansNum = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_fans_num);
+        followNum = headerView.getHeaderView(0).findViewById(R.id.drawerlayout_head_follow_num);
+
+
     }
 
     @Override
@@ -175,9 +187,19 @@ public class MainActivity extends AppCompatActivity {
             case LOGIN_CODE:
                 if (data != null) {
                     String username = data.getStringExtra("u_name");
-                    nameTv.setText(username);
-                    Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
-                    Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
+                    MyApplication.retrofit.create(UserService.class)
+                            .userIm(username)
+                            .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(personalBeanJsonBean -> {
+                                nameTv.setText(personalBeanJsonBean.getBody().get(0).getuName());
+                                Glide.with(MainActivity.this).load(personalBeanJsonBean.getBody().get(0).getuBg()).into(headBcIv);
+                                Glide.with(MainActivity.this).load(personalBeanJsonBean.getBody().get(0).getuHeader()).into(headIv);
+                                describeTv.setText(personalBeanJsonBean.getBody().get(0).getuSynopsis());
+                                fansNum.setText(personalBeanJsonBean.getBody().get(0).getuFans()+"");
+                                followNum.setText(personalBeanJsonBean.getBody().get(0).getuFollow()+"");
+                                mattersNum.setText(0 + "");
+                            });
                 }
                 break;
         }

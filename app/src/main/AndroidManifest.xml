@@ -29,6 +29,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
+        <activity android:name=".ApplyContactActivity"></activity>
         <activity android:name=".RecommendVideoDetailedActivity" />
 
         <uses-library
@@ -69,9 +70,7 @@
             android:theme="@style/GradientTheme" />
         <activity
             android:name=".TestActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".RegisterActivity"
             android:screenOrientation="portrait" />

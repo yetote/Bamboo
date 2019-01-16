@@ -58,9 +58,23 @@ public class NetworkUtil {
      */
     public static final int NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE = 601;
 
+    /**
+     * 好友已存在
+     */
+    public static final int NETWORK_CONTACT_ALREADY = 701;
+    /**
+     * 没有好友申请信息
+     */
+    public static final int NETWORK_CONTACT_UN_APPLIED = 702;
+
 
     public static final String NETWORK_BASE_URL = "http://106.12.221.149:8080/bamboo/bamboo/";
     public static final String NETWORK_RECOMMEND_VIDEO = "video/recommend";
     public static final String NETWORK_REGISTER = "user/userRegister";
     public static final String NETWORK_LOGIN = "user/userLogin";
+    public static final String NETWORK_USER_SEARCH = "user/userSearch";
+    public static final String NETWORK_USER_ADD_CONTACT = "user/userAddContacts";
+    public static final String NETWORK_USER_ADD_SELECT_STATE = "user/userSelectAddIm";
+    public static final String NETWORK_USER_ADD_CHANGE_STATE = "user/userChangeAddState";
+    public static final String NETWORK_USER_SELECT_IM = "user/userIm";
 }

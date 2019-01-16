@@ -92,4 +92,6 @@
     <string name="nausea">内容恶心</string>
     <string name="inconformity">封面与事实不符</string>
     <string name="lose_interest">不感兴趣</string>
+    <string name="apply">申请</string>
+    <string name="apply_contact">申请列表</string>
 </resources>

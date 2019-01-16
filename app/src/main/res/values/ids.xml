@@ -6,4 +6,5 @@
     <item name="user_name_tag" type="id" />
     <item name="list_item_content" type="id" />
     <item name="list_item_tag" type="id" />
+    <item name="list_item_person_name" type="id" />
 </resources>

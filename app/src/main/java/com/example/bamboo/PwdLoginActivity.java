@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,29 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bamboo.application.MyApplication;
-import com.example.bamboo.model.JsonBean;
 import com.example.bamboo.myinterface.OnLoginInterface;
-import com.example.bamboo.myinterface.ffmpeg.OnLoadListener;
-import com.example.bamboo.myinterface.services.LoginService;
-import com.example.bamboo.util.CallBackUtils;
+import com.example.bamboo.myinterface.services.UserService;
 import com.example.bamboo.util.CheckUtils;
 import com.example.bamboo.util.HuanXinHelper;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.hyphenate.EMCallBack;
-import com.hyphenate.chat.EMClient;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Retrofit;
 
 import static com.example.bamboo.util.NetworkUtil.NETWORK_LOGIN_ERR_UN_USER;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_ERR;
@@ -164,7 +151,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                 if (CheckUtils.checkNull(telText, pwdText)) {
                     Toast.makeText(this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    MyApplication.retrofit.create(LoginService.class)
+                    MyApplication.retrofit.create(UserService.class)
                             .login(telText, pwdText)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.newThread())

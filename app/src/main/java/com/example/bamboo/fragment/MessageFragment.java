@@ -9,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.bamboo.ApplyContactActivity;
 import com.example.bamboo.ChatActivity;
 import com.example.bamboo.FriendActivity;
 import com.example.bamboo.R;
@@ -60,12 +62,15 @@ public class MessageFragment extends Fragment {
     private EMMessageListener msgListener;
     public static final int HANDLER_MESSAGE_CODE = 1;
     private static final String TAG = "MessageFragment";
+    private ImageView apply;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_message, null);
         init(v);
+
+        onClick();
 
         toolbar.inflateMenu(R.menu.message_toolbar_menu);
         toolbar.setOnMenuItemClickListener(item -> {
@@ -90,7 +95,7 @@ public class MessageFragment extends Fragment {
 
         rv.setAdapter(adapter);
 
-        adapter.setOnClickListener((obj, position,tag) -> {
+        adapter.setOnClickListener((obj, position, tag) -> {
             MessageListModel model = (MessageListModel) obj;
             Intent i = new Intent();
             i.putExtra("u_id", model.getUserID());
@@ -127,6 +132,15 @@ public class MessageFragment extends Fragment {
         receiveMsg();
 
         return v;
+    }
+
+    private void onClick() {
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), ApplyContactActivity.class));
+            }
+        });
     }
 
     private void receiveMsg() {
@@ -210,7 +224,7 @@ public class MessageFragment extends Fragment {
     private void init(View v) {
         rv = v.findViewById(R.id.fragment_message_rv);
         toolbar = v.findViewById(R.id.fragment_message_toolbar);
-
+        apply = v.findViewById(R.id.fragment_message_apply);
         list = new ArrayList<>();
 
         adapter = new MessageListAdapter(getActivity(), list);

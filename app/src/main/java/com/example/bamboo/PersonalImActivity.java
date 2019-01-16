@@ -3,16 +3,20 @@ package com.example.bamboo;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.fragment.PersonalMainCollect;
 import com.example.bamboo.fragment.PersonalMainContributes;
 import com.example.bamboo.fragment.PersonalMainDynamics;
 import com.example.bamboo.fragment.PersonalMainPager;
+import com.example.bamboo.model.JsonBean;
 import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.myinterface.services.UserService;
 import com.example.bamboo.util.IdentityUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.appbar.AppBarLayout;
@@ -25,6 +29,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
 
 public class PersonalImActivity extends AppCompatActivity {
     private TabLayout tabLayout;
@@ -45,8 +54,25 @@ public class PersonalImActivity extends AppCompatActivity {
         StatusBarUtils.transparentStatusBar(this);
         setContentView(R.layout.activity_personal_im);
         Intent i = getIntent();
-        int id = i.getIntExtra("id", -1);
+        String uName = i.getStringExtra("u_name");
+        Log.e(TAG, "onCreate: "+uName );
         initView();
+
+        MyApplication.retrofit
+                .create(UserService.class)
+                .userIm(uName)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<JsonBean<PersonalBean>>() {
+                    @Override
+                    public void accept(JsonBean<PersonalBean> personalBeanJsonBean) throws Exception {
+                        if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                            dataList.addAll(personalBeanJsonBean.getBody());
+                            setData(dataList);
+                        }
+                    }
+                });
+
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.addTab(tabLayout.newTab(), true);
         tabLayout.addTab(tabLayout.newTab());
@@ -63,17 +89,18 @@ public class PersonalImActivity extends AppCompatActivity {
                 toolbar.setTitle("");
             }
         });
-        setData(dataList);
+
     }
 
     private void setData(List<PersonalBean> dataList) {
+//        if (dataList.get(0).getuBg().equals("null"))
         Glide.with(this).load(dataList.get(0).getuBg()).into(bgIv);
         Glide.with(this).load(dataList.get(0).getuHeader()).into(headIv);
         userName.setText(dataList.get(0).getuName());
         int drawableId = -1;
 
         Drawable drawable = getResources().getDrawable(IdentityUtils.getIdentityDrawable(dataList.get(0).getuIdentity()));
-        drawable.setBounds(0, 0, 70, 70);
+        drawable.setBounds(0, 0, 50, 50);
         userId.setCompoundDrawables(drawable, null, null, null);
         userId.setText(dataList.get(0).getuId() + "");
         followNum.setText(dataList.get(0).getuFollow() + "关注");
@@ -105,6 +132,6 @@ public class PersonalImActivity extends AppCompatActivity {
         title.add("收藏");
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), list, title);
         dataList = new ArrayList<>();
-        dataList.add(new PersonalBean("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544006393996&di=06f232e186c7ad846f977ec2b36c7484&imgtype=0&src=http%3A%2F%2Fbmp.skxox.com%2F201703%2F27%2Fxz123456.162643.jpg", "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3484494144,556561024&fm=26&gp=0.jpg", "yetote", 13004265, 32, 40, "vip3", "一个非常无聊的人"));
+//        dataList.add(new PersonalBean("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544006393996&di=06f232e186c7ad846f977ec2b36c7484&imgtype=0&src=http%3A%2F%2Fbmp.skxox.com%2F201703%2F27%2Fxz123456.162643.jpg", "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3484494144,556561024&fm=26&gp=0.jpg", "yetote", 13004265, 32, 40, "vip3", "一个非常无聊的人"));
     }
 }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.bamboo.PersonalImActivity;
 import com.example.bamboo.R;
-import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.model.AddImBean;
 import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.IdentityUtils;
 
@@ -33,15 +33,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class FriendAdapter extends RecyclerView.Adapter {
     private Context context;
-    private ArrayList<PersonalBean> list;
+    private ArrayList<AddImBean> list;
     private RecyclerViewOnClickListener clickListener;
-
+    public static final String APPLY = "apply";
 
     public void setClickListener(RecyclerViewOnClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
-    public FriendAdapter(Context context, ArrayList<PersonalBean> list) {
+    public FriendAdapter(Context context, ArrayList<AddImBean> list) {
         this.context = context;
         this.list = list;
     }
@@ -100,5 +100,11 @@ public class FriendAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+
+        return super.getItemViewType(position);
     }
 }
