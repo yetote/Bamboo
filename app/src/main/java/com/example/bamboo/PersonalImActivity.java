@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -55,8 +56,21 @@ public class PersonalImActivity extends AppCompatActivity {
         setContentView(R.layout.activity_personal_im);
         Intent i = getIntent();
         String uName = i.getStringExtra("u_name");
-        Log.e(TAG, "onCreate: "+uName );
+        Log.e(TAG, "onCreate: " + uName);
         initView();
+
+        toolbar.inflateMenu(R.menu.person_im_menu);
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.person_im_menu_change:
+                        startActivity(new Intent(PersonalImActivity.this, ChangeImActivity.class));
+                        break;
+                }
+                return false;
+            }
+        });
 
         MyApplication.retrofit
                 .create(UserService.class)

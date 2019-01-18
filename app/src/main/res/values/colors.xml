@@ -149,4 +149,5 @@
     <color name="gray_cc">#88cccccc</color><!--灰色cc -->
     <color name="gray_8f">#8f8f8f</color><!--灰色8f -->
     <color name="tianyi">#66ccff</color><!--天依蓝-->
+    <color name="gray_ec">#ECECEC</color><!--灰色cc -->
 </resources>

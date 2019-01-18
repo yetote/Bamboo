@@ -88,11 +88,21 @@
     <string name="latter_show">添加至稍后在看列表</string>
     <string name="feedback">举报</string>
     <string name="blood">恐怖血腥</string>
-    <string name="sex">色情暴力</string>
+    <string name="sexy">色情暴力</string>
     <string name="nausea">内容恶心</string>
     <string name="inconformity">封面与事实不符</string>
     <string name="lose_interest">不感兴趣</string>
     <string name="apply">申请</string>
     <string name="apply_contact">申请列表</string>
     <string name="declare">未经允许禁止转载</string>
+    <string name="person_im">账号资料</string>
+    <string name="nickname">昵称</string>
+    <string name="uid">UID</string>
+    <string name="card">二维码名片</string>
+    <string name="birthday">出生年月</string>
+    <string name="synopsis">简介</string>
+    <string name="sex">性别</string>
+    <string name="choose">从文件夹选择</string>
+    <string name="camera">拍照</string>
+
 </resources>
