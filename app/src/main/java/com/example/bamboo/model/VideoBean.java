@@ -4,21 +4,11 @@ public class VideoBean {
     private String videoTag, videoWriter, videoCategory, videoTopic, videoTitle, videoContent, videoBcImage;
     private long videoUpTime;
     private int videoPlayNum, videoDiscussNum, videoCollectionNum, videoTime, videoPriseNum, videoId;
+    private String videoSynopsis;
 
-    public VideoBean( String videoTag,
-                      String videoWriter,
-                      String videoCategory,
-                      String videoTopic,
-                      String videoTitle,
-                      String videoContent,
-                      String videoBcImage,
-                      int videoPlayNum,
-                      int videoDiscussNum,
-                      int videoCollectionNum,
-                      int videoTime,
-                      int videoPriseNum,
-                      int videoId,
-                      long videoUpTime) {
+    public VideoBean(int videoId, String videoTag, String videoWriter, String videoCategory, String videoTopic,
+                      String videoTitle, String videoContent, int videoPlayNum, int videoDiscussNum, int videoCollectionNum,
+                      int videoTime, int videoPriseNum, String videoBcImage, long videoUpTime, String videoSynopsis) {
 
         this.videoTag = videoTag;
         this.videoWriter = videoWriter;
@@ -34,6 +24,15 @@ public class VideoBean {
         this.videoPriseNum = videoPriseNum;
         this.videoId = videoId;
         this.videoUpTime = videoUpTime;
+        this.videoSynopsis = videoSynopsis;
+    }
+
+    public String getVideoSynopsis() {
+        return videoSynopsis;
+    }
+
+    public void setVideoSynopsis(String videoSynopsis) {
+        this.videoSynopsis = videoSynopsis;
     }
 
     public String getVideoTag() {

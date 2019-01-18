@@ -2,6 +2,7 @@ package com.example.bamboo.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,17 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
     }
 
     class ArticleViewHolder extends RecyclerView.ViewHolder {
-        private TextView title, content, time, discussNum, category;
+        private TextView title;
+        private TextView content;
+        private TextView time;
+        private TextView discussNum;
+        private TextView category;
+
+        public TextView getTopic() {
+            return topic;
+        }
+
+        private TextView topic;
         private ImageView img;
 
         public TextView getTitle() {
@@ -94,6 +105,7 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             Drawable timeImage = context.getResources().getDrawable(R.mipmap.time);
             timeImage.setBounds(0, 0, 60, 60);
             time.setCompoundDrawables(timeImage, null, null, null);
+            topic = itemView.findViewById(R.id.item_recommend_article_topic);
         }
     }
 
@@ -212,7 +224,8 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
             ((ArticleViewHolder) holder).getCategory().setText(list.get(position).getVideoCategory());
             ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
             ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getVideoDiscussNum()));
-            ((ArticleViewHolder) holder).getTime().setText(TimeUtil.caseTime(list.get(position).getVideoTime()));
+            ((ArticleViewHolder) holder).getTime().setText(TimeUtil.agoTime(list.get(position).getVideoUpTime()));
+            ((ArticleViewHolder) holder).getTopic().setText(list.get(position).getVideoTopic());
             holder.itemView.setTag(R.id.list_item_tag, RECOMMEND_ARTICLE_TAG);
 
         } else if (holder instanceof VideoViewHolder) {

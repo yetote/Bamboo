@@ -9,6 +9,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.POST;
 
 import static com.example.bamboo.util.NetworkUtil.NETWORK_RECOMMEND_VIDEO;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_VIDEO_SELECT_IM;
 
 /**
  * @author yetote QQ:503779938
@@ -30,4 +31,14 @@ public interface RecommendVideoService {
     @FormUrlEncoded
     @POST(NETWORK_RECOMMEND_VIDEO)
     Observable<JsonBean<VideoBean>> getRecommendVideo(@Field("position") int position);
+
+    /**
+     * 获取视频信息
+     *
+     * @param id 视频id
+     * @return 视频信息
+     */
+    @FormUrlEncoded
+    @POST(NETWORK_VIDEO_SELECT_IM)
+    Observable<JsonBean<VideoBean>> getVideoIm(@Field("videoId") int id);
 }

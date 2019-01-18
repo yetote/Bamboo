@@ -9,6 +9,8 @@ import android.os.Bundle;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.fragment.RecommendVideoDetailedVideoDiscussFragment;
 import com.example.bamboo.fragment.RecommendVideoDetailedVideoImFragment;
+import com.example.bamboo.myinterface.OnFragmentCallback;
+import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -29,10 +31,16 @@ public class RecommendVideoDetailedActivity extends AppCompatActivity {
     private MainViewPagerAdapter adapter;
     private ArrayList<Fragment> list;
     private ArrayList<String> title;
+    private OnFragmentCallback callback;
+
+    public void setCallback(OnFragmentCallback callback) {
+        this.callback = callback;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StatusBarUtils.changedStatusBar(this);
         setContentView(R.layout.activity_recommend_video_detailed);
         initView();
         tabLayout.addTab(tabLayout.newTab());
@@ -41,6 +49,7 @@ public class RecommendVideoDetailedActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private void initView() {
@@ -48,7 +57,9 @@ public class RecommendVideoDetailedActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.recommend_video_detailed_vp);
         list = new ArrayList<>();
         title = new ArrayList<>();
-        list.add(new RecommendVideoDetailedVideoImFragment());
+        RecommendVideoDetailedVideoImFragment videoImFragment = new RecommendVideoDetailedVideoImFragment();
+        videoImFragment.callback(getIntent().getIntExtra("id", 0));
+        list.add(videoImFragment);
         list.add(new RecommendVideoDetailedVideoDiscussFragment());
         title.add("简介");
         title.add("评论");

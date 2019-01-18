@@ -33,7 +33,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
@@ -74,12 +76,12 @@ public class RecommendVideoFragment extends Fragment {
             @Override
             public void onClick(Object obj, int position, Object tag) {
                 Intent i = new Intent();
+                i.putExtra("id", list.get(position).getVideoId());
                 switch ((String) tag) {
                     case "article":
                         i.setClass(getActivity(), RecommendVideoArticleActivity.class);
                         break;
                     case "video":
-                        i.putExtra("video_id", list.get(position).getVideoId());
                         i.setClass(getActivity(), RecommendVideoDetailedActivity.class);
                         break;
                     case "ad":
@@ -117,31 +119,51 @@ public class RecommendVideoFragment extends Fragment {
         });
 
 
-        srl.setOnRefreshListener(() -> MyApplication.retrofit.create(RecommendVideoService.class)
-                .getRecommendVideo(position)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(videoBeanJsonBean -> {
-                    int code = videoBeanJsonBean.getCode();
-                    switch (code) {
-                        case NETWORK_RESULT_OK:
-                            for (int i = 0; i < videoBeanJsonBean.getBody().size(); i++) {
-                                list.addFirst(videoBeanJsonBean.getBody().get(i));
-                                adapter.notifyItemChanged(i);
-                            }
-                            Toast.makeText(getActivity(), "刷新成功", Toast .LENGTH_SHORT).show();
-                            break;
-                        case NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE:
-                            Toast.makeText(getActivity(), "没有更新的推荐", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+        srl.setOnRefreshListener(() -> {
+            MyApplication.retrofit.create(RecommendVideoService.class)
+                    .getRecommendVideo(position)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(new Observer<JsonBean<VideoBean>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                    srl.setRefreshing(false);
-                    position += 2;
-                }));
+                        }
+
+                        @Override
+                        public void onNext(JsonBean<VideoBean> videoBeanJsonBean) {
+                            int code = videoBeanJsonBean.getCode();
+                            switch (code) {
+                                case NETWORK_RESULT_OK:
+                                    for (int i = 0; i < videoBeanJsonBean.getBody().size(); i++) {
+                                        list.addFirst(videoBeanJsonBean.getBody().get(i));
+                                        adapter.notifyItemChanged(i);
+                                    }
+                                    Toast.makeText(RecommendVideoFragment.this.getActivity(), "刷新成功", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE:
+                                    Toast.makeText(RecommendVideoFragment.this.getActivity(), "没有更新的推荐", Toast.LENGTH_SHORT).show();
+                                    break;
+                                default:
+                                    Toast.makeText(RecommendVideoFragment.this.getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+
+                            srl.setRefreshing(false);
+                            position += 2;
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Toast.makeText(getActivity(), "请求失败" + e.toString(), Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        });
         return v;
 
     }

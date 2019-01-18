@@ -75,47 +75,59 @@
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_video_play_num"
-        android:layout_width="50dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/fragment_recommend_video_detailed_im_video_title"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_title" />
+        android:layout_marginStart="4dp"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_discuss_num"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="4dp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
-        app:layout_constraintStart_toEndOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
-        app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_video_play_num" />
+        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_video_up_time"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_discuss_num"
         app:layout_constraintStart_toEndOf="@+id/fragment_recommend_video_detailed_im_discuss_num"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_discuss_num" />
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_video_id"
-        android:layout_width="50dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_up_time"
+        app:layout_constraintEnd_toStartOf="@+id/fragment_recommend_video_detailed_im_video_declare"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/fragment_recommend_video_detailed_im_video_up_time"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_video_up_time" />
 
     <TextView
         android:id="@+id/fragment_recommend_video_detailed_im_video_declare"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="@string/declare"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_id"
         app:layout_constraintEnd_toEndOf="@+id/fragment_recommend_video_detailed_im_video_title"
-        app:layout_constraintStart_toEndOf="@+id/fragment_recommend_video_detailed_im_video_id"
         app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_video_id" />
 
     <Button
@@ -291,5 +303,33 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8" />
+
+    <TextView
+        android:id="@+id/fragment_recommend_video_detailed_im_synopsis"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="@+id/fragment_recommend_video_detailed_im_video_title"
+        app:layout_constraintStart_toStartOf="@+id/fragment_recommend_video_detailed_im_video_title"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_title" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/fragment_recommend_video_detailed_im_synopsis"
+        app:layout_constraintTop_toBottomOf="@+id/fragment_recommend_video_detailed_im_synopsis"
+        app:srcCompat="@drawable/playnum" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
+        app:layout_constraintStart_toEndOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
+        app:layout_constraintTop_toTopOf="@+id/fragment_recommend_video_detailed_im_video_play_num"
+        app:srcCompat="@drawable/discuss_num" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

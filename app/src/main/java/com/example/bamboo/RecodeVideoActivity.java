@@ -22,6 +22,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
@@ -42,6 +43,7 @@ import com.example.bamboo.util.BuildModel;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -325,7 +327,7 @@ public class RecodeVideoActivity extends AppCompatActivity {
                     } else {
                         backCameraId = i;
                         backCameraOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                        backCameraCharacteristics = characteristics;
+//                        backCameraCharacteristics = characteristics;
                     }
 
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
@@ -353,6 +355,8 @@ public class RecodeVideoActivity extends AppCompatActivity {
                             Toast.makeText(this, "未检测到相机信息", Toast.LENGTH_SHORT).show();
                             break;
                     }
+                    StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+
                 }
             } else {
                 Toast.makeText(this, "未检查到相机列表，请检查是否开启相机权限", Toast.LENGTH_SHORT).show();

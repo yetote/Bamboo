@@ -196,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
                                 Glide.with(MainActivity.this).load(personalBeanJsonBean.getBody().get(0).getuBg()).into(headBcIv);
                                 Glide.with(MainActivity.this).load(personalBeanJsonBean.getBody().get(0).getuHeader()).into(headIv);
                                 describeTv.setText(personalBeanJsonBean.getBody().get(0).getuSynopsis());
-                                fansNum.setText(personalBeanJsonBean.getBody().get(0).getuFans()+"");
-                                followNum.setText(personalBeanJsonBean.getBody().get(0).getuFollow()+"");
+                                fansNum.setText(personalBeanJsonBean.getBody().get(0).getuFans() + "");
+                                followNum.setText(personalBeanJsonBean.getBody().get(0).getuFollow() + "");
                                 mattersNum.setText(0 + "");
                             });
                 }

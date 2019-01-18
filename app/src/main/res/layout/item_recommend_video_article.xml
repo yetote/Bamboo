@@ -19,10 +19,10 @@
         android:layout_alignParentEnd="true"
         android:contentDescription="@string/contentDescription"
         android:scaleType="centerCrop"
-        tools:src="@tools:sample/backgrounds/scenic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/backgrounds/scenic" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/item_recommend_article_contentCardView"
@@ -84,7 +84,9 @@
         android:layout_alignStart="@+id/item_recommend_article_contentCardView"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/missOld"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/item_recommend_article_contentCardView" />
 
@@ -114,6 +116,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/item_recommend_article_time" />
+
+    <TextView
+        android:id="@+id/item_recommend_article_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:maxLines="1"
+        app:layout_constraintBottom_toBottomOf="@+id/item_recommend_article_tag"
+        app:layout_constraintStart_toEndOf="@+id/item_recommend_article_tag"
+        app:layout_constraintTop_toTopOf="@+id/item_recommend_article_tag" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

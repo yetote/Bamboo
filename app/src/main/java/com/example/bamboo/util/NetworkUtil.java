@@ -57,7 +57,10 @@ public class NetworkUtil {
      * 没有更新的视频
      */
     public static final int NETWORK_VIDEO_ERR_RECOMMEND_UN_UPDATE = 601;
-
+    /**
+     * 没有找到视频信息
+     */
+    public static final int NETWORK_VIDEO_ERR_UN_IM = 602;
     /**
      * 好友已存在
      */
@@ -77,4 +80,5 @@ public class NetworkUtil {
     public static final String NETWORK_USER_ADD_SELECT_STATE = "user/userSelectAddIm";
     public static final String NETWORK_USER_ADD_CHANGE_STATE = "user/userChangeAddState";
     public static final String NETWORK_USER_SELECT_IM = "user/userIm";
+    public static final String NETWORK_VIDEO_SELECT_IM = "video/getVideoIm";
 }

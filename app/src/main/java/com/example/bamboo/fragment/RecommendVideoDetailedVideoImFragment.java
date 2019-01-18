@@ -6,16 +6,33 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.bamboo.R;
+import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.model.JsonBean;
+import com.example.bamboo.model.VideoBean;
+import com.example.bamboo.myinterface.OnFragmentCallback;
+import com.example.bamboo.myinterface.services.RecommendVideoService;
+import com.example.bamboo.util.TimeUtil;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.executor.TaskExecutor;
 import androidx.fragment.app.Fragment;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_ERR;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_VIDEO_ERR_UN_IM;
 
 /**
  * @author yetote QQ:503779938
@@ -27,8 +44,10 @@ import androidx.fragment.app.Fragment;
  * @chang time
  * @class describe
  */
-public class RecommendVideoDetailedVideoImFragment extends Fragment {
+public class RecommendVideoDetailedVideoImFragment extends Fragment implements OnFragmentCallback {
     private Button priseBtn, booingBtn, collectBtn, coinBtn, shareBtn;
+    private TextView title, synopsis, playNumTv, discussNumTv, upTimeTv, idTv, priseNumTv, boolNumTv, collectNumTv;
+    private static final String TAG = "RecommendVideoDetailedV";
 
     @Nullable
     @Override
@@ -115,6 +134,8 @@ public class RecommendVideoDetailedVideoImFragment extends Fragment {
                 });
             }
         });
+
+
     }
 
     private void initView(View v) {
@@ -123,19 +144,66 @@ public class RecommendVideoDetailedVideoImFragment extends Fragment {
         collectBtn = v.findViewById(R.id.fragment_recommend_video_detailed_im_collectBtn);
         coinBtn = v.findViewById(R.id.fragment_recommend_video_detailed_im_coinBtn);
         shareBtn = v.findViewById(R.id.fragment_recommend_video_detailed_im_shareBtn);
-
+        title = v.findViewById(R.id.fragment_recommend_video_detailed_im_video_title);
+        synopsis = v.findViewById(R.id.fragment_recommend_video_detailed_im_synopsis);
+        playNumTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_video_play_num);
+        discussNumTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_discuss_num);
+        upTimeTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_video_up_time);
+        idTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_video_id);
+        priseNumTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_praiseTv);
+        boolNumTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_booingTv);
+        collectNumTv = v.findViewById(R.id.fragment_recommend_video_detailed_im_collectTv);
 //        changeBtnDrawable(priseBtn, R.drawable.prise);
 //        changeBtnDrawable(booingBtn, R.drawable.booing);
 //        changeBtnDrawable(collectBtn, R.drawable.collect);
 //        changeBtnDrawable(coinBtn, R.drawable.coin);
-//        changeBtnDrawable(shareBtn, R.drawable.share);
-
+//        changeBtnDrawable(playNumTv, R.drawable.playnum);
+//        changeBtnDrawable(discussNumTv,R.drawable.discuss_num);
 
     }
 
-    private void changeBtnDrawable(Button btn, int resourceId) {
+    private void changeBtnDrawable(TextView v, int resourceId) {
         Drawable drawable = getActivity().getResources().getDrawable(resourceId);
         drawable.setBounds(0, 0, 50, 50);
-        btn.setCompoundDrawables(null, drawable, null, null);
+        v.setCompoundDrawables( drawable,null, null, null);
+    }
+
+    @Override
+    public void callback(int position) {
+        Log.e(TAG, "callback: " + position);
+        MyApplication
+                .retrofit
+                .create(RecommendVideoService.class)
+                .getVideoIm(position)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<JsonBean<VideoBean>>() {
+                    @Override
+                    public void accept(JsonBean<VideoBean> videoBeanJsonBean) throws Exception {
+                        switch (videoBeanJsonBean.getCode()) {
+                            case NETWORK_RESULT_ERR:
+                                Toast.makeText(getActivity(), "请求失败", Toast.LENGTH_SHORT).show();
+                                break;
+                            case NETWORK_RESULT_OK:
+                                title.setText(videoBeanJsonBean.getBody().get(0).getVideoTitle());
+                                synopsis.setText(videoBeanJsonBean.getBody().get(0).getVideoSynopsis());
+                                playNumTv.setText(videoBeanJsonBean.getBody().get(0).getVideoPlayNum() + "");
+                                discussNumTv.setText(videoBeanJsonBean.getBody().get(0).getVideoDiscussNum() + "");
+                                upTimeTv.setText(TimeUtil.agoTime(videoBeanJsonBean.getBody().get(0).getVideoUpTime()));
+                                idTv.setText(videoBeanJsonBean.getBody().get(0).getVideoId() + "");
+                                priseNumTv.setText(videoBeanJsonBean.getBody().get(0).getVideoPriseNum() + "");
+//                                boolNumTv.setText(videoBeanJsonBean.getBody().get(0).);
+                                collectNumTv.setText(videoBeanJsonBean.getBody().get(0).getVideoCollectionNum() + "");
+                                break;
+                            case NETWORK_VIDEO_ERR_UN_IM:
+                                Toast.makeText(getActivity(), "未找到对应的视频信息", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                Toast.makeText(getActivity(), "未知错误" + videoBeanJsonBean.getCode(), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+
+                    }
+                });
     }
 }
