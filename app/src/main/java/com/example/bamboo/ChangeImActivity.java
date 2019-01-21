@@ -1,18 +1,10 @@
 package com.example.bamboo;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.pm.PackageInfoCompat;
-import retrofit2.http.HEAD;
-
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -22,12 +14,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +34,13 @@ import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Calendar;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class ChangeImActivity extends AppCompatActivity {
     private RelativeLayout headRl, nicknameRl, uidRl, cardRl, sexRl, birthdayRl, synopsisRl;
@@ -107,22 +109,30 @@ public class ChangeImActivity extends AppCompatActivity {
             }
         });
 
-        nicknameRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        nicknameRl.setOnClickListener(v -> {
+            View nicknameView = LayoutInflater.from(ChangeImActivity.this).inflate(R.layout.dialog_person_change_im_nickname, null);
+            EditText nicknameEt = nicknameView.findViewById(R.id.dialog_change_im_nickname);
+            new AlertDialog.Builder(ChangeImActivity.this)
+                    .setView(nicknameView)
+                    .setTitle("修改昵称")
+                    .setNegativeButton("取消", (dialog, which) -> {
 
-            }
+                    })
+                    .setPositiveButton("确定", (dialog, which) -> nicknameTv.setText(nicknameEt.getText()))
+                    .create()
+                    .show();
         });
 
         uidRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Toast.makeText(ChangeImActivity.this, "uid:" + uidTv.getText(), Toast.LENGTH_SHORT).show();
             }
         });
         cardRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(ChangeImActivity.this, "该功能暂未开放:", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -130,14 +140,47 @@ public class ChangeImActivity extends AppCompatActivity {
         sexRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                View sexView = LayoutInflater.from(ChangeImActivity.this).inflate(R.layout.dialog_person_change_im_sex, null);
+                RadioButton boy = sexView.findViewById(R.id.dialog_change_im_sex_boy_rb);
+                RadioButton girl = sexView.findViewById(R.id.dialog_change_im_sex_girl_rb);
+                AlertDialog alertDialog = new AlertDialog.Builder(ChangeImActivity.this)
+                        .setView(sexView)
+                        .setTitle("修改性别")
+                        .create();
+                alertDialog.show();
+                boy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        sexTv.setText("男");
+                    }
+                });
+                girl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        sexTv.setText("女");
+                    }
+                });
             }
         });
 
         birthdayRl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ChangeImActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        birthdayTv.setText(String.format("%d-%d-%d", year, month + 1, dayOfMonth));
+                    }
+                }, year, month, day);
+                DatePicker datePicker = datePickerDialog.getDatePicker();
+                datePicker.setMaxDate(calendar.getTimeInMillis());
+                datePickerDialog.show();
             }
         });
 

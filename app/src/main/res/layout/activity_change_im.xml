@@ -85,8 +85,11 @@
             android:id="@+id/change_im_nick_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
+            android:layout_marginEnd="2dp"
             android:layout_toStartOf="@id/change_im_nick_name_right"
-            android:gravity="center_vertical" />
+            android:text="1212121" />
 
         <ImageView
             android:id="@+id/change_im_nick_name_right"
@@ -128,6 +131,8 @@
             android:id="@+id/change_im_id_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
             android:layout_toStartOf="@id/change_im_id_right" />
 
         <ImageView
@@ -170,6 +175,8 @@
             android:id="@+id/change_im_card_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
             android:layout_toStartOf="@id/change_im_card_right" />
 
         <ImageView
@@ -210,6 +217,8 @@
         <TextView
             android:id="@+id/change_im_sex_tv"
             android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/change_im_sex_right" />
 
@@ -253,6 +262,8 @@
             android:id="@+id/change_im_birthday_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
             android:layout_toStartOf="@id/change_im_birthday_right" />
 
         <ImageView
@@ -294,6 +305,8 @@
         <TextView
             android:id="@+id/change_im_synopsis_tv"
             android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="start|center_vertical"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/change_im_synopsis_right"
             android:ellipsize="end"
