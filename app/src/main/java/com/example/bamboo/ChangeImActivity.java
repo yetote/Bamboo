@@ -14,9 +14,12 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +38,18 @@ import com.example.bamboo.util.StatusBarUtils;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 
+import java.io.ByteArrayOutputStream;
+
 public class ChangeImActivity extends AppCompatActivity {
     private RelativeLayout headRl, nicknameRl, uidRl, cardRl, sexRl, birthdayRl, synopsisRl;
     private ImageView headIv;
     private TextView nicknameTv, uidTv, cardTv, sexTv, birthdayTv, synopsisTv;
     public static final int PERMISSION_READ_STORAGE = 1;
     public static final int HEADER_IMAGE_CODE = 2;
+    public static final int HEADER_CROP_CODE = 3;
+    private static int output_X = 600;
+    private static int output_Y = 600;
+    private static final String TAG = "ChangeImActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,11 +198,46 @@ public class ChangeImActivity extends AppCompatActivity {
         switch (requestCode) {
             case HEADER_IMAGE_CODE:
                 if (resultCode == RESULT_OK) {
-                    Glide.with(ChangeImActivity.this)
-                            .load(Matisse.obtainPathResult(data).get(0))
-                            .into(headIv);
+//                    Glide.with(ChangeImActivity.this)
+//                            .load(Matisse.obtainPathResult(data).get(0))
+//                            .into(headIv);
+                    cropPhoto(Uri.parse(Matisse.obtainPathResult(data).get(0)));
                 }
                 break;
+            case HEADER_CROP_CODE:
+                Bundle extras = data.getExtras();
+                if (extras != null) {
+                    Bitmap photo = extras.getParcelable("data");
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    photo.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] bytes = baos.toByteArray();
+
+                    Glide.with(this).load(bytes).into(headIv);
+                }
+
+                break;
         }
+    }
+
+    private void cropPhoto(Uri uri) {
+        Log.e(TAG, "cropPhoto: " + uri);
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+
+        //把裁剪的数据填入里面
+
+        // 设置裁剪
+        intent.putExtra("crop", "true");
+
+        // aspectX , aspectY :宽高的比例
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+
+        // outputX , outputY : 裁剪图片宽高
+        intent.putExtra("outputX", output_X);
+        intent.putExtra("outputY", output_Y);
+        intent.putExtra("return-data", true);
+
+        startActivityForResult(intent, HEADER_CROP_CODE);
     }
 }
