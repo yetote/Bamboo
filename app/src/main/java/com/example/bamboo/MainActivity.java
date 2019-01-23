@@ -68,9 +68,8 @@ public class MainActivity extends AppCompatActivity {
         initView();
 
         if (MyApplication.isFirst && MyApplication.isLogin) {
-            Intent i = getIntent();
-            String uName = i.getStringExtra("u_name");
-            nameTv.setText(uName);
+
+            nameTv.setText(MyApplication.uName);
             Glide.with(MainActivity.this).load(R.drawable.bc).into(headBcIv);
             Glide.with(MainActivity.this).load(R.drawable.boss).into(headIv);
         } else {
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         headerView.getHeaderView(0).setOnClickListener(v -> {
             if (MyApplication.isLogin) {
                 Intent i = new Intent();
-                i.putExtra("u_name", MyApplication.uName);
+                i.putExtra("uId", MyApplication.uId);
                 i.setClass(MainActivity.this, PersonalImActivity.class);
                 startActivity(i);
             } else {
@@ -186,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case LOGIN_CODE:
                 if (data != null) {
-                    String username = data.getStringExtra("u_name");
+//                    int id = data.getIntExtra("uid",0);
                     MyApplication.retrofit.create(UserService.class)
-                            .userIm(username)
+                            .userIm(MyApplication.uId)
                             .subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(personalBeanJsonBean -> {

@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.fragment.RecommendFragment;
 import com.example.bamboo.myinterface.MattersInterface;
 import com.example.bamboo.opengl.SelectTagRenderer;
@@ -47,9 +48,7 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
 
         init();
 
-        Intent i = getIntent();
-        String id = i.getStringExtra("user_id");
-        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, MyApplication.uId, Toast.LENGTH_SHORT).show();
 
         toolbar.inflateMenu(R.menu.select_tag_menu);
 

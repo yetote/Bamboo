@@ -28,6 +28,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.model.JsonBean;
+import com.example.bamboo.model.PersonalBean;
+import com.example.bamboo.myinterface.services.UserService;
 import com.example.bamboo.util.MyGlideEngine;
 import com.example.bamboo.util.StatusBarUtils;
 import com.zhihu.matisse.Matisse;
@@ -41,6 +45,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+
+import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
 
 public class ChangeImActivity extends AppCompatActivity {
     private RelativeLayout headRl, nicknameRl, uidRl, cardRl, sexRl, birthdayRl, synopsisRl;
@@ -59,6 +68,18 @@ public class ChangeImActivity extends AppCompatActivity {
         StatusBarUtils.changedStatusBar(this);
         setContentView(R.layout.activity_change_im);
         initView();
+        MyApplication.retrofit.create(UserService.class).userIm(MyApplication.uId).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<JsonBean<PersonalBean>>() {
+            @Override
+            public void accept(JsonBean<PersonalBean> personalBeanJsonBean) throws Exception {
+                if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                    nicknameTv.setText(personalBeanJsonBean.getBody().get(0).getuName());
+                    sexTv.setText(personalBeanJsonBean.getBody().get(0).getuSex());
+                    birthdayTv.setText(personalBeanJsonBean.getBody().get(0).getuBirthday());
+                    synopsisTv.setText(personalBeanJsonBean.getBody().get(0).getuSynopsis());
+                }
+            }
+        });
+        uidTv.setText(MyApplication.uId + "");
         click();
     }
 
@@ -118,7 +139,20 @@ public class ChangeImActivity extends AppCompatActivity {
                     .setNegativeButton("取消", (dialog, which) -> {
 
                     })
-                    .setPositiveButton("确定", (dialog, which) -> nicknameTv.setText(nicknameEt.getText()))
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        MyApplication.retrofit.create(UserService.class)
+                                .changeUserIm(MyApplication.uId, nicknameEt.getText().toString(), "nickname")
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribeOn(Schedulers.newThread())
+                                .subscribe(personalBeanJsonBean -> {
+                                    if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                                        Toast.makeText(ChangeImActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                                        nicknameTv.setText(nicknameEt.getText());
+                                    } else {
+                                        Toast.makeText(ChangeImActivity.this, "修改失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    })
                     .create()
                     .show();
         });
@@ -137,51 +171,68 @@ public class ChangeImActivity extends AppCompatActivity {
             }
         });
 
-        sexRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                View sexView = LayoutInflater.from(ChangeImActivity.this).inflate(R.layout.dialog_person_change_im_sex, null);
-                RadioButton boy = sexView.findViewById(R.id.dialog_change_im_sex_boy_rb);
-                RadioButton girl = sexView.findViewById(R.id.dialog_change_im_sex_girl_rb);
-                AlertDialog alertDialog = new AlertDialog.Builder(ChangeImActivity.this)
-                        .setView(sexView)
-                        .setTitle("修改性别")
-                        .create();
-                alertDialog.show();
-                boy.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                        sexTv.setText("男");
-                    }
-                });
-                girl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                        sexTv.setText("女");
-                    }
-                });
-            }
+        sexRl.setOnClickListener(v -> {
+            View sexView = LayoutInflater.from(ChangeImActivity.this).inflate(R.layout.dialog_person_change_im_sex, null);
+            RadioButton boy = sexView.findViewById(R.id.dialog_change_im_sex_boy_rb);
+            RadioButton girl = sexView.findViewById(R.id.dialog_change_im_sex_girl_rb);
+            AlertDialog alertDialog = new AlertDialog.Builder(ChangeImActivity.this)
+                    .setView(sexView)
+                    .setTitle("修改性别")
+                    .create();
+            alertDialog.show();
+            boy.setOnClickListener(v12 -> MyApplication.retrofit.create(UserService.class)
+                    .changeUserIm(MyApplication.uId, "男", "sex")
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(personalBeanJsonBean -> {
+                        if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                            Toast.makeText(ChangeImActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss();
+                            sexTv.setText("男");
+                        } else {
+                            Toast.makeText(ChangeImActivity.this, "修改失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
+            girl.setOnClickListener(v1 -> MyApplication.retrofit.create(UserService.class)
+                    .changeUserIm(MyApplication.uId, "女", "sex")
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe(personalBeanJsonBean -> {
+                        if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                            Toast.makeText(ChangeImActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss();
+                            sexTv.setText("女");
+                        } else {
+                            Toast.makeText(ChangeImActivity.this, "修改失败", Toast.LENGTH_SHORT).show();
+                        }
+                    }));
         });
 
-        birthdayRl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Calendar calendar = Calendar.getInstance();
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-                DatePickerDialog datePickerDialog = new DatePickerDialog(ChangeImActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        birthdayTv.setText(String.format("%d-%d-%d", year, month + 1, dayOfMonth));
-                    }
-                }, year, month, day);
-                DatePicker datePicker = datePickerDialog.getDatePicker();
-                datePicker.setMaxDate(calendar.getTimeInMillis());
-                datePickerDialog.show();
-            }
+        birthdayRl.setOnClickListener(v ->
+
+        {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(ChangeImActivity.this, (view1, year1, month1, dayOfMonth) -> {
+                String s = String.format("%d-%d-%d", year1, month1 + 1, dayOfMonth);
+                MyApplication.retrofit.create(UserService.class)
+                        .changeUserIm(MyApplication.uId, s, "birthday")
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.newThread())
+                        .subscribe(personalBeanJsonBean -> {
+                            if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+                                Toast.makeText(ChangeImActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
+                                birthdayTv.setText(s);
+                            } else {
+                                Toast.makeText(ChangeImActivity.this, "修改失败", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }, year, month, day);
+            DatePicker datePicker = datePickerDialog.getDatePicker();
+            datePicker.setMaxDate(calendar.getTimeInMillis());
+            datePickerDialog.show();
         });
 
         synopsisRl.setOnClickListener(new View.OnClickListener() {
@@ -282,5 +333,14 @@ public class ChangeImActivity extends AppCompatActivity {
         intent.putExtra("return-data", true);
 
         startActivityForResult(intent, HEADER_CROP_CODE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent();
+        i.putExtra("name",  nicknameTv.getText().toString());
+        i.putExtra("sex",  sexTv.getText().toString());
+        ChangeImActivity.this.setResult(RESULT_OK, i);
+        super.onBackPressed();
     }
 }

@@ -17,8 +17,9 @@ public class PersonalBean {
     private String uIdentity;
     //简介
     private String uSynopsis;
+    private String uSex, uBirthday;
 
-    public PersonalBean(String uBg, String uHeader, String uName, int uFollow, int uFans, int uId, String uIdentity, String uSynopsis) {
+    public PersonalBean(String uBg, String uHeader, String uName, int uFollow, int uFans, int uId, String uIdentity, String uSynopsis, String uSex, String uBirthday) {
         this.uBg = uBg;
         this.uHeader = uHeader;
         this.uName = uName;
@@ -27,6 +28,8 @@ public class PersonalBean {
         this.uId = uId;
         this.uIdentity = uIdentity;
         this.uSynopsis = uSynopsis;
+        this.uSex = uSex;
+        this.uBirthday = uBirthday;
     }
 
     public String getuBg() {
@@ -91,5 +94,21 @@ public class PersonalBean {
 
     public void setuSynopsis(String uSynopsis) {
         this.uSynopsis = uSynopsis;
+    }
+
+    public String getuSex() {
+        return uSex;
+    }
+
+    public void setuSex(String uSex) {
+        this.uSex = uSex;
+    }
+
+    public String getuBirthday() {
+        return uBirthday;
+    }
+
+    public void setuBirthday(String uBirthday) {
+        this.uBirthday = uBirthday;
     }
 }

@@ -146,6 +146,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.login_pwd_sure:
+                //确认登录
                 String telText = tel.getText().toString();
                 String pwdText = pwd.getText().toString();
                 if (CheckUtils.checkNull(telText, pwdText)) {
@@ -158,7 +159,9 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                             .subscribe(integerJsonBean -> {
                                 switch (integerJsonBean.getCode()) {
                                     case NETWORK_RESULT_OK:
+                                        //登陆成功，开启环信登录流程
                                         HuanXinHelper.login(telText, pwdText);
+                                        MyApplication.uId = integerJsonBean.getBody().get(0);
                                         break;
                                     case NETWORK_RESULT_ERR:
                                         Toast.makeText(PwdLoginActivity.this, "未知错误", Toast.LENGTH_SHORT).show();

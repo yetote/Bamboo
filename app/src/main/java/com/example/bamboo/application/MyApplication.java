@@ -47,6 +47,7 @@ public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
     public static boolean isFirst;
     public static boolean isLogin = false;
+    public static int uId;
     public static String uName;
     private CallBackUtils callBackUtils;
     public static Retrofit retrofit;

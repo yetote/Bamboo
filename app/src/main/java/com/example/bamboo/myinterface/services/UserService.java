@@ -14,6 +14,7 @@ import static com.example.bamboo.util.NetworkUtil.NETWORK_REGISTER;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_ADD_CHANGE_STATE;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_ADD_CONTACT;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_ADD_SELECT_STATE;
+import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_CHANGE_IM;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_SEARCH;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_USER_SELECT_IM;
 
@@ -106,10 +107,22 @@ public interface UserService {
     /**
      * 查询用户信息
      *
-     * @param user 用户手机号码
+     * @param id 用户id
      * @return personalBean
      */
     @FormUrlEncoded
     @POST(NETWORK_USER_SELECT_IM)
-    Observable<JsonBean<PersonalBean>> userIm(@Field("uTel") String user);
+    Observable<JsonBean<PersonalBean>> userIm(@Field("uId") int id);
+
+    /**
+     * 修改用户信息
+     *
+     * @param user 用户id
+     * @param im   修改的信息
+     * @param row  需要修改的用户索引
+     * @return PersonalBean
+     */
+    @FormUrlEncoded
+    @POST(NETWORK_USER_CHANGE_IM)
+    Observable<JsonBean<PersonalBean>> changeUserIm(@Field("uId") int user, @Field("im") String im, @Field("row") String row);
 }

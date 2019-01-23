@@ -12,7 +12,7 @@ package com.example.bamboo.model;
  */
 public class AddImBean {
     private int uId, uFollow, uFans, id;
-    private String uName, uHeader, uBg, uIdentity, uPwd, username, contactname, state, uSynopsis, uTel;
+    private String uName, uHeader, uBg, uIdentity, uPwd, username, contactname, state, uSynopsis, uTel, uSex;
 
     public AddImBean(int uId, String uName, String uHeader, String uBg, String uIdentity, int uFollow, int uFans,
                      String uSynopsis, String uTel, String uPwd, int id, String username, String contactname, String state) {

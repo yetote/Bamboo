@@ -80,5 +80,6 @@ public class NetworkUtil {
     public static final String NETWORK_USER_ADD_SELECT_STATE = "user/userSelectAddIm";
     public static final String NETWORK_USER_ADD_CHANGE_STATE = "user/userChangeAddState";
     public static final String NETWORK_USER_SELECT_IM = "user/userIm";
+    public static final String NETWORK_USER_CHANGE_IM = "user/userChangeIm";
     public static final String NETWORK_VIDEO_SELECT_IM = "video/getVideoIm";
 }

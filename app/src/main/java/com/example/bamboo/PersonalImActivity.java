@@ -26,6 +26,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -48,15 +49,14 @@ public class PersonalImActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private List<PersonalBean> dataList;
     private static final String TAG = "PersonalImActivity";
+    public static final int CHANGE_IM_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StatusBarUtils.transparentStatusBar(this);
         setContentView(R.layout.activity_personal_im);
-        Intent i = getIntent();
-        String uName = i.getStringExtra("u_name");
-        Log.e(TAG, "onCreate: " + uName);
+//        Log.e(TAG, "onCreate: " + uId);
         initView();
 
         toolbar.inflateMenu(R.menu.person_im_menu);
@@ -65,7 +65,10 @@ public class PersonalImActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.person_im_menu_change:
-                        startActivity(new Intent(PersonalImActivity.this, ChangeImActivity.class));
+                        Intent i = new Intent();
+                        i.setClass(PersonalImActivity.this, ChangeImActivity.class);
+                        startActivityForResult(i, CHANGE_IM_CODE);
+//                        startActivity(new Intent());
                         break;
                 }
                 return false;
@@ -74,7 +77,7 @@ public class PersonalImActivity extends AppCompatActivity {
 
         MyApplication.retrofit
                 .create(UserService.class)
-                .userIm(uName)
+                .userIm(MyApplication.uId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<JsonBean<PersonalBean>>() {
@@ -147,5 +150,18 @@ public class PersonalImActivity extends AppCompatActivity {
         adapter = new MainViewPagerAdapter(getSupportFragmentManager(), list, title);
         dataList = new ArrayList<>();
 //        dataList.add(new PersonalBean("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1544006393996&di=06f232e186c7ad846f977ec2b36c7484&imgtype=0&src=http%3A%2F%2Fbmp.skxox.com%2F201703%2F27%2Fxz123456.162643.jpg", "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=3484494144,556561024&fm=26&gp=0.jpg", "yetote", 13004265, 32, 40, "vip3", "一个非常无聊的人"));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CHANGE_IM_CODE:
+                if (resultCode == RESULT_OK && data != null) {
+                    MyApplication.uName = data.getStringExtra("name");
+                    userName.setText(MyApplication.uName);
+                }
+                break;
+        }
     }
 }
