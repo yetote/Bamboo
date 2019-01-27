@@ -20,15 +20,14 @@
     <TextView
         android:id="@+id/item_friend_uName"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:gravity="start|center"
         android:maxLines="1"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/item_friend_chat"
         app:layout_constraintStart_toEndOf="@+id/item_friend_headIv"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/item_friend_headIv" />
 
     <ImageView
         android:id="@+id/item_friend_chat"
@@ -47,5 +46,15 @@
         android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/item_friend_headIv"
         app:layout_constraintEnd_toEndOf="@+id/item_friend_headIv" />
+
+    <TextView
+        android:id="@+id/item_friend_tel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        style="@style/MyUserImTelStyle"
+        app:layout_constraintEnd_toEndOf="@+id/item_friend_uName"
+        app:layout_constraintStart_toStartOf="@+id/item_friend_uName"
+        app:layout_constraintTop_toBottomOf="@+id/item_friend_uName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

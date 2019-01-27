@@ -5,6 +5,10 @@ import com.example.bamboo.room.entity.UserEntity;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
 
 /**
  * @author yetote QQ:503779938
@@ -24,5 +28,14 @@ public interface UserDAO {
      * @param userEntity 用户信息
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-     void insertUser(UserEntity userEntity);
+    void insertUser(UserEntity userEntity);
+
+    /**
+     * 查询本地数据库中user信息
+     *
+     * @param uId 查询的用户id
+     * @return 查询出来的用户信息
+     */
+    @Query("select * from user where uId=:uId")
+    Observable<UserEntity[]> selectUserIm(int uId);
 }

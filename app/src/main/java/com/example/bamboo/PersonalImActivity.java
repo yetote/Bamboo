@@ -18,12 +18,15 @@ import com.example.bamboo.fragment.PersonalMainPager;
 import com.example.bamboo.model.JsonBean;
 import com.example.bamboo.model.PersonalBean;
 import com.example.bamboo.myinterface.services.UserService;
+import com.example.bamboo.room.MyDatabase;
+import com.example.bamboo.room.entity.UserEntity;
 import com.example.bamboo.util.IdentityUtils;
 import com.example.bamboo.util.StatusBarUtils;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -31,10 +34,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+import io.reactivex.MaybeObserver;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
+import static com.example.bamboo.util.NetworkUtil.DATA_FROM_ROOM;
 import static com.example.bamboo.util.NetworkUtil.NETWORK_RESULT_OK;
 
 public class PersonalImActivity extends AppCompatActivity {
@@ -75,20 +88,98 @@ public class PersonalImActivity extends AppCompatActivity {
             }
         });
 
-        MyApplication.retrofit
-                .create(UserService.class)
-                .userIm(MyApplication.uId)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<JsonBean<PersonalBean>>() {
-                    @Override
-                    public void accept(JsonBean<PersonalBean> personalBeanJsonBean) throws Exception {
-                        if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
-                            dataList.addAll(personalBeanJsonBean.getBody());
-                            setData(dataList);
+        MyDatabase.getInstance(this)
+                .getUserEntityDao()
+                .selectUserIm(MyApplication.uId)
+                .observeOn(Schedulers.newThread())
+                .flatMap((Function<UserEntity[], ObservableSource<JsonBean<PersonalBean>>>) userEntities -> {
+                    if (userEntities.length == 0) {
+                        Log.e(TAG, "apply: network");
+                        return MyApplication.retrofit.create(UserService.class).userIm(MyApplication.uId);
+                    }
+                    return new Observable<JsonBean<PersonalBean>>() {
+                        @Override
+                        protected void subscribeActual(Observer<? super JsonBean<PersonalBean>> observer) {
+                            Log.e(TAG, "apply: room");
+                            JsonBean<PersonalBean> jsonBean = new JsonBean<>();
+                            for (int i = 0; i < userEntities.length; i++) {
+                                Log.e(TAG, "subscribeActual: " + userEntities[i].toString());
+                            }
+                            ArrayList<PersonalBean> list = new ArrayList<>();
+                            list.add(new PersonalBean(
+                                    userEntities[0].getuBg(),
+                                    userEntities[0].getuHeader(),
+                                    userEntities[0].getuName(),
+                                    userEntities[0].getuFollow(),
+                                    userEntities[0].getuFans(),
+                                    userEntities[0].getuId(),
+                                    userEntities[0].getuIdentity(),
+                                    userEntities[0].getuSynopsis(),
+                                    userEntities[0].getuSex(),
+                                    userEntities[0].getuBirthday(),
+                                    userEntities[0].getuTel()
+
+                            ));
+                            jsonBean.setBody(list);
+                            jsonBean.setCode(DATA_FROM_ROOM);
+                            observer.onNext(jsonBean);
                         }
+                    };
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(personalBeanJsonBean -> {
+                    if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK || personalBeanJsonBean.getCode() == DATA_FROM_ROOM) {
+                        dataList.addAll(personalBeanJsonBean.getBody());
+                        setData(dataList);
                     }
                 });
+
+//
+//        MyApplication.retrofit
+//                .create(UserService.class)
+//                .userIm(MyApplication.uId)
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<JsonBean<PersonalBean>>() {
+//                    @Override
+//                    public void accept(JsonBean<PersonalBean> personalBeanJsonBean) throws Exception {
+//                        if (personalBeanJsonBean.getCode() == NETWORK_RESULT_OK) {
+//                            dataList.addAll(personalBeanJsonBean.getBody());
+//                            setData(dataList);
+//                        }
+//                    }
+//                });
+
+//        MyDatabase.getInstance(this).getUserEntityDao().selectUserIm(MyApplication.uId)
+//                .observeOn(Schedulers.newThread())
+//                .flatMapSingle(new Function<UserEntity[], SingleSource<?>>() {
+//                    @Override
+//                    public SingleSource<?> apply(UserEntity[] userEntities) throws Exception {
+//                        return null;
+//                    }
+//                })
+//                .subscribeOn(Schedulers.newThread())
+//                .subscribe(new MaybeObserver<UserEntity[]>() {
+//                    @Override
+//                    public void onSubscribe(Disposable d) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onSuccess(UserEntity[] userEntities) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onComplete() {
+//
+//                    }
+//                });
 
         tabLayout.addTab(tabLayout.newTab());
         tabLayout.addTab(tabLayout.newTab(), true);
@@ -111,6 +202,7 @@ public class PersonalImActivity extends AppCompatActivity {
 
     private void setData(List<PersonalBean> dataList) {
 //        if (dataList.get(0).getuBg().equals("null"))
+        Log.e(TAG, "setData: " + Thread.currentThread().getName());
         Glide.with(this).load(dataList.get(0).getuBg()).into(bgIv);
         Glide.with(this).load(dataList.get(0).getuHeader()).into(headIv);
         userName.setText(dataList.get(0).getuName());

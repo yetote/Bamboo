@@ -11,6 +11,10 @@ package com.example.bamboo.util;
  * @class describe
  */
 public class NetworkUtil {
+    /**
+     * 数据从本地数据库中获取的
+     */
+    public static final int DATA_FROM_ROOM = 1000;
 
     /**
      * 请求错误

@@ -20,8 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.model.JsonBean;
+import com.example.bamboo.model.PersonalBean;
 import com.example.bamboo.myinterface.OnLoginInterface;
 import com.example.bamboo.myinterface.services.UserService;
+import com.example.bamboo.room.MyDatabase;
+import com.example.bamboo.room.entity.UserEntity;
 import com.example.bamboo.util.CheckUtils;
 import com.example.bamboo.util.HuanXinHelper;
 import com.example.bamboo.util.StatusBarUtils;
@@ -29,7 +33,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.example.bamboo.util.NetworkUtil.NETWORK_LOGIN_ERR_UN_USER;
@@ -154,14 +162,37 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                 } else {
                     MyApplication.retrofit.create(UserService.class)
                             .login(telText, pwdText)
+                            .observeOn(Schedulers.newThread())
+                            .flatMap((Function<JsonBean<PersonalBean>, ObservableSource<Integer>>) personBean -> {
+                                if (personBean.getCode() == NETWORK_RESULT_OK) {
+                                    MyApplication.uId = personBean.getBody().get(0).getuId();
+                                    UserEntity userEntity = new UserEntity();
+                                    userEntity.setuId(personBean.getBody().get(0).getuId());
+                                    userEntity.setuBg(personBean.getBody().get(0).getuBg());
+                                    userEntity.setuBirthday(personBean.getBody().get(0).getuBirthday());
+                                    userEntity.setuFans(personBean.getBody().get(0).getuFans());
+                                    userEntity.setuFollow(personBean.getBody().get(0).getuFollow());
+                                    userEntity.setuHeader(personBean.getBody().get(0).getuHeader());
+                                    userEntity.setuIdentity(personBean.getBody().get(0).getuIdentity());
+                                    userEntity.setuName(personBean.getBody().get(0).getuName());
+                                    userEntity.setuSex(personBean.getBody().get(0).getuSex());
+                                    userEntity.setuSynopsis(personBean.getBody().get(0).getuSynopsis());
+                                    MyDatabase.getInstance(PwdLoginActivity.this).getUserEntityDao().insertUser(userEntity);
+                                }
+                                return new Observable<Integer>() {
+                                    @Override
+                                    protected void subscribeActual(Observer<? super Integer> observer) {
+                                        observer.onNext(personBean.getCode());
+                                    }
+                                };
+                            })
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeOn(Schedulers.newThread())
                             .subscribe(integerJsonBean -> {
-                                switch (integerJsonBean.getCode()) {
+                                switch (integerJsonBean) {
                                     case NETWORK_RESULT_OK:
                                         //登陆成功，开启环信登录流程
                                         HuanXinHelper.login(telText, pwdText);
-                                        MyApplication.uId = integerJsonBean.getBody().get(0);
                                         break;
                                     case NETWORK_RESULT_ERR:
                                         Toast.makeText(PwdLoginActivity.this, "未知错误", Toast.LENGTH_SHORT).show();
@@ -170,11 +201,10 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                                         Toast.makeText(PwdLoginActivity.this, "未找到用户", Toast.LENGTH_SHORT).show();
                                         break;
                                     default:
-                                        Toast.makeText(PwdLoginActivity.this, "default" + integerJsonBean.getCode(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PwdLoginActivity.this, "default" + integerJsonBean, Toast.LENGTH_SHORT).show();
                                         break;
                                 }
                             });
-
                 }
                 break;
             default:

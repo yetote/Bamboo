@@ -98,9 +98,9 @@ public class AddContactActivity extends AppCompatActivity {
 
 
         adapter.setClickListener(position -> {
-            String contactName = list.get(position).getuName();
+            int contactId = list.get(position).getuId();
             MyApplication.retrofit.create(UserService.class)
-                    .addContact(MyApplication.uName, 0, "waiting", contactName)
+                    .addContact(MyApplication.uId,  contactId)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.newThread())
                     .subscribe(integerJsonBean -> {

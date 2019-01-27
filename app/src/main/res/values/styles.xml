@@ -54,6 +54,12 @@
         <item name="android:windowExitAnimation">@anim/popupwindow_exit_animation</item>
     </style>
 
+    <style name="MyUserImTelStyle">
+        <item name="android:textColor">@color/gray_pressed</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:gravity">start|center</item>
+    </style>
+
     <declare-styleable name="NineImageView">
         <attr name="list_size" format="integer" />
     </declare-styleable>

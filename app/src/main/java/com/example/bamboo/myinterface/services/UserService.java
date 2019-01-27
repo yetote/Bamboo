@@ -38,7 +38,7 @@ public interface UserService {
      */
     @FormUrlEncoded
     @POST(NetworkUtil.NETWORK_LOGIN)
-    Observable<JsonBean<Integer>> login(@Field("uTel") String tel, @Field("uPwd") String pwd);
+    Observable<JsonBean<PersonalBean>> login(@Field("uTel") String tel, @Field("uPwd") String pwd);
 
     /**
      * 注册
@@ -65,29 +65,25 @@ public interface UserService {
     /**
      * 添加好友
      *
-     * @param username    用户名
      * @param id          id
-     * @param state       添加状态
-     * @param contactName 申请好友名
+     * @param contactId 申请好友名
      * @return code
      */
     @FormUrlEncoded
     @POST(NETWORK_USER_ADD_CONTACT)
-    Observable<JsonBean<Integer>> addContact(@Field("uTel") String username,
-                                             @Field("id") int id,
-                                             @Field("state") String state,
-                                             @Field("cTel") String contactName);
+    Observable<JsonBean<Integer>> addContact(@Field("uId") int id,
+                                             @Field("cId") int contactId);
 
     /**
      * 查询好友添加状态
      *
-     * @param username 当前用户
+     * @param id 当前用户
      * @param state    好友状态
      * @return code
      */
     @FormUrlEncoded
     @POST(NETWORK_USER_ADD_SELECT_STATE)
-    Observable<JsonBean<AddImBean>> selectAddContactIm(@Field("uTel") String username, @Field("state") String state);
+    Observable<JsonBean<AddImBean>> selectAddContactIm(@Field("uId") int  id, @Field("state") String state);
 
 
     /**

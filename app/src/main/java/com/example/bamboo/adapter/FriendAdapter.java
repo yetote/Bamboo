@@ -49,7 +49,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
     class MyViewHolder extends RecyclerView.ViewHolder {
         private CircleImageView headIv;
         private ImageView identityIv, chatIv;
-        private TextView uName;
+        private TextView uName, uTel;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,12 +57,17 @@ public class FriendAdapter extends RecyclerView.Adapter {
             identityIv = itemView.findViewById(R.id.item_friend_identity);
             chatIv = itemView.findViewById(R.id.item_friend_chat);
             uName = itemView.findViewById(R.id.item_friend_uName);
+            uTel = itemView.findViewById(R.id.item_friend_tel);
             headIv.setOnClickListener(v -> {
                 Intent i = new Intent();
                 i.putExtra("id", (Integer) itemView.getTag());
                 i.setClass(context, PersonalImActivity.class);
                 context.startActivity(i);
             });
+        }
+
+        public TextView getuTel() {
+            return uTel;
         }
 
         public CircleImageView getHeadIv() {
@@ -91,6 +96,7 @@ public class FriendAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
         vh.getuName().setText(list.get(position).getuName());
+        vh.getuTel().setText(list.get(position).getuTel());
         Glide.with(context).load(list.get(position).getuHeader()).into(vh.getHeadIv());
         Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getuIdentity())).into(vh.getIdentityIv());
         vh.itemView.setTag(R.id.user_name_tag, list.get(position).getuName());

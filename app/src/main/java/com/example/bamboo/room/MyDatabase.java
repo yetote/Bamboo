@@ -3,6 +3,7 @@ package com.example.bamboo.room;
 import android.content.Context;
 
 import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.room.dao.UserDAO;
 import com.example.bamboo.room.entity.UserEntity;
 
 import androidx.room.Database;
@@ -19,7 +20,7 @@ import androidx.room.RoomDatabase;
  * @chang time
  * @class describe
  */
-@Database(entities = {UserEntity.class}, version = 1, exportSchema = true)
+@Database(entities = {UserEntity.class}, version = 1, exportSchema = false)
 public abstract class MyDatabase extends RoomDatabase {
     private static MyDatabase ourInstance;
 
@@ -39,5 +40,5 @@ public abstract class MyDatabase extends RoomDatabase {
      *
      * @return 用户实体
      */
-    public abstract UserEntity getUserEntityDao();
+    public abstract UserDAO getUserEntityDao();
 }

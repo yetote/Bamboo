@@ -85,7 +85,7 @@ public class FriendActivity extends AppCompatActivity {
         String uName = getIntent().getStringExtra("u_name");
 
         MyApplication.retrofit.create(UserService.class)
-                .selectAddContactIm(MyApplication.uName, "apply")
+                .selectAddContactIm(MyApplication.uId, "agree")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(addImBeanJsonBean -> {

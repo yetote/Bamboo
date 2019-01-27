@@ -14,30 +14,30 @@ import androidx.room.PrimaryKey;
  * @chang time
  * @class describe
  */
-@Entity
+@Entity(tableName = "user")
 public class UserEntity {
     @PrimaryKey
-    private int uId;
-    private String uName;
-    private String uHeader;
+    public int uId;
 
-    private String uBg;
+    public String uName;
+    public String uHeader;
 
-    private String uIdentity;
+    public String uBg;
 
-    private String uSynopsis;
+    public String uIdentity;
 
-    private String uTel;
+    public String uSynopsis;
 
-    private String uPwd;
+    public String uTel;
 
-    private String uSex;
 
-    private String uBirthday;
+    public String uSex;
 
-    private int uFollow;
+    public String uBirthday;
 
-    private int uFans;
+    public int uFollow;
+
+    public int uFans;
 
     public int getuId() {
         return uId;
@@ -95,13 +95,6 @@ public class UserEntity {
         this.uTel = uTel;
     }
 
-    public String getuPwd() {
-        return uPwd;
-    }
-
-    public void setuPwd(String uPwd) {
-        this.uPwd = uPwd;
-    }
 
     public String getuSex() {
         return uSex;
@@ -133,5 +126,22 @@ public class UserEntity {
 
     public void setuFans(int uFans) {
         this.uFans = uFans;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "uId=" + uId +
+                ", uName='" + uName + '\'' +
+                ", uHeader='" + uHeader + '\'' +
+                ", uBg='" + uBg + '\'' +
+                ", uIdentity='" + uIdentity + '\'' +
+                ", uSynopsis='" + uSynopsis + '\'' +
+                ", uTel='" + uTel + '\'' +
+                ", uSex='" + uSex + '\'' +
+                ", uBirthday='" + uBirthday + '\'' +
+                ", uFollow=" + uFollow +
+                ", uFans=" + uFans +
+                '}';
     }
 }

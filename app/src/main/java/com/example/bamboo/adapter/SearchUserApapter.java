@@ -2,6 +2,7 @@ package com.example.bamboo.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class SearchUserApapter extends RecyclerView.Adapter {
         private ImageView identityIv;
         private Button addBtn;
         private TextView uName;
+        private TextView uTel;
 
         public CircleImageView getHeadIv() {
             return headIv;
@@ -62,6 +64,10 @@ public class SearchUserApapter extends RecyclerView.Adapter {
 
         public TextView getuName() {
             return uName;
+        }
+
+        public TextView getuTel() {
+            return uTel;
         }
 
         public MyViewHolder(@NonNull View itemView) {
@@ -76,8 +82,13 @@ public class SearchUserApapter extends RecyclerView.Adapter {
                 i.setClass(context, PersonalImActivity.class);
                 context.startActivity(i);
             });
-            addBtn.setOnClickListener(v -> clickListener.onClick((Integer) itemView.getTag(R.id.list_position)));
-
+            addBtn.setOnClickListener(v -> {
+                clickListener.onClick((Integer) itemView.getTag(R.id.list_position));
+                addBtn.setBackgroundColor(Color.TRANSPARENT);
+                addBtn.setTextColor(context.getResources().getColor(R.color.gray_pressed));
+                addBtn.setText("等待响应");
+            });
+            uTel = itemView.findViewById(R.id.item_search_user_tel);
         }
     }
 
@@ -93,6 +104,7 @@ public class SearchUserApapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MyViewHolder vh = (MyViewHolder) holder;
         vh.getuName().setText(list.get(position).getuName());
+        vh.getuTel().setText(list.get(position).getuTel());
         Glide.with(context).load(list.get(position).getuHeader()).into(vh.getHeadIv());
         Glide.with(context).load(IdentityUtils.getIdentityDrawable(list.get(position).getuIdentity())).into(vh.getIdentityIv());
         vh.itemView.setTag(R.id.user_name_tag, list.get(position).getuName());

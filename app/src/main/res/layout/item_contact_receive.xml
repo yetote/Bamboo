@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--我申请的好友信息列表-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/item_search_user_headIv"
+        android:id="@+id/item_contact_receive_headIv"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/item_search_user_uName"
+        android:id="@+id/item_contact_receive_uName"
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
@@ -26,44 +26,41 @@
         android:ellipsize="end"
         android:gravity="start|center"
         android:maxLines="1"
-        app:layout_constraintEnd_toStartOf="@+id/item_search_user_add"
-        app:layout_constraintStart_toEndOf="@+id/item_search_user_headIv"
-        app:layout_constraintTop_toTopOf="@+id/item_search_user_headIv" />
+        app:layout_constraintEnd_toStartOf="@+id/item_contact_receive_add"
+        app:layout_constraintStart_toEndOf="@+id/item_contact_receive_headIv"
+        app:layout_constraintTop_toTopOf="@+id/item_contact_receive_headIv" />
 
     <Button
-        android:id="@+id/item_search_user_add"
-        android:layout_width="60dp"
+        android:id="@+id/item_contact_receive_add"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_gravity="end"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:textSize="14sp"
-        android:background="@drawable/personal_im_follow_btn"
+        android:background="@color/transparent"
         android:text="@string/add"
-        android:textColor="@color/white"
+        android:textColor="@color/gray_pressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.6" />
 
     <ImageView
-        android:id="@+id/item_search_user_identity"
+        android:id="@+id/item_contact_receive_identity"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/item_search_user_headIv"
-        app:layout_constraintEnd_toEndOf="@+id/item_search_user_headIv" />
+        app:layout_constraintBottom_toBottomOf="@+id/item_contact_receive_headIv"
+        app:layout_constraintEnd_toEndOf="@+id/item_contact_receive_headIv" />
 
     <TextView
-        android:id="@+id/item_search_user_tel"
+        android:id="@+id/item_contact_receive_tel"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-       style="@style/MyUserImTelStyle"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="@+id/item_search_user_headIv"
-        app:layout_constraintEnd_toEndOf="@+id/item_search_user_uName"
-        app:layout_constraintStart_toStartOf="@+id/item_search_user_uName"
-        app:layout_constraintTop_toBottomOf="@+id/item_search_user_uName" />
-
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        style="@style/MyUserImTelStyle"
+        app:layout_constraintBottom_toBottomOf="@+id/item_contact_receive_headIv"
+        app:layout_constraintEnd_toEndOf="@+id/item_contact_receive_uName"
+        app:layout_constraintStart_toStartOf="@+id/item_contact_receive_uName"
+        app:layout_constraintTop_toBottomOf="@+id/item_contact_receive_uName" />
 </androidx.constraintlayout.widget.ConstraintLayout>
