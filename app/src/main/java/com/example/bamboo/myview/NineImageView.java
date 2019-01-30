@@ -53,6 +53,9 @@ public class NineImageView extends ViewGroup {
     }
 
     private int checkVerticalSize(int horizontalViewCount, int size) {
+        if (horizontalViewCount == 2) {
+            return size <= 2 ? 1 : 2;
+        }
         if (horizontalViewCount == 3) {
             return size <= 6 ? 2 : 3;
         }

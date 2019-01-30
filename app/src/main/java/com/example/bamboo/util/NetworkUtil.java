@@ -86,4 +86,7 @@ public class NetworkUtil {
     public static final String NETWORK_USER_SELECT_IM = "user/userIm";
     public static final String NETWORK_USER_CHANGE_IM = "user/userChangeIm";
     public static final String NETWORK_VIDEO_SELECT_IM = "video/getVideoIm";
+    public static final String NETWORK_MATTERS_ADD = "matters/add";
+    public static final String NETWORK_MATTERS_FOLLOW = "matters/follow";
+
 }

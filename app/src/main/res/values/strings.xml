@@ -104,5 +104,6 @@
     <string name="sex">性别</string>
     <string name="choose">从文件夹选择</string>
     <string name="camera">拍照</string>
+    <string name="write_matters">发布动态</string>
 
 </resources>

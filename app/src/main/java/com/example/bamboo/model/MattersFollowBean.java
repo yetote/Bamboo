@@ -13,68 +13,32 @@ import java.util.ArrayList;
  * @class describe
  */
 public class MattersFollowBean {
-    private ArrayList<String> imageList;
-    private String headImg;
-    private String identity;
-    private String name;
-    private String content;
-    private long releaseTime;
     private int id;
+    private int writer;
+    private String content;
+    private long uptime;
+    private int parseNum;
+    private int discussNum;
+    private int shareNum;
+    private int uId;
+    private String uName;
+    private String uHeader;
+    private String uIdentity;
+    private ArrayList<String> list;
 
-    @Override
-    public String toString() {
-        return "MattersFollowBean{" +
-                "imageList=" + imageList +
-                ", headImg='" + headImg + '\'' +
-                ", identity='" + identity + '\'' +
-                ", name='" + name + '\'' +
-                ", content='" + content + '\'' +
-                ", releaseTime=" + releaseTime +
-                '}';
-    }
-
-    public ArrayList<String> getImageList() {
-        return imageList;
-    }
-
-    public void setImageList(ArrayList<String> imageList) {
-        this.imageList = imageList;
-    }
-
-    public String getHeadImg() {
-        return headImg;
-    }
-
-    public void setHeadImg(String headImg) {
-        this.headImg = headImg;
-    }
-
-    public String getIdentity() {
-        return identity;
-    }
-
-    public void setIdentity(String identity) {
-        this.identity = identity;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
+    public MattersFollowBean(int id, int writer, String content, long uptime, int parseNum, int discussNum, int shareNum, int uId, String uName, String uHeader, String uIdentity, ArrayList<String> list) {
+        this.id = id;
+        this.writer = writer;
         this.content = content;
-    }
-
-    public long getReleaseTime() {
-        return releaseTime;
+        this.uptime = uptime;
+        this.parseNum = parseNum;
+        this.discussNum = discussNum;
+        this.shareNum = shareNum;
+        this.uId = uId;
+        this.uName = uName;
+        this.uHeader = uHeader;
+        this.uIdentity = uIdentity;
+        this.list = list;
     }
 
     public int getId() {
@@ -85,25 +49,110 @@ public class MattersFollowBean {
         this.id = id;
     }
 
-    public void setReleaseTime(long releaseTime) {
-        this.releaseTime = releaseTime;
+    public int getWriter() {
+        return writer;
     }
 
-    /**
-     * @param imageList   图片列表
-     * @param headImg     头像
-     * @param identity    身份
-     * @param name        用户名
-     * @param content     内容
-     * @param releaseTime 发布时间
-     */
-    public MattersFollowBean(int id,ArrayList<String> imageList, String headImg, String identity, String name, String content, long releaseTime) {
-        this.id=id;
-        this.imageList = imageList;
-        this.headImg = headImg;
-        this.identity = identity;
-        this.name = name;
+    public void setWriter(int writer) {
+        this.writer = writer;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
         this.content = content;
-        this.releaseTime = releaseTime;
+    }
+
+    public long getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(long uptime) {
+        this.uptime = uptime;
+    }
+
+    public int getParseNum() {
+        return parseNum;
+    }
+
+    public void setParseNum(int parseNum) {
+        this.parseNum = parseNum;
+    }
+
+    public int getDiscussNum() {
+        return discussNum;
+    }
+
+    public void setDiscussNum(int discussNum) {
+        this.discussNum = discussNum;
+    }
+
+    public int getShareNum() {
+        return shareNum;
+    }
+
+    public void setShareNum(int shareNum) {
+        this.shareNum = shareNum;
+    }
+
+    public int getuId() {
+        return uId;
+    }
+
+    public void setuId(int uId) {
+        this.uId = uId;
+    }
+
+    public String getuName() {
+        return uName;
+    }
+
+    public void setuName(String uName) {
+        this.uName = uName;
+    }
+
+    public String getuHeader() {
+        return uHeader;
+    }
+
+    public void setuHeader(String uHeader) {
+        this.uHeader = uHeader;
+    }
+
+    public String getuIdentity() {
+        return uIdentity;
+    }
+
+    public void setuIdentity(String uIdentity) {
+        this.uIdentity = uIdentity;
+    }
+
+    public ArrayList<String> getList() {
+        return list;
+    }
+
+    public void setList(ArrayList<String> list) {
+        this.list = list;
+    }
+
+    @Override
+    public String toString() {
+        return "MattersFollowBean{" +
+                "id=" + id +
+                ", writer=" + writer +
+                ", content='" + content + '\'' +
+                ", uptime=" + uptime +
+                ", parseNum=" + parseNum +
+                ", discussNum=" + discussNum +
+                ", shareNum=" + shareNum +
+                ", uId=" + uId +
+                ", uName='" + uName + '\'' +
+                ", uHeader='" + uHeader + '\'' +
+                ", uIdentity='" + uIdentity + '\'' +
+                ", list=" + list +
+                '}';
     }
 }
+

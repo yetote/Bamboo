@@ -29,8 +29,9 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyTheme">
-        <activity android:name=".ChangeImActivity"></activity>
+        android:theme="@style/AppTheme">
+        <activity android:name=".WriteMattersActivity"></activity>
+        <activity android:name=".ChangeImActivity" />
         <activity android:name=".ApplyContactActivity" />
         <activity android:name=".RecommendVideoDetailedActivity" />
 
@@ -68,8 +69,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/GradientTheme" />
+            android:screenOrientation="portrait" />
         <activity
             android:name=".TestActivity"
             android:screenOrientation="portrait" />

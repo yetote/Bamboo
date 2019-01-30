@@ -12,8 +12,10 @@ import android.widget.Toast;
 
 import com.example.bamboo.R;
 import com.example.bamboo.SelectTagActivity;
+import com.example.bamboo.WriteMattersActivity;
 import com.example.bamboo.adapter.MainViewPagerAdapter;
 import com.example.bamboo.adapter.MattersViewPagerAdapter;
+import com.example.bamboo.application.MyApplication;
 import com.example.bamboo.myinterface.MattersInterface;
 import com.example.bamboo.opengl.objects.SelectTag;
 import com.google.android.material.tabs.TabLayout;
@@ -59,7 +61,11 @@ public class MattersFragment extends Fragment {
         toolbar.setOnMenuItemClickListener(item -> {
             switch (item.getItemId()) {
                 case R.id.matters_toolbar_write:
-                    Toast.makeText(getActivity(), "未完成，敬请期待", Toast.LENGTH_SHORT).show();
+                    if (MyApplication.isLogin) {
+                        startActivity(new Intent(getActivity(), WriteMattersActivity.class));
+                    } else {
+                        Toast.makeText(getActivity(), "请先登录", Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 default:
                     break;
@@ -90,7 +96,6 @@ public class MattersFragment extends Fragment {
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(1);
         tabLayout.setupWithViewPager(viewPager);
-
 
         return v;
     }

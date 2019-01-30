@@ -102,13 +102,13 @@ public class MattersFollowAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ImageHolder vh = (ImageHolder) holder;
         vh.getContext().setText(list.get(position).getContent());
-        vh.getName().setText(list.get(position).getName());
-        vh.getReleaseTime().setText(TimeUtil.agoTime(list.get(position).getReleaseTime()));
-        Glide.with(context).load(list.get(position).getHeadImg()).into(vh.getHeadIv());
+        vh.getName().setText(list.get(position).getuName());
+        vh.getReleaseTime().setText(TimeUtil.agoTime(list.get(position).getUptime()));
+        Glide.with(context).load(list.get(position).getuHeader()).into(vh.getHeadIv());
         Glide.with(context).asDrawable().load(R.drawable.star).into(vh.getIdentityIv());
-        if (list.get(position).getImageList() != null) {
-            vh.getNineImageView().setSize(list.get(position).getImageList().size());
-            vh.getNineImageView().setUrlList(list.get(position).getImageList());
+        if (list.get(position).getList() != null&&list.get(position).getList().size()!=0) {
+            vh.getNineImageView().setSize(list.get(position).getList().size());
+            vh.getNineImageView().setUrlList(list.get(position).getList());
         } else {
             vh.getNineImageView().setVisibility(View.GONE);
         }

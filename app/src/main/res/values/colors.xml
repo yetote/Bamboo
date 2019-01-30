@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#014343</color>
-    <color name="colorPrimaryDark">#152d46</color>
-    <color name="colorAccent">#039BE5</color>
-    <color name="textColor">#039BE5</color>
+    <color name="colorPrimary">#E38EB8</color>
+    <color name="colorPrimaryDark">#AD92C2</color>
+    <color name="colorAccent">#AD92C2</color>
+    <color name="textColor">#AD92C2</color>
     <color name="verifyLoginColor">#322F50</color>
     <color name="transparent">#00000000</color><!--透明色 -->
     <color name="white">#FFFFFF</color><!--白色 -->
