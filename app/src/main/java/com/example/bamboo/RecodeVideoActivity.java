@@ -7,6 +7,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -34,6 +38,8 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -56,7 +62,7 @@ import java.util.Set;
  * @chang time
  * @class describe
  */
-public class RecodeVideoActivity extends AppCompatActivity {
+public class RecodeVideoActivity extends AppCompatActivity implements View.OnClickListener {
     private CameraDevice cameraDevice;
     private CameraManager cameraManager;
     private int frontCameraId = -1, backCameraId = -1;
@@ -74,7 +80,7 @@ public class RecodeVideoActivity extends AppCompatActivity {
     private CaptureRequest.Builder previewRequestBuilder;
     private int previewState;
     private CameraCaptureSession captureSession;
-    private ImageView iv;
+    private ImageView iv, switchCamera, switchVideo;
     ///为了使照片竖直显示
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
 
@@ -85,8 +91,14 @@ public class RecodeVideoActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
+    /**
+     * 相机模式
+     */
+    private boolean isCamera = true;
+
     private Bitmap bitmap;
     private Bitmap resource;
+
 
     enum CAMERA_ORIENTATION {
         /**
@@ -115,7 +127,7 @@ public class RecodeVideoActivity extends AppCompatActivity {
         }
 
         initView();
-
+        switchCamera.setVisibility(View.GONE);
         onClick();
 
         surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
@@ -128,6 +140,7 @@ public class RecodeVideoActivity extends AppCompatActivity {
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
                 surfaceHolder = holder;
+                adjustScreen(surfaceView);
                 if (ContextCompat.checkSelfPermission(RecodeVideoActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(RecodeVideoActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA_CODE);
                 } else {
@@ -174,9 +187,16 @@ public class RecodeVideoActivity extends AppCompatActivity {
     }
 
     private void onClick() {
-        switchCameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        switchCameraBtn.setOnClickListener(this);
+        recodeButton.setOnClickListener(this);
+        switchCamera.setOnClickListener(this);
+        switchVideo.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.recode_video_switchCamera_btn:
                 if (cameraDevice != null) {
                     cameraDevice.close();
                     if (cameraOrientation == CAMERA_ORIENTATION.CAMERA_ORIENTATION_BACK) {
@@ -195,15 +215,21 @@ public class RecodeVideoActivity extends AppCompatActivity {
                         }
                     }
                 }
-            }
-        });
-        recodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // click to take-photo
+                break;
+            case R.id.recode_video_recodeBtn:
                 takePhoto();
-            }
-        });
+                break;
+            case R.id.recode_video_switch_camera:
+                isCamera = true;
+                changeCameraModeAnimation(isCamera);
+                break;
+            case R.id.recode_video_switch_video:
+                isCamera = false;
+                changeCameraModeAnimation(isCamera);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -224,18 +250,18 @@ public class RecodeVideoActivity extends AppCompatActivity {
             @Override
             public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                 super.onCaptureCompleted(session, request, result);
-                //等待对焦
+//等待对焦
                 final Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
                 if (afState == null) {
                     Toast.makeText(RecodeVideoActivity.this, "对焦失败", Toast.LENGTH_SHORT).show();
                     captureStillPicture();
                 } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_INACTIVE == afState || CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN == afState) {
-                    Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-                    if (aeState == null ||
-                            aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-                        //对焦完成，开始拍照
-                        captureStillPicture();
-                    }
+                        Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
+                        if (aeState == null ||
+                                aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
+                            //对焦完成，开始拍照
+                            captureStillPicture();
+                        }
                 } else {
 //                    runPreCaptureSequence();
                 }
@@ -296,12 +322,21 @@ public class RecodeVideoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 录制视频
+     */
+    private void recodeVideo() {
+
+    }
+
     private void initView() {
         backgroundHandler = new Handler(getMainLooper());
         surfaceView = findViewById(R.id.recode_video_surfaceView);
         switchCameraBtn = findViewById(R.id.recode_video_switchCamera_btn);
         recodeButton = findViewById(R.id.recode_video_recodeBtn);
         iv = findViewById(R.id.recode_video_iv);
+        switchCamera = findViewById(R.id.recode_video_switch_camera);
+        switchVideo = findViewById(R.id.recode_video_switch_video);
     }
 
     private void getCameraInfo() {
@@ -473,8 +508,79 @@ public class RecodeVideoActivity extends AppCompatActivity {
         if (cameraDevice != null) {
             cameraDevice.close();
         }
-        resource.recycle();
-        bitmap.recycle();
+        if (resource != null) {
+            resource.recycle();
+        }
+
+        if (bitmap != null) {
+            bitmap.recycle();
+        }
 
     }
+
+    /**
+     * 切换相机模式动画
+     *
+     * @param isCamera 是否为照相机模式
+     */
+    private void changeCameraModeAnimation(boolean isCamera) {
+        ObjectAnimator oa1, oa2;
+        int start, end;
+        if (isCamera) {
+            start = 0;
+            end = 1;
+        } else {
+            start = 1;
+            end = 0;
+        }
+        oa1 = ObjectAnimator.ofFloat(switchVideo, "alpha", start, end);
+        oa2 = ObjectAnimator.ofFloat(switchCamera, "alpha", end, start);
+        oa1.setDuration(1000);
+        oa2.setDuration(1000);
+        AnimatorSet animatorSet1 = new AnimatorSet();
+        animatorSet1.playTogether(oa1, oa2);
+
+        animatorSet1.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                if (isCamera) {
+                    switchVideo.setVisibility(View.VISIBLE);
+                } else {
+                    switchCamera.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (isCamera) {
+                    switchCamera.setVisibility(View.GONE);
+                } else {
+                    switchVideo.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        animatorSet1.start();
+    }
+    private void adjustScreen(View sv) {
+        int height = sv.getHeight();
+        int width = sv.getWidth();
+        if (height > width) {
+            float justH = width * 4.f / 3;
+            surfaceView.setScaleX(height / justH);
+        } else {
+            float justW = height * 4.f / 3;
+            surfaceView.setScaleY(width / justW);
+        }
+    }
+
 }

@@ -44,8 +44,7 @@ void *videoStart(void *data) {
     videoPlayer->initVertex();
     float changeH =
             (float) videoPlayer->pCodecCtx->height / (float) videoPlayer->pCodecCtx->width *
-            (float) videoPlayer->w /
-            (float) videoPlayer->h;
+            (float) videoPlayer->w / (float) videoPlayer->h;
     for (int i = 0; i < 12; ++i) {
         videoPlayer->vertexArray[++i] *= changeH;
     }
@@ -255,7 +254,7 @@ void VideoPlayer::initPlay(AVFrame *frame) {
 }
 
 void VideoPlayer::initVertex() {
-    //@//    @formatter:on
+    //    @formatter:on
     vertexArray = new GLfloat[12]{
             1.0f, 1.0f,
             -1.0f, 1.0f,

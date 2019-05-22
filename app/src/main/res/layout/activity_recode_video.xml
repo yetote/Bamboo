@@ -12,7 +12,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@mipmap/camera"
+        android:background="@mipmap/switch_camera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,4 +40,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/recode_video_switch_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:src="@mipmap/video"
+        app:layout_constraintBottom_toBottomOf="@+id/recode_video_recodeBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recode_video_recodeBtn" />
+
+    <ImageView
+        android:id="@+id/recode_video_switch_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:src="@mipmap/camera"
+        app:layout_constraintBottom_toBottomOf="@+id/recode_video_recodeBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/recode_video_recodeBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

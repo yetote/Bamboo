@@ -164,6 +164,7 @@ public class PwdLoginActivity extends AppCompatActivity implements View.OnClickL
                             .login(telText, pwdText)
                             .observeOn(Schedulers.newThread())
                             .flatMap((Function<JsonBean<PersonalBean>, ObservableSource<Integer>>) personBean -> {
+                                Log.e(TAG, "onClick: "+personBean.getCode() );
                                 if (personBean.getCode() == NETWORK_RESULT_OK) {
                                     MyApplication.uId = personBean.getBody().get(0).getuId();
                                     UserEntity userEntity = new UserEntity();

@@ -313,7 +313,7 @@ public class ChangeImActivity extends AppCompatActivity {
 
     private void cropPhoto(Uri uri) {
         Log.e(TAG, "cropPhoto: " + uri);
-        Intent intent = new Intent("com.android.camera.action.CROP");
+        Intent intent = new Intent("com.android.switch_camera.action.CROP");
         intent.setDataAndType(uri, "image/*");
 
         //把裁剪的数据填入里面
