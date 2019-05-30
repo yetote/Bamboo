@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'bugly'
+bugly {
+    appId = '20198c64dd' // 注册时分配的App ID
+    appKey = '30ccf9bf-62fd-48a2-bb7e-4a8ea0ee95ca' // 注册时分配的App Key
+    debug = true
+}
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
@@ -43,11 +48,15 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':easeui')
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha09'
-    implementation 'android.arch.navigation:navigation-ui:1.0.0-alpha09'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    //单元测试
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'android.arch.navigation:navigation-fragment:1.0.0'
+    implementation 'android.arch.navigation:navigation-ui:1.0.0'
+
     //google
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.viewpager:viewpager:1.0.0'
@@ -63,15 +72,19 @@ dependencies {
     implementation 'org.jbox2d:jbox2d-library:2.2.1.1'
     implementation 'com.zhihu.android:matisse:0.5.2-beta3'
     //网络方向
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.4'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'com.google.code.gson:gson:2.8.5'
     //数据库
-    implementation "androidx.room:room-runtime:2.1.0-alpha03"
-    implementation "androidx.room:room-rxjava2:2.0.0"
-    annotationProcessor "androidx.room:room-compiler:2.1.0-alpha03"
+    implementation "androidx.room:room-runtime:2.1.0-rc01"
+    implementation 'androidx.room:room-rxjava2:2.1.0-rc01'
+    annotationProcessor "androidx.room:room-compiler:2.1.0-rc01"
+    //bugly
+    implementation 'com.tencent.bugly:crashreport:3.0.0'
+    implementation 'com.tencent.bugly:nativecrashreport:3.7.1'
+
 }

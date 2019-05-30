@@ -19,6 +19,7 @@ import com.example.bamboo.util.CrashHandle;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
 import com.hyphenate.easeui.EaseUI;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class MyApplication extends Application {
 
         initHuanxin();
         callBackUtils = new CallBackUtils();
-
+        CrashReport.initCrashReport(getApplicationContext(), "20198c64dd", false);
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
@@ -83,7 +84,7 @@ public class MyApplication extends Application {
 
         CoordinateTransformation.initDisplay(pxWidth, pxHeight, dpWidth, dpHeight);
 
-        startCrash();
+//        startCrash();
 
         activityList = Collections.synchronizedList(new ArrayList<Activity>());
         registerActivityLifecycleCallbacks(new AbstractActivityLifeCycleCallbacks() {

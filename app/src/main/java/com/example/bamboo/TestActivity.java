@@ -3,6 +3,7 @@ package com.example.bamboo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -26,11 +27,12 @@ public class TestActivity extends AppCompatActivity {
     private ArrayList<PersonalBean> list;
     private FriendAdapter adapter;
     public static final int HANDLER_ADD_CODE = 1;
+    private static final String TAG = "TestActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.e(TAG, "onCreate: " + (~1));
         setContentView(R.layout.activity_test);
     }
 

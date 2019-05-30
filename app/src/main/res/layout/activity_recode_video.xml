@@ -16,8 +16,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SurfaceView
-        android:id="@+id/recode_video_surfaceView"
+    <TextureView
+        android:id="@+id/recode_video_texture"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -26,7 +26,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="@+id/recode_video_surfaceView"
+        app:layout_constraintBottom_toBottomOf="@+id/recode_video_texture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:radius="100" />

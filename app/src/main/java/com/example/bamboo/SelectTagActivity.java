@@ -48,7 +48,7 @@ public class SelectTagActivity extends AppCompatActivity implements SensorEventL
 
         init();
 
-        Toast.makeText(this, MyApplication.uId, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, MyApplication.uId, Toast.LENGTH_SHORT).show();
 
         toolbar.inflateMenu(R.menu.select_tag_menu);
 
