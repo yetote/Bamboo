@@ -1,22 +1,16 @@
 package com.example.bamboo;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ImageFormat;
-import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -29,9 +23,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
 import android.media.ImageReader;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -43,20 +35,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.bamboo.application.MyApplication;
+import com.example.bamboo.encode.MutexUtil;
 import com.example.bamboo.myview.RecodeButton;
-import com.example.bamboo.util.BuildModel;
-import com.example.bamboo.util.CameraUtil;
+import com.example.bamboo.encode.CameraUtil;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -117,16 +104,14 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             surfaceTexture = surface;
-            if (isOpenCamera) {
-                Size size = cameraUtil.getPreviewSize(CameraUtil.CAMERA_TYPE_BACK);
-                if (size != null) {
-                    surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
-                }
-                if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(RecodeVideoActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA_CODE);
-                } else {
-                    cameraUtil.openCamera(new Surface(surfaceTexture));
-                }
+            Size size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+            if (size != null) {
+                surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+            }
+            if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(RecodeVideoActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA_CODE);
+            } else {
+                mutexUtil.open(new Surface(surfaceTexture));
             }
         }
 
@@ -145,6 +130,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
         }
     };
+    private MutexUtil mutexUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,20 +142,20 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         Display display = getWindowManager().getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
-        switch (Build.MODEL) {
-            case BuildModel.XIAOMI_MIX2S:
-                new AlertDialog.Builder(RecodeVideoActivity.this).setMessage("是否旋转屏幕").setPositiveButton("是", (dialog, which) -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)).setNegativeButton("否", (dialog, which) -> Toast.makeText(RecodeVideoActivity.this, "这可能导致您的拍摄角度出现问题", Toast.LENGTH_SHORT).show()).show();
-                break;
-            default:
-                break;
-        }
+//        switch (Build.MODEL) {
+//            case BuildModel.XIAOMI_MIX2S:
+//                new AlertDialog.Builder(RecodeVideoActivity.this).setMessage("是否旋转屏幕").setPositiveButton("是", (dialog, which) -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)).setNegativeButton("否", (dialog, which) -> Toast.makeText(RecodeVideoActivity.this, "这可能导致您的拍摄角度出现问题", Toast.LENGTH_SHORT).show()).show();
+//                break;
+//            default:
+//                break;
+//        }
 
         initView();
-        switchCamera.setVisibility(View.GONE);
-        onClick();
-        cameraUtil = new CameraUtil(this, point.x, point.y);
-        isOpenCamera = cameraUtil.initCamera();
-
+//        switchCamera.setVisibility(View.GONE);
+//        onClick();
+//        cameraUtil = new CameraUtil(this, point.x, point.y);
+//        isOpenCamera = cameraUtil.initCamera();
+        mutexUtil = new MutexUtil(this, point.x, point.y);
     }
 
     private void onClick() {
@@ -476,7 +462,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         switch (requestCode) {
             case PERMISSION_CAMERA_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    cameraUtil.openCamera(new Surface(surfaceTexture));
+                    mutexUtil.open(new Surface(surfaceTexture));
                 } else {
                     Toast.makeText(this, "您拒绝了相机权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
                 }

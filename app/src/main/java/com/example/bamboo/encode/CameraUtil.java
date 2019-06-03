@@ -1,4 +1,4 @@
-package com.example.bamboo.util;
+package com.example.bamboo.encode;
 
 import android.Manifest;
 import android.content.Context;
@@ -17,10 +17,8 @@ import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import java.util.Arrays;
@@ -53,6 +51,12 @@ public class CameraUtil {
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
     private CameraCaptureSession captureSession;
+    private ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader reader) {
+            Log.e(TAG, "onImageAvailable: 接受图片");
+        }
+    };
 
     public CameraUtil(Context context, int width, int height) {
         this.context = context;
@@ -61,6 +65,7 @@ public class CameraUtil {
         backgroundThread = new HandlerThread("CameraBackground");
         backgroundThread.start();
         backgroundHandler = new android.os.Handler(backgroundThread.getLooper());
+        imageReader = ImageReader.newInstance(recordWidth, recordHeight, ImageFormat.YUV_420_888, 1);
     }
 
     public boolean initCamera() {
@@ -166,6 +171,20 @@ public class CameraUtil {
 
     }
 
+    public void startRecord(Surface surface) {
+        if (captureSession != null) {
+            captureSession.close();
+        }
+        try {
+            recordCaptureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
+            recordCaptureBuilder.addTarget(imageReader.getSurface());
+            recordCaptureBuilder.addTarget(surface);
+            captureSession.setRepeatingRequest(recordCaptureBuilder.build(), null, backgroundHandler);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     public Size getPreviewSize(int cameraType) {
         switch (cameraType) {
             case CAMERA_TYPE_FRONT:
@@ -236,5 +255,7 @@ public class CameraUtil {
         }
 
     }
+
+
 }
 
