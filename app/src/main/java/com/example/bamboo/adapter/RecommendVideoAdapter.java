@@ -16,6 +16,11 @@ import com.example.bamboo.myinterface.OnRecyclerViewItemViewClickListener;
 import com.example.bamboo.myinterface.RecyclerViewOnClickListener;
 import com.example.bamboo.util.TimeUtil;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -220,7 +225,8 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ArticleViewHolder) {
             Glide.with(context).load(list.get(position).getVideoBcImage()).into(((ArticleViewHolder) holder).img);
-            ((ArticleViewHolder) holder).getContent().setText(list.get(position).getVideoContent());
+
+            ((ArticleViewHolder) holder).getContent().setText(getHtmlContent(list.get(position).getVideoContent()));
             ((ArticleViewHolder) holder).getCategory().setText(list.get(position).getVideoCategory());
             ((ArticleViewHolder) holder).getTitle().setText(list.get(position).getVideoTitle());
             ((ArticleViewHolder) holder).getDiscussNum().setText(context.getResources().getString(R.string.recommend_discuss_num, list.get(position).getVideoDiscussNum()));
@@ -258,4 +264,18 @@ public class RecommendVideoAdapter extends RecyclerView.Adapter {
         }
         return -1;
     }
+
+    String getHtmlContent(String content) {
+        Document document = Jsoup.parse(content);
+        Element element = document.body()
+                .select("div.zl_ycinfor")
+                .select("div.content")
+                .select("div.ZLmp3")
+                .select("div.zl_cent>p")
+                .first();
+        String text = element.text();
+        return text;
+    }
+
+
 }

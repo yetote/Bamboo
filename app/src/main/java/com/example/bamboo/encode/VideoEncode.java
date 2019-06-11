@@ -73,7 +73,7 @@ public class VideoEncode {
                         Log.e(TAG, "run: 最后一帧");
                         flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
                     }
-                    Log.e(TAG, "run: videoSize=" + videoData.length);
+//                    Log.e(TAG, "run: videoSize=" + videoData.length);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -106,7 +106,7 @@ public class VideoEncode {
                         outputBuffer.position(bufferInfo.offset);
                         outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
                     }
-                    Log.e(TAG, "VideoEncode: size=" + bufferInfo.size);
+//                    Log.e(TAG, "VideoEncode: size=" + bufferInfo.size);
                     writeFile.write(outputBuffer);
                     mediaCodec.releaseOutputBuffer(outputIndex, false);
                     outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 0);

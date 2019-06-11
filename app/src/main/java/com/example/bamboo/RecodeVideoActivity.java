@@ -61,54 +61,19 @@ import static android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
  * @class describe
  */
 public class RecodeVideoActivity extends AppCompatActivity implements View.OnClickListener {
-    private CameraDevice cameraDevice;
-    private CameraManager cameraManager;
-    private int frontCameraId = -1, backCameraId = -1;
-    private int frontCameraOrientation, backCameraOrientation;
-    private CameraCharacteristics frontCameraCharacteristics, backCameraCharacteristics;
-    private Handler backgroundHandler;
-    private SurfaceView surfaceView;
-    private SurfaceHolder surfaceHolder;
-    private ImageReader imageReader;
     private static final String TAG = "RecodeVideoActivity";
     private Button switchCameraBtn;
     private RecodeButton recodeButton;
-    private String[] ids;
-    private CaptureRequest.Builder previewRequestBuilder;
-    private int previewState;
-    private CameraCaptureSession captureSession;
     private ImageView iv, switchCamera, switchVideo;
     private TextureView textureView;
-    ///为了使照片竖直显示
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private boolean isRecording;
 
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
-
-    /**
-     * 相机模式
-     */
-    private boolean isCamera = true;
-
-    private Bitmap bitmap;
-    private Bitmap resource;
-    private CameraUtil cameraUtil;
-    private boolean isOpenCamera;
     private SurfaceTexture surfaceTexture;
-    private Surface surface;
     private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             surfaceTexture = surface;
-            size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
-            if (size != null) {
-                surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
-            }
+            changeTextureSize();
             boolean permissionCheckResult = true;
             for (int i = 0; i < permissionArr.length; i++) {
                 if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
@@ -207,6 +172,8 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.recode_video_recodeBtn:
                 if (!isRecording) {
+                    Toast.makeText(this, "开始录制", Toast.LENGTH_SHORT).show();
+                    isRecording = true;
                     boolean permissionCheckResult = true;
                     for (int i = 0; i < permissionArr.length; i++) {
                         if (ActivityCompat.checkSelfPermission(this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
@@ -218,17 +185,13 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                     if (!permissionCheckResult) {
                         ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
                     }
-                    if (size == null) {
-                        size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
-                    }
-                    surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
-                    mutexUtil.record(new Surface(surfaceTexture), getWindowManager().getDefaultDisplay().getRotation());
+                    changeTextureSize();
+                    mutexUtil.record(getWindowManager().getDefaultDisplay().getRotation());
                 } else {
-                    if (size == null) {
-                        size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
-                    }
-                    surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
-                    mutexUtil.stop(new Surface(surfaceTexture));
+                    Toast.makeText(this, "录制结束", Toast.LENGTH_SHORT).show();
+                    isRecording = false;
+                    changeTextureSize();
+                    mutexUtil.stop();
                 }
                 break;
             case R.id.recode_video_switch_camera:
@@ -246,7 +209,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
 
     private void initView() {
-        backgroundHandler = new Handler(getMainLooper());
         textureView = findViewById(R.id.recode_video_texture);
         switchCameraBtn = findViewById(R.id.recode_video_switchCamera_btn);
         recodeButton = findViewById(R.id.recode_video_recodeBtn);
@@ -254,10 +216,16 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         switchCamera = findViewById(R.id.recode_video_switch_camera);
         switchVideo = findViewById(R.id.recode_video_switch_video);
         textureView.setSurfaceTextureListener(textureListener);
-
-
         videoPath = getExternalFilesDir(null).getPath() + "/res/test.h264";
         audioPath = getExternalFilesDir(null).getPath() + "/res/test.aac";
+    }
+
+    public void changeTextureSize() {
+        if (size == null) {
+            size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+        }
+        surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+
     }
 
 
@@ -275,30 +243,13 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 RecodeVideoActivity.this.getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | SYSTEM_UI_FLAG_FULLSCREEN
                         | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                changeTextureSize();
                 mutexUtil.open(new Surface(surfaceTexture));
             default:
                 break;
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        if (captureSession != null) {
-            captureSession.close();
-        }
-        if (cameraDevice != null) {
-            cameraDevice.close();
-        }
-        if (resource != null) {
-            resource.recycle();
-        }
-
-        if (bitmap != null) {
-            bitmap.recycle();
-        }
-
-    }
 
     /**
      * 切换相机模式动画

@@ -49,13 +49,13 @@ public class MutexUtil {
         }
     }
 
-    public void record(Surface surface, int orientation) {
+    public void record( int orientation) {
         cameraUtil.startRecord(previewSurface, orientation);
         audioRecordUtil.startRecord();
     }
 
 
-    public void stop(Surface surface) {
+    public void stop() {
         cameraUtil.stop(previewSurface);
     }
 

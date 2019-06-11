@@ -29,6 +29,7 @@ public class AudioRecordUtil {
     private AudioEncode audioEncode;
 
     public AudioRecordUtil(int sampleRate, int channelCount, String path) {
+        this.sampleRate = sampleRate;
         switch (channelCount) {
             case 1:
                 channelLayout = AudioFormat.CHANNEL_IN_MONO;
@@ -40,22 +41,22 @@ public class AudioRecordUtil {
                 channelLayout = -1;
                 break;
         }
-        if (channelLayout != -1) {
-            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT) * 2);
-        }
+
         audioData = new byte[sampleRate * channelCount];
         audioEncode = new AudioEncode(sampleRate, channelCount, path);
         thread = new Thread(() -> {
             while (isRecording) {
-                int rst = audioRecord.read(audioData, 0, audioData.length);
+                audioRecord.read(audioData, 0, audioData.length);
                 audioEncode.pushData(audioData);
             }
         });
     }
 
     public void startRecord() {
+        if (channelLayout != -1 && audioRecord == null) {
+            audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelLayout, AudioFormat.ENCODING_PCM_16BIT, AudioRecord.getMinBufferSize(sampleRate, channelLayout, AudioFormat.ENCODING_PCM_16BIT) * 2);
+        }
         if (audioRecord.getState() == AudioRecord.STATE_UNINITIALIZED) {
-//            Toast.makeText(c, "audioRecord未初始化成功", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "startRecord: audioRecord未初始化成功");
             return;
         }

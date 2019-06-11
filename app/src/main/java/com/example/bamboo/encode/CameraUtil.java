@@ -55,7 +55,7 @@ public class CameraUtil {
     private HandlerThread backgroundThread;
     private CameraCaptureSession captureSession;
     private ImageReader.OnImageAvailableListener imageAvailableListener = reader -> {
-        Log.e(TAG, "onImageAvailable: 接受图片");
+//        Log.e(TAG, "onImageAvailable: 接受图片");
         Image image = reader.acquireNextImage();
         changeNv21(image);
         image.close();
@@ -300,7 +300,7 @@ public class CameraUtil {
         long now = System.currentTimeMillis();
         int w = image.getWidth();
         int h = image.getHeight();
-        Log.e(TAG, "dataEnqueue: 图片宽高" + w + h);
+//        Log.e(TAG, "dataEnqueue: 图片宽高" + w + h);
         byte[] yBuffer = new byte[w * h];
         byte[] uvBuffer = new byte[w * h / 2];
         byte[] dataBuffer = new byte[w * h * 3 / 2];

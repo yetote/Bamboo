@@ -2,6 +2,8 @@ package com.example.bamboo.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,12 +20,7 @@ import android.widget.Toast;
 import com.example.bamboo.R;
 import com.example.bamboo.RecodeVideoActivity;
 import com.example.bamboo.model.TimeInfoBean;
-import com.example.bamboo.myinterface.ffmpeg.OnCompleteListener;
 import com.example.bamboo.myinterface.ffmpeg.OnPauseListener;
-import com.example.bamboo.myinterface.ffmpeg.OnPreparedListener;
-import com.example.bamboo.myinterface.ffmpeg.OnStartListener;
-import com.example.bamboo.myinterface.ffmpeg.OnStopListener;
-import com.example.bamboo.myinterface.ffmpeg.OnTimeInfoListener;
 import com.example.bamboo.myview.PlayerView;
 import com.example.bamboo.opengl.utils.TextRecourseReader;
 import com.example.bamboo.util.TimeUtil;
@@ -36,9 +33,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
  * @author yetote QQ:503779938
@@ -51,20 +45,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * @class describe
  */
 public class HomePageFragment extends Fragment {
-    SurfaceView surfaceView;
-    SurfaceHolder surfaceHolder;
-    Button startBtn;
-    PlayerView playerView;
+    private SurfaceView surfaceView;
+    private SurfaceHolder surfaceHolder;
+    private Button startBtn;
+    private PlayerView playerView;
     private static final String TAG = "HomePageFragment";
     private boolean isPlaying = false;
     private String path;
-    int w;
-    int h;
-    private String outPath;
+    private int w;
+    private int h;
     private FloatingActionButton recodeBtn;
-    private String networkSource;
-    public static final int MSG_AV_TIME_INFO_WHAT = 1;
-    private boolean isSetTime = false;
+    private static final int MSG_AV_TIME_INFO_WHAT = 1;
     private TextView currentTime, totalTime;
     private SeekBar seekBar;
     private int playPosition;
@@ -148,6 +139,8 @@ public class HomePageFragment extends Fragment {
                             isCut = false;
                             break;
                         }
+                    default:
+                        break;
                 }
                 return true;
             }
@@ -158,13 +151,11 @@ public class HomePageFragment extends Fragment {
     }
 
     private void onCall() {
-       playerView.setPreparedListener(new OnPreparedListener() {
-           @Override
-           public void onPrepared() {
-               playerView.start();
-               isPlaying = true;
-           }
-       });
+        playerView.setPreparedListener(() -> {
+            Log.e(TAG, "onPrepared: 准备好了，开始播放");
+            playerView.start();
+            isPlaying = true;
+        });
 
         playerView.setLoadListener(isLoad -> Log.e(TAG, "onLoad: 加载中,请稍等"));
         playerView.setPauseListener(new OnPauseListener() {
@@ -177,38 +168,16 @@ public class HomePageFragment extends Fragment {
                 }
             }
         });
-        playerView.setStartListener(new OnStartListener() {
-            @Override
-            public void onStart() {
-                Log.e(TAG, "onStart: 开始播放");
-            }
+        playerView.setStartListener(() -> Log.e(TAG, "onStart: 开始播放"));
+        playerView.setStopListener(() -> Log.e(TAG, "onStop: 停止播放"));
+        playerView.setTimeInfoListener(timeInfoBean -> {
+            Message msg = new Message();
+            msg.what = MSG_AV_TIME_INFO_WHAT;
+            msg.obj = timeInfoBean;
+            handler.sendMessage(msg);
         });
-        playerView.setStopListener(new OnStopListener() {
-            @Override
-            public void onStop() {
-                Log.e(TAG, "onStop: 停止播放");
-            }
-        });
-        playerView.setTimeInfoListener(new OnTimeInfoListener() {
-            @Override
-            public void onTimeInfo(TimeInfoBean timeInfoBean) {
-
-           Observable.create((ObservableOnSubscribe<TimeInfoBean>) emitter -> emitter.onNext(timeInfoBean))
-                        .subscribeOn(AndroidSchedulers.mainThread())
-                        .subscribe(bean -> {
-                            if (!isSetTime) {
-                                totalTime.setText(TimeUtil.caseTime(bean.getTotalTime()));
-                                seekBar.setMax(bean.getTotalTime());
-                            }
-                            currentTime.setText(TimeUtil.caseTime(bean.getCurrentTime()));
-                            seekBar.setProgress(bean.getCurrentTime());
-                        });
-            }
-        });
-        playerView.setCompleteListener(new OnCompleteListener() {
-            @Override
-            public void onComplete() {
-                Log.e(TAG, "onComplete: 播放完成回调" + playPosition);
+        playerView.setCompleteListener(() -> {
+            Log.e(TAG, "onComplete: 播放完成回调" + playPosition);
 //                if (playPosition < musicList.size() - 1) {
 //                    Toast.makeText(getActivity(), "准备播放下一首", Toast.LENGTH_SHORT).show();
 //                    playerView.playNext(musicList.get(playPosition++));
@@ -217,7 +186,6 @@ public class HomePageFragment extends Fragment {
 //                    playPosition = 0;
 //                    playerView.playNext(musicList.get(playPosition));
 //                }
-            }
         });
     }
 
@@ -266,8 +234,6 @@ public class HomePageFragment extends Fragment {
         surfaceView = v.findViewById(R.id.homePager_surfaceView);
         startBtn = v.findViewById(R.id.homePager_start_btn);
         path = getActivity().getExternalCacheDir().getPath() + "/res/891.mp4";
-        outPath = getActivity().getExternalCacheDir().getPath() + "/res/test.pcm";
-        networkSource = "http://dl.stream.qqmusic.qq.com/C400003Chs7Y0jd49n.m4a?guid=1122016361&vkey=CB2B81BC8AFAA8E062DBA6147CD8CA439F1823527B8B7F3B070329495568FDABB6D7E2A0A2451220181E9366148ADBD3560C312E52EFFC29&uin=0&fromtag=66";
         recodeBtn = v.findViewById(R.id.homePager_recode_video);
         currentTime = v.findViewById(R.id.homePager_currentTime_tv);
         totalTime = v.findViewById(R.id.homePager_totalTime_tv);
@@ -295,6 +261,26 @@ public class HomePageFragment extends Fragment {
         constraintReply.clone(getActivity(), R.layout.fragment_homepage);
     }
 
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            boolean isSetTime = false;
+            switch (msg.what) {
+                case MSG_AV_TIME_INFO_WHAT:
+                    TimeInfoBean bean = (TimeInfoBean) msg.obj;
+                    if (!isSetTime) {
+                        totalTime.setText(TimeUtil.caseTime(bean.getTotalTime()));
+                        seekBar.setMax(bean.getTotalTime());
+                    }
+                    currentTime.setText(TimeUtil.caseTime(bean.getCurrentTime()));
+                    seekBar.setProgress(bean.getCurrentTime());
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     public void onPause() {

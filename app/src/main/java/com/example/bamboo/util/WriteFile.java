@@ -41,7 +41,7 @@ public class WriteFile {
     }
 
     public boolean write(ByteBuffer byteBuffer) {
-        Log.e(TAG, "write: " + byteBuffer.limit());
+//        Log.e(TAG, "write: " + byteBuffer.limit());
         if (fileChannel == null) {
             Log.e(TAG, "write: 未打开channel");
             return false;
@@ -55,7 +55,7 @@ public class WriteFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "write: 文件写入成功");
+//        Log.e(TAG, "write: 文件写入成功");
         return true;
 
     }

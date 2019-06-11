@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                 i.setClass(MainActivity.this, PersonalImActivity.class);
                 startActivity(i);
             } else {
-//                startActivity(new Intent(MainActivity.this, RegisterActivity.class));
                 startActivityForResult(new Intent(MainActivity.this, PwdLoginActivity.class), LOGIN_CODE);
             }
         });
