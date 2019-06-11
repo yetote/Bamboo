@@ -1,10 +1,18 @@
 package com.example.bamboo.encode;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 
+import androidx.core.app.ActivityCompat;
+
+import com.example.bamboo.RecodeVideoActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -25,6 +33,7 @@ public class MutexUtil {
     private AudioRecordUtil audioRecordUtil;
     private static final String TAG = "MutexUtil";
 
+
     public MutexUtil(Context context, int width, int height, String videoPath, String audioPath) {
         this.context = context;
         cameraUtil = new CameraUtil(context, width, height, videoPath);
@@ -40,7 +49,7 @@ public class MutexUtil {
     }
 
     public void record(Surface surface, int orientation) {
-//        cameraUtil.startRecord(surface, orientation);
+        cameraUtil.startRecord(surface, orientation);
         audioRecordUtil.startRecord();
     }
 

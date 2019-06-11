@@ -2,6 +2,7 @@ package com.example.bamboo.util;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,8 +28,12 @@ public class WriteFile {
     private ByteBuffer byteBuffer;
 
     public WriteFile(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            file.getParentFile().mkdir();
+        }
         try {
-            outputStream = new FileOutputStream(path);
+            outputStream = new FileOutputStream(file);
             fileChannel = outputStream.getChannel();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

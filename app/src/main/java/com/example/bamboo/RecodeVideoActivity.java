@@ -66,7 +66,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private int frontCameraId = -1, backCameraId = -1;
     private int frontCameraOrientation, backCameraOrientation;
     private CameraCharacteristics frontCameraCharacteristics, backCameraCharacteristics;
-    public static final int PERMISSION_CAMERA_CODE = 1;
     private Handler backgroundHandler;
     private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
@@ -108,9 +107,18 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
             if (size != null) {
                 surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
             }
-            if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(RecodeVideoActivity.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_CAMERA_CODE);
+            boolean permissionCheckResult = true;
+            for (int i = 0; i < permissionArr.length; i++) {
+                if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
+                    permissionCheckResult = false;
+                    break;
+                }
+            }
+
+            if (!permissionCheckResult) {
+                ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
             } else {
+
                 mutexUtil.open(new Surface(surfaceTexture));
             }
         }
@@ -132,6 +140,11 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     };
     private MutexUtil mutexUtil;
     private String videoPath, audioPath;
+    private String[] permissionArr = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+    };
+    private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +203,17 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 //                }
                 break;
             case R.id.recode_video_recodeBtn:
+                boolean permissionCheckResult = true;
+                for (int i = 0; i < permissionArr.length; i++) {
+                    if (ActivityCompat.checkSelfPermission(this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
+                        permissionCheckResult = false;
+                        break;
+                    }
+                }
+
+                if (!permissionCheckResult) {
+                    ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
+                }
                 Size size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
                 if (size != null) {
                     surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
@@ -220,8 +244,9 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         switchVideo = findViewById(R.id.recode_video_switch_video);
         textureView.setSurfaceTextureListener(textureListener);
 
-        videoPath = getExternalCacheDir().getPath() + "/res/test.h264";
-        audioPath = getExternalCacheDir().getPath() + "/res/test.aac";
+
+        videoPath = getExternalFilesDir(null).getPath() + "/res/test.h264";
+        audioPath = getExternalFilesDir(null).getPath() + "/res/test.aac";
     }
 
 
@@ -229,13 +254,17 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case PERMISSION_CAMERA_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mutexUtil.open(new Surface(surfaceTexture));
-                } else {
-                    Toast.makeText(this, "您拒绝了相机权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
+            case PERMISSION_CAMERA_AND_RECORD_CODE:
+                for (int i = 0; i < grantResults.length; i++) {
+                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, "您拒绝了权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
+                        break;
+                    }
                 }
-                break;
+                RecodeVideoActivity.this.getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | SYSTEM_UI_FLAG_FULLSCREEN
+                        | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+                mutexUtil.open(new Surface(surfaceTexture));
             default:
                 break;
         }
