@@ -28,13 +28,13 @@ public class MutexUtil {
     private AudioRecordUtil audioRecordUtil;
     private static final String TAG = "MutexUtil";
 
-    public MutexUtil(Context context, int width, int height) {
+    public MutexUtil(Context context, int width, int height, String path) {
         this.context = context;
         audioQueue = new LinkedBlockingQueue<>();
         videoQueue = new LinkedBlockingQueue<>();
         audioEncode = new AudioEncode(48000, 2);
-        videoEncode = new VideoEncode(640, 1280);
-        cameraUtil = new CameraUtil(context, width, height);
+//        videoEncode = new VideoEncode(640, 1280);
+        cameraUtil = new CameraUtil(context, width, height, path);
         isCamera = cameraUtil.initCamera();
         audioRecordUtil = new AudioRecordUtil(48000, 2);
     }
@@ -46,9 +46,9 @@ public class MutexUtil {
         }
     }
 
-    public void record(Surface surface) {
-        cameraUtil.startRecord(surface);
-
+    public void record(Surface surface,int orientation) {
+        cameraUtil.startRecord(surface,orientation);
+        audioRecordUtil.startRecord();
     }
 
 

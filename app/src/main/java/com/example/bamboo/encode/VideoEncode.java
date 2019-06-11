@@ -3,8 +3,14 @@ package com.example.bamboo.encode;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.util.Log;
+
+import com.example.bamboo.util.WriteFile;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import static android.media.MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_VBR;
 
@@ -22,10 +28,19 @@ public class VideoEncode {
     private int width, height;
     private MediaFormat mediaFormat;
     private MediaCodec mediaCodec;
+    private BlockingQueue<byte[]> videoQueue;
+    private Thread thread;
+    private boolean isRecording;
+    private static final String TAG = "VideoEncode";
+    private byte[] videoData;
+    private MediaCodec.BufferInfo bufferInfo;
+    private byte[] pps;
+    private WriteFile writeFile;
 
-    public VideoEncode(int width, int height) {
+    public VideoEncode(int width, int height, String path) {
         this.width = width;
         this.height = height;
+        writeFile = new WriteFile(path);
         mediaFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, width, height);
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, width * height * 30 * 3);
         mediaFormat.setInteger(MediaFormat.KEY_BITRATE_MODE, BITRATE_MODE_VBR);
@@ -38,9 +53,86 @@ public class VideoEncode {
             e.printStackTrace();
         }
         mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+        videoQueue = new LinkedBlockingQueue<>();
+        bufferInfo = new MediaCodec.BufferInfo();
+        thread = new Thread(() -> {
+            int flag = 0;
+            while (isRecording) {
+                int inputIndex = mediaCodec.dequeueInputBuffer(-1);
+                if (inputIndex < 0) {
+                    continue;
+                }
+                ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inputIndex);
+                if (inputBuffer == null) {
+                    continue;
+                }
+                inputBuffer.clear();
+                try {
+                    videoData = videoQueue.take();
+                    if (!isRecording && videoQueue.isEmpty()) {
+                        Log.e(TAG, "run: 最后一帧");
+                        flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
+                    }
+                    Log.e(TAG, "run: videoSize=" + videoData.length);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                inputBuffer.put(videoData);
+                mediaCodec.queueInputBuffer(inputIndex, 0, videoData.length, System.currentTimeMillis(), flag);
+                int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+                if (outputIndex < 0) {
+                    continue;
+                }
+                while (outputIndex >= 0) {
+                    ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputIndex);
+                    if (outputBuffer == null) {
+                        Log.e(TAG, "encode: 未找到编码后容器");
+                        break;
+                    }
+                    if (pps == null) {
+                        if (bufferInfo.flags == 2) {
+                            Log.e(TAG, "run: 第一帧");
+                            pps = new byte[bufferInfo.size];
+                            Log.e(TAG, "run:第一帧长度 " + outputBuffer.limit());
+                            Log.e(TAG, "run:第一帧flag " + bufferInfo.flags);
+                            Log.e(TAG, "run: ptsSize" + pps.length);
+                            outputBuffer.get(pps);
+                        }
+                    }
+                    if (bufferInfo.flags == 1) {
+                        Log.e(TAG, "run: 关键帧");
+                        writeFile.write(pps);
+                    } else {
+                        outputBuffer.position(bufferInfo.offset);
+                        outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
+                    }
+                    Log.e(TAG, "VideoEncode: size=" + bufferInfo.size);
+                    writeFile.write(outputBuffer);
+                    mediaCodec.releaseOutputBuffer(outputIndex, false);
+                    outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 0);
+                }
+            }
+        });
     }
 
     public MediaFormat getMediaFormat() {
         return mediaFormat;
+    }
+
+    public void pushData(byte[] yuvData) {
+        try {
+            videoQueue.put(yuvData);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startEncode() {
+        mediaCodec.start();
+        thread.start();
+    }
+
+    public void setRecording(boolean recording) {
+        isRecording = recording;
     }
 }

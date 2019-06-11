@@ -131,6 +131,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         }
     };
     private MutexUtil mutexUtil;
+    private String path;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,10 +153,10 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
         initView();
 //        switchCamera.setVisibility(View.GONE);
-//        onClick();
+        onClick();
 //        cameraUtil = new CameraUtil(this, point.x, point.y);
 //        isOpenCamera = cameraUtil.initCamera();
-        mutexUtil = new MutexUtil(this, point.x, point.y);
+        mutexUtil = new MutexUtil(this, point.x, point.y, path);
     }
 
     private void onClick() {
@@ -189,7 +190,11 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 //                }
                 break;
             case R.id.recode_video_recodeBtn:
-//                takePhoto();
+                Size size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+                if (size != null) {
+                    surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+                }
+                mutexUtil.record(new Surface(surfaceTexture),getWindowManager().getDefaultDisplay().getRotation());
                 break;
             case R.id.recode_video_switch_camera:
 //                isCamera = true;
@@ -204,102 +209,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    /**
-     * 准备拍照
-     */
-    private void takePhoto() {
-        //对焦
-        previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
-        //修改状态
-//        previewState = STATE_WAITING_LOCK;
-
-        CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
-            @Override
-            public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
-                super.onCaptureProgressed(session, request, partialResult);
-            }
-
-            @Override
-            public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                super.onCaptureCompleted(session, request, result);
-//等待对焦
-                final Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
-                if (afState == null) {
-                    Toast.makeText(RecodeVideoActivity.this, "对焦失败", Toast.LENGTH_SHORT).show();
-                    captureStillPicture();
-                } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_INACTIVE == afState || CaptureResult.CONTROL_AF_STATE_PASSIVE_SCAN == afState) {
-                    Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
-                    if (aeState == null ||
-                            aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-                        //对焦完成，开始拍照
-                        captureStillPicture();
-                    }
-                } else {
-//                    runPreCaptureSequence();
-                }
-            }
-        };
-
-        //发送对焦请求
-        try {
-            captureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 拍照
-     */
-    private void captureStillPicture() {
-        Log.e(TAG, "captureStillPicture: " + "拍照");
-        if (cameraDevice == null) {
-            Log.e(TAG, "captureStillPicture: " + "device 为空");
-            return;
-        }
-        //构建用来拍照的CaptureRequest
-        try {
-            final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-            captureBuilder.addTarget(imageReader.getSurface());
-            //使用相同的AR和AF模式作为预览
-            captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            // 获取手机方向
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            //设置方向
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            //创建会话
-            CameraCaptureSession.CaptureCallback captureCallback = new CameraCaptureSession.CaptureCallback() {
-                @Override
-                public void onCaptureCompleted(@NonNull CameraCaptureSession session,
-                                               @NonNull CaptureRequest request,
-                                               @NonNull TotalCaptureResult result) {
-                    Log.d(TAG, "onCaptureCompleted: ");
-                }
-            };
-            //停止连续取景
-            captureSession.stopRepeating();
-            //捕获照片
-            captureSession.capture(captureBuilder.build(), captureCallback, null);
-            //重置自动对焦
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
-            captureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
-            //相机恢复正常的预览状态
-//            previewState = STATE_PREVIEW;
-            //打开连续取景模式
-            captureSession.setRepeatingRequest(previewRequestBuilder.build(), captureCallback, backgroundHandler);
-
-
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 录制视频
-     */
-    private void recodeVideo() {
-
-    }
 
     private void initView() {
         backgroundHandler = new Handler(getMainLooper());
@@ -310,151 +219,10 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         switchCamera = findViewById(R.id.recode_video_switch_camera);
         switchVideo = findViewById(R.id.recode_video_switch_video);
         textureView.setSurfaceTextureListener(textureListener);
+
+        path = getExternalCacheDir().getPath() + "/res/test.h264";
     }
 
-    private void getCameraInfo() {
-
-        //获取相机服务
-        cameraManager = (CameraManager) getSystemService(CAMERA_SERVICE);
-        ids = new String[]{};
-        try {
-            //获取相机列表
-            if (cameraManager != null) {
-                ids = cameraManager.getCameraIdList();
-                int cameraNum = ids.length;
-                for (int i = 0; i < ids.length; i++) {
-                    //获取相机参数
-                    CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(ids[i]);
-                    int orientation = characteristics.get(CameraCharacteristics.LENS_FACING);
-                    if (orientation == CameraCharacteristics.LENS_FACING_FRONT) {
-                        //前置摄像头id
-                        frontCameraId = i;
-                        //拍照方向
-                        frontCameraOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                        frontCameraCharacteristics = characteristics;
-                    } else {
-                        backCameraId = i;
-                        backCameraOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-//                        backCameraCharacteristics = characteristics;
-                    }
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                        Set s = characteristics.getPhysicalCameraIds();
-                        Log.e(TAG, "openCamera: " + s.toString());
-                    }
-                    final int supportLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-                    switch (supportLevel) {
-                        case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY:
-                            Toast.makeText(this, "支持级别为:不支持", Toast.LENGTH_SHORT).show();
-                            break;
-                        case CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED:
-                            Toast.makeText(this, "支持级别为:简单支持", Toast.LENGTH_SHORT).show();
-                            break;
-                        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL:
-                            Toast.makeText(this, "支持级别为:部分支持", Toast.LENGTH_SHORT).show();
-                            break;
-                        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL:
-                            Toast.makeText(this, "设备还支持传感器，闪光灯，镜头和后处理设置的每帧手动控制，以及高速率的图像捕获", Toast.LENGTH_SHORT).show();
-                            break;
-                        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3:
-                            Toast.makeText(this, "设备还支持YUV重新处理和RAW图像捕获，以及其他输出流配置", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(this, "未检测到相机信息", Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                    StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-                }
-            } else {
-                Toast.makeText(this, "未检查到相机列表，请检查是否开启相机权限", Toast.LENGTH_SHORT).show();
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * 打开相机预览
-     */
-    private void openPreview() {
-
-        if (cameraDevice != null) {
-            try {
-                previewRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                previewRequestBuilder.addTarget(surfaceHolder.getSurface());
-//                if (imageReader == null) {
-                cameraDevice.createCaptureSession(Arrays.asList(surfaceHolder.getSurface(), imageReader.getSurface()), new CameraCaptureSession.StateCallback() {
-                    @Override
-                    public void onConfigured(@NonNull CameraCaptureSession session) {
-                        captureSession = session;
-                        Toast.makeText(RecodeVideoActivity.this, "摄像头完成配置，可以处理Capture请求了。", Toast.LENGTH_SHORT).show();
-//                            captureRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,);
-                        CaptureRequest captureRequest = previewRequestBuilder.build();
-                        try {
-                            captureSession.setRepeatingRequest(captureRequest, null, backgroundHandler);
-                        } catch (CameraAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                        Toast.makeText(RecodeVideoActivity.this, "摄像头配置失败", Toast.LENGTH_SHORT).show();
-                    }
-                }, null);
-            } catch (CameraAccessException e) {
-                e.printStackTrace();
-            }
-        } else {
-            Toast.makeText(this, "相机打开失败", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-
-    /**
-     * 开启相机
-     */
-    public void openCamera(int cameraId) {
-        if (cameraId != -1 && ids.length != 0) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            try {
-                cameraManager.openCamera(ids[cameraId], new CameraDevice.StateCallback() {
-                    @Override
-                    public void onOpened(@NonNull CameraDevice camera) {
-                        //开启完成回调
-                        cameraDevice = camera;
-                        Toast.makeText(RecodeVideoActivity.this, "相机打开成功", Toast.LENGTH_SHORT).show();
-                        openPreview();
-                    }
-
-                    @Override
-                    public void onDisconnected(@NonNull CameraDevice camera) {
-                        //与设备断开连接回调(不在使用)
-                        cameraDevice.close();
-                        Toast.makeText(RecodeVideoActivity.this, "相机不在使用", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(@NonNull CameraDevice camera, int error) {
-                        //打开失败回调
-                        cameraDevice.close();
-                        Toast.makeText(RecodeVideoActivity.this, "相机打开失败", Toast.LENGTH_SHORT).show();
-                    }
-                }, backgroundHandler);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void closeCamera() {
-        if (cameraDevice != null) {
-            cameraDevice.close();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -544,17 +312,4 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         });
         animatorSet1.start();
     }
-
-    private void adjustScreen(View sv) {
-        int height = sv.getHeight();
-        int width = sv.getWidth();
-        if (height > width) {
-            float justH = width * 4.f / 3;
-            surfaceView.setScaleX(height / justH);
-        } else {
-            float justW = height * 4.f / 3;
-            surfaceView.setScaleY(width / justW);
-        }
-    }
-
 }

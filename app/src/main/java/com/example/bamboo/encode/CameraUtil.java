@@ -11,11 +11,13 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseIntArray;
 import android.view.Surface;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ import java.util.Arrays;
  * @class describe
  */
 public class CameraUtil {
+    private VideoEncode videoEncode;
     private CameraManager cameraManager;
     private CameraDevice cameraDevice;
     private CameraCharacteristics frontCameraCharacteristics, backCameraCharacteristics;
@@ -43,7 +46,7 @@ public class CameraUtil {
     private CaptureRequest.Builder previewCaptureBuilder, recordCaptureBuilder;
     private Context context;
     private int width, height;
-    private int recordWidth, recordHeight;
+    private int recordWidth = 1280, recordHeight = 640;
     private ImageReader imageReader;
     private static final String TAG = "CameraUtil";
     public static final int CAMERA_TYPE_FRONT = 1;
@@ -51,14 +54,23 @@ public class CameraUtil {
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
     private CameraCaptureSession captureSession;
-    private ImageReader.OnImageAvailableListener imageAvailableListener = new ImageReader.OnImageAvailableListener() {
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-            Log.e(TAG, "onImageAvailable: 接受图片");
-        }
+    private ImageReader.OnImageAvailableListener imageAvailableListener = reader -> {
+        Log.e(TAG, "onImageAvailable: 接受图片");
+        Image image = reader.acquireNextImage();
+        changeNv21(image);
+        image.close();
     };
 
-    public CameraUtil(Context context, int width, int height) {
+    private static final SparseIntArray ORIENTATION = new SparseIntArray();
+
+    static {
+        ORIENTATION.append(Surface.ROTATION_0, 90);
+        ORIENTATION.append(Surface.ROTATION_90, 0);
+        ORIENTATION.append(Surface.ROTATION_180, 270);
+        ORIENTATION.append(Surface.ROTATION_270, 180);
+    }
+
+    public CameraUtil(Context context, int width, int height,String path) {
         this.context = context;
         this.width = width;
         this.height = height;
@@ -66,6 +78,8 @@ public class CameraUtil {
         backgroundThread.start();
         backgroundHandler = new android.os.Handler(backgroundThread.getLooper());
         imageReader = ImageReader.newInstance(recordWidth, recordHeight, ImageFormat.YUV_420_888, 1);
+        imageReader.setOnImageAvailableListener(imageAvailableListener, backgroundHandler);
+        videoEncode = new VideoEncode(recordWidth, recordHeight,path);
     }
 
     public boolean initCamera() {
@@ -171,7 +185,9 @@ public class CameraUtil {
 
     }
 
-    public void startRecord(Surface surface) {
+    public void startRecord(Surface surface,int orientation) {
+        videoEncode.setRecording(true);
+        videoEncode.startEncode();
         if (captureSession != null) {
             captureSession.close();
         }
@@ -179,7 +195,23 @@ public class CameraUtil {
             recordCaptureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
             recordCaptureBuilder.addTarget(imageReader.getSurface());
             recordCaptureBuilder.addTarget(surface);
-            captureSession.setRepeatingRequest(recordCaptureBuilder.build(), null, backgroundHandler);
+            recordCaptureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATION.get(orientation));
+            cameraDevice.createCaptureSession(Arrays.asList(imageReader.getSurface(), surface), new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(@NonNull CameraCaptureSession session) {
+                    captureSession = session;
+                    try {
+                        captureSession.setRepeatingRequest(recordCaptureBuilder.build(), null, backgroundHandler);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+
+                }
+            }, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -256,6 +288,21 @@ public class CameraUtil {
 
     }
 
-
+    private void changeNv21(Image image) {
+        long now = System.currentTimeMillis();
+        int w = image.getWidth();
+        int h = image.getHeight();
+        Log.e(TAG, "dataEnqueue: 图片宽高" + w + h);
+        byte[] yBuffer = new byte[w * h];
+        byte[] uvBuffer = new byte[w * h / 2];
+        byte[] dataBuffer = new byte[w * h * 3 / 2];
+        image.getPlanes()[0].getBuffer().get(yBuffer);
+        image.getPlanes()[1].getBuffer().get(uvBuffer, 0, w * h / 2 - 1);
+        uvBuffer[w * h / 2 - 1] = image.getPlanes()[2].getBuffer().get(w * h / 2 - 2);
+        System.arraycopy(yBuffer, 0, dataBuffer, 0, yBuffer.length);
+        System.arraycopy(uvBuffer, 0, dataBuffer, yBuffer.length, uvBuffer.length);
+        videoEncode.pushData(dataBuffer);
+        Log.e(TAG, "dataEnqueue: 耗时" + (System.currentTimeMillis() - now));
+    }
 }
 
