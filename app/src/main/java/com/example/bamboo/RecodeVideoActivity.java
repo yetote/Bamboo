@@ -81,6 +81,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private TextureView textureView;
     ///为了使照片竖直显示
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    private boolean isRecording;
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -99,11 +100,12 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private CameraUtil cameraUtil;
     private boolean isOpenCamera;
     private SurfaceTexture surfaceTexture;
+    private Surface surface;
     private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             surfaceTexture = surface;
-            Size size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+            size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
             if (size != null) {
                 surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
             }
@@ -145,6 +147,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
             Manifest.permission.RECORD_AUDIO
     };
     private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
+    private Size size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,22 +206,30 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 //                }
                 break;
             case R.id.recode_video_recodeBtn:
-                boolean permissionCheckResult = true;
-                for (int i = 0; i < permissionArr.length; i++) {
-                    if (ActivityCompat.checkSelfPermission(this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
-                        permissionCheckResult = false;
-                        break;
+                if (!isRecording) {
+                    boolean permissionCheckResult = true;
+                    for (int i = 0; i < permissionArr.length; i++) {
+                        if (ActivityCompat.checkSelfPermission(this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
+                            permissionCheckResult = false;
+                            break;
+                        }
                     }
-                }
 
-                if (!permissionCheckResult) {
-                    ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
-                }
-                Size size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
-                if (size != null) {
+                    if (!permissionCheckResult) {
+                        ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
+                    }
+                    if (size == null) {
+                        size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+                    }
                     surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+                    mutexUtil.record(new Surface(surfaceTexture), getWindowManager().getDefaultDisplay().getRotation());
+                } else {
+                    if (size == null) {
+                        size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+                    }
+                    surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
+                    mutexUtil.stop(new Surface(surfaceTexture));
                 }
-                mutexUtil.record(new Surface(surfaceTexture), getWindowManager().getDefaultDisplay().getRotation());
                 break;
             case R.id.recode_video_switch_camera:
 //                isCamera = true;

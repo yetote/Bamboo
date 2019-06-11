@@ -32,7 +32,7 @@ public class MutexUtil {
     private boolean isCamera;
     private AudioRecordUtil audioRecordUtil;
     private static final String TAG = "MutexUtil";
-
+    private Surface previewSurface;
 
     public MutexUtil(Context context, int width, int height, String videoPath, String audioPath) {
         this.context = context;
@@ -42,17 +42,22 @@ public class MutexUtil {
     }
 
     public void open(Surface surface) {
+        this.previewSurface = surface;
         if (isCamera) {
             Log.e(TAG, "open: ");
-            cameraUtil.openCamera(surface);
+            cameraUtil.openCamera(previewSurface);
         }
     }
 
     public void record(Surface surface, int orientation) {
-        cameraUtil.startRecord(surface, orientation);
+        cameraUtil.startRecord(previewSurface, orientation);
         audioRecordUtil.startRecord();
     }
 
+
+    public void stop(Surface surface) {
+        cameraUtil.stop(previewSurface);
+    }
 
     public Size getCameraBestSize(int cameraType) {
         if (isCamera) {

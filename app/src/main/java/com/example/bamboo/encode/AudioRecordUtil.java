@@ -67,4 +67,8 @@ public class AudioRecordUtil {
         audioEncode.startEncode();
     }
 
+    public void stop() {
+        audioEncode.setRecording(false);
+        audioRecord.stop();
+    }
 }

@@ -70,7 +70,7 @@ public class CameraUtil {
         ORIENTATION.append(Surface.ROTATION_270, 180);
     }
 
-    public CameraUtil(Context context, int width, int height,String path) {
+    public CameraUtil(Context context, int width, int height, String path) {
         this.context = context;
         this.width = width;
         this.height = height;
@@ -79,7 +79,7 @@ public class CameraUtil {
         backgroundHandler = new android.os.Handler(backgroundThread.getLooper());
         imageReader = ImageReader.newInstance(recordWidth, recordHeight, ImageFormat.YUV_420_888, 1);
         imageReader.setOnImageAvailableListener(imageAvailableListener, backgroundHandler);
-        videoEncode = new VideoEncode(recordWidth, recordHeight,path);
+        videoEncode = new VideoEncode(recordWidth, recordHeight, path);
     }
 
     public boolean initCamera() {
@@ -185,7 +185,7 @@ public class CameraUtil {
 
     }
 
-    public void startRecord(Surface surface,int orientation) {
+    public void startRecord(Surface surface, int orientation) {
         videoEncode.setRecording(true);
         videoEncode.startEncode();
         if (captureSession != null) {
@@ -215,6 +215,14 @@ public class CameraUtil {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void stop(Surface surface) {
+        videoEncode.setRecording(false);
+        if (captureSession != null) {
+            captureSession.close();
+        }
+        openPreview(surface);
     }
 
     public Size getPreviewSize(int cameraType) {
