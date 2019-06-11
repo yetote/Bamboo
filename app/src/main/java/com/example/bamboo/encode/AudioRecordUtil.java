@@ -4,6 +4,9 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.example.bamboo.util.WriteFile;
 
 /**
  * @author yetote QQ:503779938
@@ -23,8 +26,9 @@ public class AudioRecordUtil {
     private static final String TAG = "AudioRecordUtil";
     private boolean isRecording;
     private Thread thread;
+    private AudioEncode audioEncode;
 
-    public AudioRecordUtil(int sampleRate, int channelCount) {
+    public AudioRecordUtil(int sampleRate, int channelCount, String path) {
         switch (channelCount) {
             case 1:
                 channelLayout = AudioFormat.CHANNEL_IN_MONO;
@@ -40,19 +44,27 @@ public class AudioRecordUtil {
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, AudioRecord.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT) * 2);
         }
         audioData = new byte[sampleRate * channelCount];
+        audioEncode = new AudioEncode(sampleRate, channelCount, path);
         thread = new Thread(() -> {
             while (isRecording) {
                 int rst = audioRecord.read(audioData, 0, audioData.length);
-                Log.e(TAG, "run: 录制了" + rst + "个字节");
+                audioEncode.pushData(audioData);
             }
         });
     }
 
     public void startRecord() {
+        if (audioRecord.getState() == AudioRecord.STATE_UNINITIALIZED) {
+//            Toast.makeText(c, "audioRecord未初始化成功", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "startRecord: audioRecord未初始化成功");
+            return;
+        }
         isRecording = true;
         Log.e(TAG, "startRecord: 开始录制");
         audioRecord.startRecording();
         thread.start();
+        audioEncode.setRecording(true);
+        audioEncode.startEncode();
     }
 
 }

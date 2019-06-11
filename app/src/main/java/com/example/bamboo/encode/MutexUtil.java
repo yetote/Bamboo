@@ -19,24 +19,17 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @class describe
  */
 public class MutexUtil {
-    private BlockingQueue<byte[]> audioQueue, videoQueue;
-    private AudioEncode audioEncode;
-    private VideoEncode videoEncode;
     private CameraUtil cameraUtil;
     private Context context;
     private boolean isCamera;
     private AudioRecordUtil audioRecordUtil;
     private static final String TAG = "MutexUtil";
 
-    public MutexUtil(Context context, int width, int height, String path) {
+    public MutexUtil(Context context, int width, int height, String videoPath, String audioPath) {
         this.context = context;
-        audioQueue = new LinkedBlockingQueue<>();
-        videoQueue = new LinkedBlockingQueue<>();
-        audioEncode = new AudioEncode(48000, 2);
-//        videoEncode = new VideoEncode(640, 1280);
-        cameraUtil = new CameraUtil(context, width, height, path);
+        cameraUtil = new CameraUtil(context, width, height, videoPath);
         isCamera = cameraUtil.initCamera();
-        audioRecordUtil = new AudioRecordUtil(48000, 2);
+        audioRecordUtil = new AudioRecordUtil(48000, 2, audioPath);
     }
 
     public void open(Surface surface) {
@@ -46,8 +39,8 @@ public class MutexUtil {
         }
     }
 
-    public void record(Surface surface,int orientation) {
-        cameraUtil.startRecord(surface,orientation);
+    public void record(Surface surface, int orientation) {
+//        cameraUtil.startRecord(surface, orientation);
         audioRecordUtil.startRecord();
     }
 

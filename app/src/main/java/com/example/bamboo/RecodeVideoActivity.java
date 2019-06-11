@@ -131,7 +131,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         }
     };
     private MutexUtil mutexUtil;
-    private String path;
+    private String videoPath, audioPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +156,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         onClick();
 //        cameraUtil = new CameraUtil(this, point.x, point.y);
 //        isOpenCamera = cameraUtil.initCamera();
-        mutexUtil = new MutexUtil(this, point.x, point.y, path);
+        mutexUtil = new MutexUtil(this, point.x, point.y, videoPath, audioPath);
     }
 
     private void onClick() {
@@ -194,7 +194,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 if (size != null) {
                     surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
                 }
-                mutexUtil.record(new Surface(surfaceTexture),getWindowManager().getDefaultDisplay().getRotation());
+                mutexUtil.record(new Surface(surfaceTexture), getWindowManager().getDefaultDisplay().getRotation());
                 break;
             case R.id.recode_video_switch_camera:
 //                isCamera = true;
@@ -220,7 +220,8 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         switchVideo = findViewById(R.id.recode_video_switch_video);
         textureView.setSurfaceTextureListener(textureListener);
 
-        path = getExternalCacheDir().getPath() + "/res/test.h264";
+        videoPath = getExternalCacheDir().getPath() + "/res/test.h264";
+        audioPath = getExternalCacheDir().getPath() + "/res/test.aac";
     }
 
 
