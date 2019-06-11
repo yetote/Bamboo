@@ -41,7 +41,7 @@ public class AudioEncode {
         mediaFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, sampleRate, channelCount);
         mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, sampleRate * channelCount);
         mediaFormat.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectLC);
-        mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 512*1024);
+        mediaFormat.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 512 * 1024);
         try {
             mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_AAC);
             mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
@@ -106,7 +106,6 @@ public class AudioEncode {
     public void setRecording(boolean recording) {
         isRecording = recording;
     }
-
 
     private static void addADTStoPacket(byte[] packet, int packetLen) {
         // AAC LC
