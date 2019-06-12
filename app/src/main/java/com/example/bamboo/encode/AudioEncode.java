@@ -4,6 +4,7 @@ import android.media.AudioFormat;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
+import android.util.Log;
 
 import com.example.bamboo.util.WriteFile;
 
@@ -32,6 +33,8 @@ public class AudioEncode {
     private Thread thread;
     private boolean isRecording;
     private MediaCodec.BufferInfo bufferInfo;
+    private long startPts;
+    private static final String TAG = "AudioEncode";
 
     public AudioEncode(int sampleRate, int channelCount, String path) {
         this.sampleRate = sampleRate;
@@ -49,8 +52,53 @@ public class AudioEncode {
             e.printStackTrace();
         }
         bufferInfo = new MediaCodec.BufferInfo();
-        thread = new Thread(() -> {
-            while (isRecording) {
+//        thread = new Thread(() -> {
+//            while (isRecording) {
+//                int flag = 0;
+//                int inputIndex = mediaCodec.dequeueInputBuffer(-1);
+//                if (inputIndex < 0) {
+//                    continue;
+//                }
+//                ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inputIndex);
+//                if (inputBuffer == null) {
+//                    continue;
+//                }
+//                inputBuffer.clear();
+//                try {
+//                    audioData = audioQueue.take();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                inputBuffer.put(audioData);
+//                if (!isRecording && audioQueue.isEmpty()) {
+//                    flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
+//                }
+//                mediaCodec.queueInputBuffer(inputIndex, 0, sampleRate * channelCount, 0, flag);
+//                int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+//                while (outputIndex >= 0) {
+//                    ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputIndex);
+//                    if (outputBuffer != null) {
+//                        outputBuffer.position(bufferInfo.offset);
+//                        outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
+//                        byte[] audioData = new byte[bufferInfo.size + 7];
+//                        outputBuffer.get(audioData, 7, bufferInfo.size);
+//                        addADTStoPacket(audioData, bufferInfo.size + 7);
+//                        writeFile.write(audioData);
+//                    }
+//                    mediaCodec.releaseOutputBuffer(outputIndex, false);
+//                    outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+//                }
+//            }
+//        });
+    }
+
+    public void startEncode(MutexUtil mutexUtil) {
+        mediaCodec.start();
+        startPts = System.nanoTime();
+        new Thread(() -> {
+            int endFlag = 0;
+            while (endFlag != MediaCodec.BUFFER_FLAG_END_OF_STREAM) {
+                int flag = 0;
                 int inputIndex = mediaCodec.dequeueInputBuffer(-1);
                 if (inputIndex < 0) {
                     continue;
@@ -66,28 +114,41 @@ public class AudioEncode {
                     e.printStackTrace();
                 }
                 inputBuffer.put(audioData);
-                mediaCodec.queueInputBuffer(inputIndex, 0, sampleRate * channelCount, 0, 0);
+                Log.e(TAG, "audioStartEncode:结束标志 " + isRecording + audioQueue.isEmpty());
+                if (!isRecording && audioQueue.isEmpty()) {
+                    flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
+                    Log.e(TAG, "startEncode: 音频最后一帧");
+                }
+                mediaCodec.queueInputBuffer(inputIndex, 0, sampleRate * channelCount, (System.nanoTime() - startPts) / 1000, flag);
                 int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
-                while (outputIndex >= 0) {
-                    ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputIndex);
-                    if (outputBuffer != null) {
-                        outputBuffer.position(bufferInfo.offset);
-                        outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
-                        byte[] audioData = new byte[bufferInfo.size + 7];
-                        outputBuffer.get(audioData, 7, bufferInfo.size);
-                        addADTStoPacket(audioData, bufferInfo.size + 7);
-                        writeFile.write(audioData);
+//                Log.e(TAG, "startEncode: outputindex" + outputIndex);
+                if (outputIndex == -2) {
+                    mutexUtil.addFormat(mediaCodec.getOutputFormat(), true);
+                }
+                if (mutexUtil.getState()) {
+                    while (outputIndex >= 0) {
+                        ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputIndex);
+                        if (outputBuffer != null) {
+                            outputBuffer.position(bufferInfo.offset);
+                            outputBuffer.limit(bufferInfo.offset + bufferInfo.size);
+//                        byte[] audioData = new byte[bufferInfo.size + 7];
+//                        outputBuffer.get(audioData, 7, bufferInfo.size);
+//                        addADTStoPacket(audioData, bufferInfo.size + 7);
+//                        writeFile.write(audioData);
+                            mutexUtil.pushData(outputBuffer, true, bufferInfo);
+                        }
+//                    Log.e(TAG, "startEncode: outputindex" + outputIndex);
+                        mediaCodec.releaseOutputBuffer(outputIndex, false);
+                        outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+                        endFlag = bufferInfo.flags;
+                        Log.e(TAG, "startEncode: 音频endflag" + endFlag);
                     }
-                    mediaCodec.releaseOutputBuffer(outputIndex, false);
-                    outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
                 }
             }
-        });
-    }
+            Log.e(TAG, "startEncode: 音频结束录制");
+            mutexUtil.stop(true);
 
-    public void startEncode() {
-        mediaCodec.start();
-        thread.start();
+        }).start();
     }
 
 
@@ -104,7 +165,7 @@ public class AudioEncode {
     }
 
     public void setRecording(boolean recording) {
-        isRecording = recording;
+        this.isRecording = recording;
     }
 
     private static void addADTStoPacket(byte[] packet, int packetLen) {

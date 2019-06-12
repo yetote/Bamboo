@@ -1,50 +1,29 @@
 package com.example.bamboo;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.Display;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.bamboo.encode.MutexUtil;
-import com.example.bamboo.myview.RecodeButton;
-import com.example.bamboo.encode.CameraUtil;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
-import java.util.Arrays;
-import java.util.Set;
+import com.example.bamboo.encode.CameraUtil;
+import com.example.bamboo.encode.RecordUtil;
+import com.example.bamboo.myview.RecodeButton;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -69,6 +48,14 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private boolean isRecording;
 
     private SurfaceTexture surfaceTexture;
+    private RecordUtil recordUtil;
+    private String videoPath, audioPath, path;
+    private String[] permissionArr = new String[]{
+            Manifest.permission.CAMERA,
+            Manifest.permission.RECORD_AUDIO
+    };
+    private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
+    private Size size;
     private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -86,7 +73,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
             } else {
 
-                mutexUtil.open(new Surface(surfaceTexture));
+                recordUtil.open(new Surface(surfaceTexture));
             }
         }
 
@@ -105,14 +92,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
         }
     };
-    private MutexUtil mutexUtil;
-    private String videoPath, audioPath;
-    private String[] permissionArr = new String[]{
-            Manifest.permission.CAMERA,
-            Manifest.permission.RECORD_AUDIO
-    };
-    private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
-    private Size size;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,9 +114,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         initView();
 //        switchCamera.setVisibility(View.GONE);
         onClick();
-//        cameraUtil = new CameraUtil(this, point.x, point.y);
-//        isOpenCamera = cameraUtil.initCamera();
-        mutexUtil = new MutexUtil(this, 1080, 1812, videoPath, audioPath);
+        recordUtil = new RecordUtil(this, point.x, point.y, videoPath, audioPath, path);
     }
 
     private void onClick() {
@@ -186,12 +163,12 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                         ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
                     }
                     changeTextureSize();
-                    mutexUtil.record(getWindowManager().getDefaultDisplay().getRotation());
+                    recordUtil.record(getWindowManager().getDefaultDisplay().getRotation());
                 } else {
                     Toast.makeText(this, "录制结束", Toast.LENGTH_SHORT).show();
                     isRecording = false;
                     changeTextureSize();
-                    mutexUtil.stop();
+                    recordUtil.stop();
                 }
                 break;
             case R.id.recode_video_switch_camera:
@@ -218,11 +195,12 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         textureView.setSurfaceTextureListener(textureListener);
         videoPath = getExternalFilesDir(null).getPath() + "/res/test.h264";
         audioPath = getExternalFilesDir(null).getPath() + "/res/test.aac";
+        path = getExternalFilesDir(null).getPath() + "/res/test.mp4";
     }
 
-    public void changeTextureSize() {
+    private void changeTextureSize() {
         if (size == null) {
-            size = mutexUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+            size = recordUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
         }
         surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
 
@@ -244,7 +222,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                         | SYSTEM_UI_FLAG_FULLSCREEN
                         | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
                 changeTextureSize();
-                mutexUtil.open(new Surface(surfaceTexture));
+                recordUtil.open(new Surface(surfaceTexture));
             default:
                 break;
         }

@@ -13,6 +13,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaFormat;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -185,9 +186,9 @@ public class CameraUtil {
 
     }
 
-    public void startRecord(Surface surface, int orientation) {
+    public void startRecord(Surface surface, int orientation, MutexUtil mutexUtil) {
         videoEncode.setRecording(true);
-        videoEncode.startEncode();
+        videoEncode.startEncode(mutexUtil);
         if (captureSession != null) {
             captureSession.close();
         }
@@ -312,7 +313,14 @@ public class CameraUtil {
         System.arraycopy(yBuffer, 0, dataBuffer, 0, yBuffer.length);
         System.arraycopy(uvBuffer, 0, dataBuffer, yBuffer.length, uvBuffer.length);
         videoEncode.pushData(dataBuffer);
-        Log.e(TAG, "dataEnqueue: 耗时" + (System.currentTimeMillis() - now));
+//        Log.e(TAG, "dataEnqueue: 耗时" + (System.currentTimeMillis() - now));
+    }
+
+    public MediaFormat getVideoFormat() {
+        if (videoEncode != null) {
+            return videoEncode.getMediaFormat();
+        }
+        return null;
     }
 }
 

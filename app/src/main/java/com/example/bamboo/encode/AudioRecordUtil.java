@@ -2,6 +2,7 @@ package com.example.bamboo.encode;
 
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
 import android.widget.Toast;
@@ -52,7 +53,7 @@ public class AudioRecordUtil {
         });
     }
 
-    public void startRecord() {
+    public void startRecord(MutexUtil mutexUtil) {
         if (channelLayout != -1 && audioRecord == null) {
             audioRecord = new AudioRecord(MediaRecorder.AudioSource.MIC, sampleRate, channelLayout, AudioFormat.ENCODING_PCM_16BIT, AudioRecord.getMinBufferSize(sampleRate, channelLayout, AudioFormat.ENCODING_PCM_16BIT) * 2);
         }
@@ -65,11 +66,18 @@ public class AudioRecordUtil {
         audioRecord.startRecording();
         thread.start();
         audioEncode.setRecording(true);
-        audioEncode.startEncode();
+        audioEncode.startEncode(mutexUtil);
     }
 
     public void stop() {
         audioEncode.setRecording(false);
         audioRecord.stop();
+    }
+
+    public MediaFormat getAudioFormat() {
+        if (audioEncode != null) {
+            return audioEncode.getMediaFormat();
+        }
+        return null;
     }
 }
