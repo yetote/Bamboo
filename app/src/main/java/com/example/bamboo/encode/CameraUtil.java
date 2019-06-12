@@ -238,6 +238,8 @@ public class CameraUtil {
 
 
     private void chooseBestSize(int cameraType, Size[] supportResolvingSize) {
+        Log.e(TAG, "chooseBestSize: " + Arrays.toString(supportResolvingSize));
+        Log.e(TAG, "chooseBestSize: " + width + height);
         float diff = Float.MAX_VALUE;
         int bestWidth = 0, bestHeight = 0;
 
@@ -245,7 +247,7 @@ public class CameraUtil {
         int bestIndex = -1;
         for (int j = 0; j < supportResolvingSize.length - 1; j++) {
 
-            float newDiff = Math.abs(supportResolvingSize[j].getWidth() / supportResolvingSize[j].getHeight() - bestRatio);
+            float newDiff = Math.abs((float) supportResolvingSize[j].getWidth() / (float) supportResolvingSize[j].getHeight() - bestRatio);
             if (newDiff == 0) {
                 bestWidth = supportResolvingSize[j].getWidth();
                 bestHeight = supportResolvingSize[j].getHeight();

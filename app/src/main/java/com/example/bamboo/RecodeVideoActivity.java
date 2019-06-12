@@ -137,7 +137,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         onClick();
 //        cameraUtil = new CameraUtil(this, point.x, point.y);
 //        isOpenCamera = cameraUtil.initCamera();
-        mutexUtil = new MutexUtil(this, point.x, point.y, videoPath, audioPath);
+        mutexUtil = new MutexUtil(this, 1080, 1812, videoPath, audioPath);
     }
 
     private void onClick() {
