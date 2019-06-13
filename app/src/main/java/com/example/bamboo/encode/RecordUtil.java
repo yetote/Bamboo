@@ -60,13 +60,13 @@ public class RecordUtil {
     }
 
     public void record(int orientation) {
-        cameraUtil.startRecord(previewSurface, orientation,mutexUtil);
+//        cameraUtil.startRecord(previewSurface, orientation, mutexUtil);
         audioRecordUtil.startRecord(mutexUtil);
     }
 
 
     public void stop() {
-        cameraUtil.stop(previewSurface);
+//        cameraUtil.stop(previewSurface);
         audioRecordUtil.stop();
     }
 

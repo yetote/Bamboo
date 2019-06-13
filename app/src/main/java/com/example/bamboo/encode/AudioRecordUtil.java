@@ -48,8 +48,11 @@ public class AudioRecordUtil {
         thread = new Thread(() -> {
             while (isRecording) {
                 audioRecord.read(audioData, 0, audioData.length);
+                Log.e(TAG, "AudioRecordUtil: 获取数据" + isRecording);
                 audioEncode.pushData(audioData);
             }
+            audioRecord.stop();
+            Log.e(TAG, "AudioRecordUtil: 停止");
         });
     }
 
@@ -70,8 +73,9 @@ public class AudioRecordUtil {
     }
 
     public void stop() {
+        isRecording = false;
         audioEncode.setRecording(false);
-        audioRecord.stop();
+//        audioRecord.stop();
     }
 
     public MediaFormat getAudioFormat() {

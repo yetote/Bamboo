@@ -36,6 +36,7 @@ public class VideoEncode {
     private MediaCodec.BufferInfo bufferInfo;
     private byte[] pps;
     private WriteFile writeFile;
+    private boolean isFinish=false;
 
     public VideoEncode(int width, int height, String path) {
         this.width = width;
@@ -133,34 +134,41 @@ public class VideoEncode {
         new Thread(() -> {
             int flag = 0;
             int endFlag = 0;
+            long presentationTimeUs = System.currentTimeMillis() * 1000;
             while (endFlag != MediaCodec.BUFFER_FLAG_END_OF_STREAM) {
-                int inputIndex = mediaCodec.dequeueInputBuffer(-1);
-                if (inputIndex < 0) {
-                    continue;
-                }
-                ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inputIndex);
-                if (inputBuffer == null) {
-                    continue;
-                }
-                inputBuffer.clear();
-                try {
-                    videoData = videoQueue.take();
-                    if (!isRecording && videoQueue.isEmpty()) {
-                        Log.e(TAG, "startEncode: 视频最后一帧");
-//                        Log.e(TAG, "run: 最后一帧");
-                        flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
+                Log.e(TAG, "startEncode: 视频编码循环"+!isFinish);
+                if (!isFinish) {
+                    int inputIndex = mediaCodec.dequeueInputBuffer(-1);
+                    if (inputIndex < 0) {
+                        continue;
                     }
+                    try {
+                        videoData = videoQueue.take();
+                        if (!isRecording && videoQueue.isEmpty()) {
+                            Log.e(TAG, "startEncode: 视频最后一帧");
+//                        Log.e(TAG, "run: 最后一帧");
+                            flag = MediaCodec.BUFFER_FLAG_END_OF_STREAM;
+                            isFinish = true;
+                        }
 //                    Log.e(TAG, "run: videoSize=" + videoData.length);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    ByteBuffer inputBuffer = mediaCodec.getInputBuffer(inputIndex);
+                    if (inputBuffer == null) {
+                        continue;
+                    }
+                    inputBuffer.clear();
+
+                    inputBuffer.put(videoData);
+                    mediaCodec.queueInputBuffer(inputIndex, 0, videoData.length, System.currentTimeMillis() * 1000 - presentationTimeUs, flag);
                 }
-                inputBuffer.put(videoData);
-                mediaCodec.queueInputBuffer(inputIndex, 0, videoData.length, System.currentTimeMillis(), flag);
-                int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 10000);
+                int outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 0);
                 if (outputIndex == -2) {
                     mutexUtil.addFormat(mediaCodec.getOutputFormat(), false);
+
                 }
-                Log.e(TAG, "startEncode: state" + mutexUtil.getState());
+                Log.e(TAG, "startEncode: 视频state" + mutexUtil.getState());
                 if (mutexUtil.getState()) {
                     while (outputIndex >= 0) {
                         ByteBuffer outputBuffer = mediaCodec.getOutputBuffer(outputIndex);
@@ -187,7 +195,7 @@ public class VideoEncode {
 //                    }
 //                    Log.e(TAG, "VideoEncode: size=" + bufferInfo.size);
 //                    writeFile.write(outputBuffer);
-//                        mutexUtil.pushData(outputBuffer, false, bufferInfo);
+                        mutexUtil.pushData(outputBuffer, false, bufferInfo);
                         mediaCodec.releaseOutputBuffer(outputIndex, false);
                         outputIndex = mediaCodec.dequeueOutputBuffer(bufferInfo, 0);
                         endFlag = bufferInfo.flags;

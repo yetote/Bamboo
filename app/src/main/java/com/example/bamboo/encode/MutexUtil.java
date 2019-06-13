@@ -39,16 +39,22 @@ public class MutexUtil {
 
     public synchronized void pushData(ByteBuffer data, boolean isAudio, MediaCodec.BufferInfo bufferInfo) {
         int currentTrackIndex = isAudio ? audioTrackIndex : videoTrackIndex;
+//        if (currentTrackIndex==audioTrackIndex){
+//            Log.e(TAG, "pushData: 接受到的pts"+bufferInfo.presentationTimeUs );
+//        }
         mediaMuxer.writeSampleData(currentTrackIndex, data, bufferInfo);
     }
 
     public synchronized void stop(boolean isAudio) {
         if (isAudio) {
+            Log.e(TAG, "stop: 音频结束");
             audioStop = true;
         } else {
+            Log.e(TAG, "stop: 视频结束");
             videoStop = true;
         }
         if (audioStop && videoStop) {
+            Log.e(TAG, "stop: 封装完成");
             mediaMuxer.stop();
         }
     }
