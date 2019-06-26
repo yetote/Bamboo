@@ -6,73 +6,65 @@ import android.media.MediaMuxer;
 import android.util.Log;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
  * @author yetote QQ:503779938
  * @name Bamboo
  * @class name：com.example.bamboo.encode
- * @class describe
- * @time 2019/6/12 14:15
+ * @class 封包util
+ * @time 2019/6/26 16:46
  * @change
  * @chang time
  * @class describe
  */
 public class MutexUtil {
     private MediaMuxer mediaMuxer;
-    int audioTrackIndex = -1, videoTrackIndex = -1;
-    private boolean audioStop, videoStop;
-    private boolean isStart, isAddVideoTrack;
+    private int audioTrack, videoTrack;
+    private boolean isStart;
+    private boolean videoStop, audioStop;
     private static final String TAG = "MutexUtil";
 
-    public MutexUtil(String path, MediaFormat videoFormat, MediaFormat audioFormat) {
-
+    public MutexUtil(String path) {
         try {
             mediaMuxer = new MediaMuxer(path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        videoTrackIndex = mediaMuxer.addTrack(videoFormat);
-//        audioTrackIndex = mediaMuxer.addTrack(audioFormat);
-//        mediaMuxer.start();
+        audioTrack = videoTrack = -1;
     }
 
-    public synchronized void pushData(ByteBuffer data, boolean isAudio, MediaCodec.BufferInfo bufferInfo) {
-        int currentTrackIndex = isAudio ? audioTrackIndex : videoTrackIndex;
-//        if (currentTrackIndex==audioTrackIndex){
-//            Log.e(TAG, "pushData: 接受到的pts"+bufferInfo.presentationTimeUs );
-//        }
-        mediaMuxer.writeSampleData(currentTrackIndex, data, bufferInfo);
-    }
-
-    public synchronized void stop(boolean isAudio) {
+    public synchronized void addTrack(MediaFormat mediaFormat, boolean isAudio) {
         if (isAudio) {
-            Log.e(TAG, "stop: 音频结束");
-            audioStop = true;
+            audioTrack = mediaMuxer.addTrack(mediaFormat);
         } else {
-            Log.e(TAG, "stop: 视频结束");
-            videoStop = true;
+            videoTrack = mediaMuxer.addTrack(mediaFormat);
         }
-        if (audioStop && videoStop) {
-            Log.e(TAG, "stop: 封装完成");
-            mediaMuxer.stop();
-        }
-    }
-
-    public synchronized void addFormat(MediaFormat mediaFormat, boolean isAudio) {
-        Log.e(TAG, "addFormat: isAudio" + isAudio);
-        if (isAudio) {
-            audioTrackIndex = mediaMuxer.addTrack(mediaFormat);
-        } else {
-            videoTrackIndex = mediaMuxer.addTrack(mediaFormat);
-        }
-        if (audioTrackIndex != -1 && videoTrackIndex != -1) {
+        if (audioTrack != -1 && videoTrack != -1) {
             mediaMuxer.start();
             isStart = true;
         }
     }
 
-    public boolean getState() {
-        return isStart;
+    public synchronized void writeData(ByteBuffer buffer, MediaCodec.BufferInfo info, boolean isAudio) {
+        if (!isStart) {
+            Log.e(TAG, "writeData: 混音器未启动");
+            return;
+        }
+
+        if (isAudio) {
+            mediaMuxer.writeSampleData(audioTrack, buffer, info);
+        } else {
+            mediaMuxer.writeSampleData(videoTrack, buffer, info);
+        }
+    }
+
+    public synchronized void stop() {
+        if (isStart && mediaMuxer != null) {
+            mediaMuxer.stop();
+            mediaMuxer.release();
+            isStart = false;
+        }
     }
 }

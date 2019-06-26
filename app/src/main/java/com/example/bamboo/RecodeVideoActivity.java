@@ -21,8 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.bamboo.encode.CameraUtil;
-import com.example.bamboo.encode.RecordUtil;
 import com.example.bamboo.myview.RecodeButton;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
