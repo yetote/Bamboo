@@ -38,8 +38,10 @@ public class MutexUtil {
     public synchronized void addTrack(MediaFormat mediaFormat, boolean isAudio) {
         if (isAudio) {
             audioTrack = mediaMuxer.addTrack(mediaFormat);
+            Log.e(TAG, "addTrack: 添加音频索引");
         } else {
             videoTrack = mediaMuxer.addTrack(mediaFormat);
+            Log.e(TAG, "addTrack: 添加视频索引");
         }
         if (audioTrack != -1 && videoTrack != -1) {
             mediaMuxer.start();
@@ -60,11 +62,24 @@ public class MutexUtil {
         }
     }
 
-    public synchronized void stop() {
-        if (isStart && mediaMuxer != null) {
-            mediaMuxer.stop();
-            mediaMuxer.release();
-            isStart = false;
+    public synchronized void stop(boolean isAudio) {
+        if (isAudio) {
+            audioStop = true;
+            Log.e(TAG, "stop: 音频停止");
+        } else {
+            videoStop = true;
+            Log.e(TAG, "stop: 视频停止");
+        }
+
+        if (audioStop && videoStop) {
+            if (isStart && mediaMuxer != null) {
+                mediaMuxer.stop();
+                mediaMuxer.release();
+                isStart = false;
+                audioStop = false;
+                videoStop = false;
+                Log.e(TAG, "stop: 停止封包器");
+            }
         }
     }
 }

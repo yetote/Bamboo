@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
@@ -21,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.bamboo.encode.CameraUtil;
+import com.example.bamboo.encode.Record;
 import com.example.bamboo.myview.RecodeButton;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
@@ -44,9 +47,8 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private ImageView iv, switchCamera, switchVideo;
     private TextureView textureView;
     private boolean isRecording;
-
+    private Record record;
     private SurfaceTexture surfaceTexture;
-    private RecordUtil recordUtil;
     private String videoPath, audioPath, path;
     private String[] permissionArr = new String[]{
             Manifest.permission.CAMERA,
@@ -71,7 +73,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
             } else {
 
-                recordUtil.open(new Surface(surfaceTexture));
+                record.openCamera(new Surface(surfaceTexture));
             }
         }
 
@@ -98,9 +100,11 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                 | SYSTEM_UI_FLAG_FULLSCREEN
                 | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         setContentView(R.layout.activity_recode_video);
-        Display display = getWindowManager().getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
+        DisplayMetrics metric = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(metric);
+
+        int dw = metric.widthPixels;
+        int dh = metric.heightPixels;
 //        switch (Build.MODEL) {
 //            case BuildModel.XIAOMI_MIX2S:
 //                new AlertDialog.Builder(RecodeVideoActivity.this).setMessage("是否旋转屏幕").setPositiveButton("是", (dialog, which) -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)).setNegativeButton("否", (dialog, which) -> Toast.makeText(RecodeVideoActivity.this, "这可能导致您的拍摄角度出现问题", Toast.LENGTH_SHORT).show()).show();
@@ -110,9 +114,8 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 //        }
 
         initView();
-//        switchCamera.setVisibility(View.GONE);
         onClick();
-        recordUtil = new RecordUtil(this, point.x, point.y, videoPath, audioPath, path);
+        record = new Record(this, 48000, 2, dw, dh, path);
     }
 
     private void onClick() {
@@ -126,24 +129,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.recode_video_switchCamera_btn:
-//                if (cameraDevice != null) {
-//                    cameraDevice.close();
-//                    if (cameraOrientation == CAMERA_ORIENTATION.CAMERA_ORIENTATION_BACK) {
-//                        if (frontCameraId != -1) {
-//                            openCamera(frontCameraId);
-//                            cameraOrientation = CAMERA_ORIENTATION.CAMERA_ORIENTATION_FRONT;
-//                        } else {
-//                            Toast.makeText(RecodeVideoActivity.this, "未找到前置摄像机", Toast.LENGTH_SHORT).show();
-//                        }
-//                    } else if (cameraOrientation == CAMERA_ORIENTATION.CAMERA_ORIENTATION_FRONT) {
-//                        if (backCameraId != -1) {
-//                            openCamera(backCameraId);
-//                            cameraOrientation = CAMERA_ORIENTATION.CAMERA_ORIENTATION_BACK;
-//                        } else {
-//                            Toast.makeText(RecodeVideoActivity.this, "未找到后置摄像机", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                }
+
                 break;
             case R.id.recode_video_recodeBtn:
                 if (!isRecording) {
@@ -161,12 +147,12 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                         ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
                     }
                     changeTextureSize();
-                    recordUtil.record(getWindowManager().getDefaultDisplay().getRotation());
+                    record.start(getWindowManager().getDefaultDisplay().getRotation(), new Surface(surfaceTexture));
                 } else {
                     Toast.makeText(this, "录制结束", Toast.LENGTH_SHORT).show();
                     isRecording = false;
                     changeTextureSize();
-                    recordUtil.stop();
+                    record.stop(new Surface(surfaceTexture));
                 }
                 break;
             case R.id.recode_video_switch_camera:
@@ -198,7 +184,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
     private void changeTextureSize() {
         if (size == null) {
-            size = recordUtil.getCameraBestSize(CameraUtil.CAMERA_TYPE_BACK);
+            size = record.getBestSize();
         }
         surfaceTexture.setDefaultBufferSize(size.getWidth(), size.getHeight());
 
@@ -220,7 +206,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                         | SYSTEM_UI_FLAG_FULLSCREEN
                         | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
                 changeTextureSize();
-                recordUtil.open(new Surface(surfaceTexture));
+                record.openCamera(new Surface(surfaceTexture));
             default:
                 break;
         }
