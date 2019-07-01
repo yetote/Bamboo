@@ -25,6 +25,14 @@ public class MutexUtil {
     private boolean isStart;
     private boolean videoStop, audioStop;
     private static final String TAG = "MutexUtil";
+    public static final int MUTEX_STOP = 1;
+    public static final int MUTEX_TIME_SHORT = 2;
+
+    public EncodeListener listener;
+
+    public void setListener(EncodeListener listener) {
+        this.listener = listener;
+    }
 
     public MutexUtil(String path) {
         try {
@@ -36,16 +44,18 @@ public class MutexUtil {
     }
 
     public synchronized void addTrack(MediaFormat mediaFormat, boolean isAudio) {
-        if (isAudio) {
-            audioTrack = mediaMuxer.addTrack(mediaFormat);
-            Log.e(TAG, "addTrack: 添加音频索引");
-        } else {
-            videoTrack = mediaMuxer.addTrack(mediaFormat);
-            Log.e(TAG, "addTrack: 添加视频索引");
-        }
-        if (audioTrack != -1 && videoTrack != -1) {
-            mediaMuxer.start();
-            isStart = true;
+        if (mediaMuxer!=null) {
+            if (isAudio) {
+                audioTrack = mediaMuxer.addTrack(mediaFormat);
+                Log.e(TAG, "addTrack: 添加音频索引");
+            } else {
+                videoTrack = mediaMuxer.addTrack(mediaFormat);
+                Log.e(TAG, "addTrack: 添加视频索引");
+            }
+            if (audioTrack != -1 && videoTrack != -1) {
+                mediaMuxer.start();
+                isStart = true;
+            }
         }
     }
 
@@ -63,6 +73,13 @@ public class MutexUtil {
     }
 
     public synchronized void stop(boolean isAudio) {
+        if (!isStart && mediaMuxer != null) {
+            Log.e(TAG, "stop: 录制时间过短");
+            mediaMuxer.release();
+            mediaMuxer = null;
+            audioStop = videoStop = false;
+            listener.onStop(MUTEX_TIME_SHORT);
+        }
         if (isAudio) {
             audioStop = true;
             Log.e(TAG, "stop: 音频停止");
@@ -79,7 +96,9 @@ public class MutexUtil {
                 audioStop = false;
                 videoStop = false;
                 Log.e(TAG, "stop: 停止封包器");
+                listener.onStop(MUTEX_STOP);
             }
+
         }
     }
 }

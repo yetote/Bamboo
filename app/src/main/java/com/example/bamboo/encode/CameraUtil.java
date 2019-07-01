@@ -180,7 +180,7 @@ public class CameraUtil {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession session) {
                     captureSession = session;
-                    Toast.makeText(context, "开始录制", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "开始录制", Toast.LENGTH_SHORT).show();
                     previewCaptureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
                     CaptureRequest captureRequest = previewCaptureBuilder.build();
                     try {

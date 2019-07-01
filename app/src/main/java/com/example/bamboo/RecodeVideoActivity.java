@@ -24,8 +24,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.bamboo.encode.CameraUtil;
+import com.example.bamboo.encode.EncodeListener;
+import com.example.bamboo.encode.MutexUtil;
 import com.example.bamboo.encode.Record;
 import com.example.bamboo.myview.RecodeButton;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 
 import static android.view.View.SYSTEM_UI_FLAG_FULLSCREEN;
 import static android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
@@ -58,7 +66,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
     private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
     private static final int PERMISSION_OPEN_RECORD_CODE = 2;
     private Size size;
-    private TextureView.SurfaceTextureListener textureListener;
     private int dw, dh;
 
     @Override
@@ -73,32 +80,24 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
         dw = metric.widthPixels;
         dh = metric.heightPixels;
-//        switch (Build.MODEL) {
-//            case BuildModel.XIAOMI_MIX2S:
-//                new AlertDialog.Builder(RecodeVideoActivity.this).setMessage("是否旋转屏幕").setPositiveButton("是", (dialog, which) -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)).setNegativeButton("否", (dialog, which) -> Toast.makeText(RecodeVideoActivity.this, "这可能导致您的拍摄角度出现问题", Toast.LENGTH_SHORT).show()).show();
-//                break;
-//            default:
-//                break;
-//        }
-        videoPath = getExternalFilesDir(null).getPath() + "/test.h264";
-        audioPath = getExternalFilesDir(null).getPath() + "/test.aac";
-        path = getExternalFilesDir(null).getPath() + "/test.mp4";
-        boolean permissionCheckResult = true;
-        Log.e(TAG, "onCreate: ");
-        for (int i = 0; i < permissionArr.length; i++) {
-            if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
-                permissionCheckResult = false;
-                break;
-            }
-        }
-        record = new Record(this, 48000, 2, dw, dh, path);
-//        if (!permissionCheckResult) {
-//            ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
-//        } else {
-//            record.init();
-//        }
+
         initView();
         onClick();
+        record.mutexState(state -> Observable.create((ObservableOnSubscribe<Integer>) emitter -> emitter.onNext(state))
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(mutexState -> {
+                    switch (mutexState) {
+                        case MutexUtil.MUTEX_STOP:
+                            Toast.makeText(RecodeVideoActivity.this, "录制完成", Toast.LENGTH_SHORT).show();
+                            break;
+                        case MutexUtil.MUTEX_TIME_SHORT:
+                            Toast.makeText(RecodeVideoActivity.this, "录制时间太短", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
+                    }
+
+                }));
     }
 
     private void onClick() {
@@ -132,7 +131,6 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                     changeTextureSize();
                     record.start(getWindowManager().getDefaultDisplay().getRotation(), new Surface(surfaceTexture));
                 } else {
-                    Toast.makeText(this, "录制结束", Toast.LENGTH_SHORT).show();
                     isRecording = false;
                     changeTextureSize();
                     record.stop(new Surface(surfaceTexture));
@@ -153,13 +151,17 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 
 
     private void initView() {
+        videoPath = getExternalFilesDir(null).getPath() + "/test.h264";
+        audioPath = getExternalFilesDir(null).getPath() + "/test.aac";
+        path = getExternalFilesDir(null).getPath() + "/test.mp4";
+        record = new Record(this, 48000, 2, dw, dh, path);
         textureView = findViewById(R.id.recode_video_texture);
         switchCameraBtn = findViewById(R.id.recode_video_switchCamera_btn);
         recodeButton = findViewById(R.id.recode_video_recodeBtn);
         iv = findViewById(R.id.recode_video_iv);
         switchCamera = findViewById(R.id.recode_video_switch_camera);
         switchVideo = findViewById(R.id.recode_video_switch_video);
-        textureListener = new TextureView.SurfaceTextureListener() {
+        TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
                 Log.e(TAG, "onSurfaceTextureAvailable: 加载listener");
@@ -214,13 +216,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_CAMERA_AND_RECORD_CODE:
-//                for (int i = 0; i < grantResults.length; i++) {
-//                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-//                        Toast.makeText(this, "您拒绝了权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    }
-//                }
-//                record = new Record(this, 48000, 2, dw, dh, path);
+
                 break;
             case PERMISSION_OPEN_RECORD_CODE:
                 for (int i = 0; i < grantResults.length; i++) {

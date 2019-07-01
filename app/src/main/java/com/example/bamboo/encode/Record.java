@@ -28,6 +28,7 @@ public class Record {
         this.channelCount = channelCount;
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
+
     }
 
     public void init() {
@@ -55,5 +56,9 @@ public class Record {
             return recordVideo.getBestSize();
         }
         return null;
+    }
+
+    public void mutexState(EncodeListener listener) {
+        mutexUtil.setListener(listener);
     }
 }
