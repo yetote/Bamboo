@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class EncodeAudio {
     private static final String TAG = "EncodeAudio";
     private boolean isStart;
-    private long pts;
+    private long pts, lastPts;
     private MediaCodec.Callback callback = new MediaCodec.Callback() {
         @Override
         public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
@@ -46,6 +46,8 @@ public class EncodeAudio {
                         if (data != null) {
                             buffer.put(data);
                             codec.queueInputBuffer(index, 0, data.length, System.currentTimeMillis() * 1000L - pts, flag);
+                        }else {
+                            codec.queueInputBuffer(index, 0, 0, System.currentTimeMillis() * 1000L - pts, flag);
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -59,10 +61,17 @@ public class EncodeAudio {
             if (index >= 0) {
                 ByteBuffer buffer = codec.getOutputBuffer(index);
                 if (buffer != null) {
-                    mutexUtil.writeData(buffer, info, true);
+                    if (lastPts < info.presentationTimeUs) {
+                        mutexUtil.writeData(buffer, info, true);
+                        lastPts = info.presentationTimeUs;
+                    } else {
+                        Log.e(TAG, "onOutputBufferAvailable: 音频时间戳不正确");
+                    }
                 }
                 codec.releaseOutputBuffer(index, false);
             }
+            Log.e(TAG, "onOutputBufferAvailable: 音频flag=" + info.flags);
+            Log.e(TAG, "onOutputBufferAvailable: 音频size=" + info.size);
             if (info.flags == MediaCodec.BUFFER_FLAG_END_OF_STREAM) {
                 mutexUtil.stop(true);
                 codec.stop();

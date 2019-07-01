@@ -19,10 +19,18 @@ public class Record {
     private RecordAudio recordAudio;
     private RecordVideo recordVideo;
     private MutexUtil mutexUtil;
+    int sampleRate, channelCount, displayWidth, displayHeight;
 
     public Record(Context context, int sampleRate, int channelCount, int displayWidth, int displayHeight, String path) {
         this.context = context;
         mutexUtil = new MutexUtil(path);
+        this.sampleRate = sampleRate;
+        this.channelCount = channelCount;
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
+    }
+
+    public void init() {
         recordAudio = new RecordAudio(sampleRate, channelCount, mutexUtil);
         recordVideo = new RecordVideo(context, displayWidth, displayHeight, mutexUtil);
     }

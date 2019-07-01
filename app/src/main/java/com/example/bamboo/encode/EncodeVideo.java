@@ -38,6 +38,7 @@ public class EncodeVideo {
     private MediaFormat videoFormat;
     private BlockingQueue<byte[]> videoQueue;
     private boolean isStart;
+    long pts = 0;
     private MediaCodec.Callback callback = new MediaCodec.Callback() {
         @Override
         public void onInputBufferAvailable(@NonNull MediaCodec codec, int index) {
@@ -53,7 +54,7 @@ public class EncodeVideo {
                         }
                         byteBuffer.clear();
                         byteBuffer.put(data);
-                        codec.queueInputBuffer(index, 0, data.length, System.currentTimeMillis(), flag);
+                        codec.queueInputBuffer(index, 0, data.length, System.currentTimeMillis()*1000L-pts, flag);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -119,6 +120,9 @@ public class EncodeVideo {
 
     public void start() {
         if (videoCodec != null) {
+            if (pts == 0) {
+                pts = System.currentTimeMillis() * 1000L;
+            }
             videoCodec.start();
             isStart = true;
         }

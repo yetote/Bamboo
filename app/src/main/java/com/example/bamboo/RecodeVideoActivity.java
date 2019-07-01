@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
@@ -55,43 +56,10 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
             Manifest.permission.RECORD_AUDIO
     };
     private static final int PERMISSION_CAMERA_AND_RECORD_CODE = 1;
+    private static final int PERMISSION_OPEN_RECORD_CODE = 2;
     private Size size;
-    private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            surfaceTexture = surface;
-            changeTextureSize();
-            boolean permissionCheckResult = true;
-            for (int i = 0; i < permissionArr.length; i++) {
-                if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
-                    permissionCheckResult = false;
-                    break;
-                }
-            }
-
-            if (!permissionCheckResult) {
-                ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
-            } else {
-
-                record.openCamera(new Surface(surfaceTexture));
-            }
-        }
-
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-
-        }
-
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            return false;
-        }
-
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-        }
-    };
+    private TextureView.SurfaceTextureListener textureListener;
+    private int dw, dh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,8 +71,8 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         DisplayMetrics metric = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getRealMetrics(metric);
 
-        int dw = metric.widthPixels;
-        int dh = metric.heightPixels;
+        dw = metric.widthPixels;
+        dh = metric.heightPixels;
 //        switch (Build.MODEL) {
 //            case BuildModel.XIAOMI_MIX2S:
 //                new AlertDialog.Builder(RecodeVideoActivity.this).setMessage("是否旋转屏幕").setPositiveButton("是", (dialog, which) -> setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT)).setNegativeButton("否", (dialog, which) -> Toast.makeText(RecodeVideoActivity.this, "这可能导致您的拍摄角度出现问题", Toast.LENGTH_SHORT).show()).show();
@@ -112,10 +80,25 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
 //            default:
 //                break;
 //        }
-
+        videoPath = getExternalFilesDir(null).getPath() + "/test.h264";
+        audioPath = getExternalFilesDir(null).getPath() + "/test.aac";
+        path = getExternalFilesDir(null).getPath() + "/test.mp4";
+        boolean permissionCheckResult = true;
+        Log.e(TAG, "onCreate: ");
+        for (int i = 0; i < permissionArr.length; i++) {
+            if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
+                permissionCheckResult = false;
+                break;
+            }
+        }
+        record = new Record(this, 48000, 2, dw, dh, path);
+//        if (!permissionCheckResult) {
+//            ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
+//        } else {
+//            record.init();
+//        }
         initView();
         onClick();
-        record = new Record(this, 48000, 2, dw, dh, path);
     }
 
     private void onClick() {
@@ -144,7 +127,7 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
                     }
 
                     if (!permissionCheckResult) {
-                        ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_CAMERA_AND_RECORD_CODE);
+                        ActivityCompat.requestPermissions(this, permissionArr, PERMISSION_OPEN_RECORD_CODE);
                     }
                     changeTextureSize();
                     record.start(getWindowManager().getDefaultDisplay().getRotation(), new Surface(surfaceTexture));
@@ -176,10 +159,45 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         iv = findViewById(R.id.recode_video_iv);
         switchCamera = findViewById(R.id.recode_video_switch_camera);
         switchVideo = findViewById(R.id.recode_video_switch_video);
+        textureListener = new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+                Log.e(TAG, "onSurfaceTextureAvailable: 加载listener");
+                surfaceTexture = surface;
+                boolean permissionCheckResult = true;
+                for (int i = 0; i < permissionArr.length; i++) {
+                    if (ActivityCompat.checkSelfPermission(RecodeVideoActivity.this, permissionArr[i]) != PackageManager.PERMISSION_GRANTED) {
+                        permissionCheckResult = false;
+                        break;
+                    }
+                }
+
+                if (!permissionCheckResult) {
+                    ActivityCompat.requestPermissions(RecodeVideoActivity.this, permissionArr, PERMISSION_OPEN_RECORD_CODE);
+                } else {
+                    record.init();
+                    changeTextureSize();
+                    record.openCamera(new Surface(surfaceTexture));
+                }
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+            }
+        };
         textureView.setSurfaceTextureListener(textureListener);
-        videoPath = getExternalFilesDir(null).getPath() + "/res/test.h264";
-        audioPath = getExternalFilesDir(null).getPath() + "/res/test.aac";
-        path = getExternalFilesDir(null).getPath() + "/res/test.mp4";
+
     }
 
     private void changeTextureSize() {
@@ -196,17 +214,28 @@ public class RecodeVideoActivity extends AppCompatActivity implements View.OnCli
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case PERMISSION_CAMERA_AND_RECORD_CODE:
+//                for (int i = 0; i < grantResults.length; i++) {
+//                    if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+//                        Toast.makeText(this, "您拒绝了权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
+//                        break;
+//                    }
+//                }
+//                record = new Record(this, 48000, 2, dw, dh, path);
+                break;
+            case PERMISSION_OPEN_RECORD_CODE:
                 for (int i = 0; i < grantResults.length; i++) {
                     if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                         Toast.makeText(this, "您拒绝了权限可能导致相机无法使用", Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
+                record.init();
                 RecodeVideoActivity.this.getWindow().getDecorView().setSystemUiVisibility(SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         | SYSTEM_UI_FLAG_FULLSCREEN
                         | SYSTEM_UI_FLAG_HIDE_NAVIGATION);
                 changeTextureSize();
                 record.openCamera(new Surface(surfaceTexture));
+                break;
             default:
                 break;
         }
